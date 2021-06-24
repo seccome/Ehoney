@@ -96,7 +96,11 @@ cd Ehoney && chmod +x quick-start.sh && ./quick-start.sh
 
 
 
-## 🙏 关于 
+## 🙏 讨论区 
+如有问题可以在 GitHub 提 issue, 也可在下方的讨论组里
 
-如果大家对系统有好的建议或想法, 请[创建issue](https://github.com/seccome/Ehoney/issues/new ), 我们会及时回复并处理。
+1. GitHub issue: https://github.com/seccome/Ehoney/issues/new
+1. QQ 群: xxxx
+1. 微信群: 扫描以下二维码关注 seccome 公众号，点击菜单加群，按照提示进行操作即可。
 
+<img src="" height="200px">
