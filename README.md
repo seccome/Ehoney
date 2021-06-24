@@ -98,7 +98,7 @@ cd Ehoney && chmod +x quick-start.sh && ./quick-start.sh
 
 ## 🙏 讨论区 
 
-如有问题可以在 GitHub 提 issue, 也可在下方的讨论组里
+如有问题可以在 GitHub 提 issue, 也可在下方的讨论组里，问题我们都会及时处理
 
 1. GitHub issue: [创建issue](https://github.com/seccome/Ehoney/issues/new )
 2. QQ 群: xxxx
