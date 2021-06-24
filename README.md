@@ -103,6 +103,6 @@ cd Ehoney && chmod +x quick-start.sh && ./quick-start.sh
 1. GitHub issue: [创建issue](https://github.com/seccome/Ehoney/issues/new )
 2. QQ 群: xxxx
 3. 微信群: 扫描以下二维码关注 seccome 公众号，点击菜单加群，按照提示进行操作即可。
-4. 邮箱: ask@seccome@com
+4. 邮箱: ask@seccome.com
 
 <img src="" height="200px">
