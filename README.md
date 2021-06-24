@@ -49,8 +49,9 @@
 ## ⛴ 环境准备
 
 - **系统要求**: CentOS 7 及以上
-- **最低配置：**: 内存1G、磁盘空间10G以上
-- **建议配置：**: 内存4G、磁盘空间10G以上
+- **最低配置：**: 内存4G、磁盘空间10G以上
+- **建议配置：**: 内存8G、磁盘空间30G以上
+
 
 <br>
 
@@ -96,8 +97,13 @@ cd Ehoney && chmod +x quick-start.sh && ./quick-start.sh
 ![告警列表](./doc/img/告警列表.png)
 
 
+## 🙏 讨论区 
 
-## 🙏 关于 
+欢迎如下方式参与社区:
 
-如果大家对系统有好的建议或想法, 请[创建issue](https://github.com/seccome/Ehoney/issues/new )。
+1. [创建issue](https://github.com/seccome/Ehoney/issues/new)
+2. QQ 群: xxxx
+3. 微信群: 扫描以下二维码关注 seccome 公众号，点击菜单加群，按照提示进行操作。
+4. 邮箱: ask@seccome.com
 
+<img src="" height="200px">
