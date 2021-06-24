@@ -4,9 +4,10 @@
   <br/>
   <h1 align="center">Welcome To Ehoney 👋</h1>
   <br/>
-  <p>
+  <p align="center">
   <img align="center" src="https://img.shields.io/badge/release-v1.0.0-green" />
   <img align="center" src="https://img.shields.io/badge/language-goland-orange" />
+  <img align="center" src="https://img.shields.io/badge/documentation-yes-ff69b4" />
   <img align="center" src="https://img.shields.io/badge/license-Apache%202-blue" />
   </p>
 </p>
