@@ -65,12 +65,12 @@ cd Ehoney && chmod +x quick-start.sh && ./quick-start.sh
 
 此安装过程会比较耗时、耐心等待后看到如下提示语
 
-​			**all the services are ready and happy to use!!!**
+>​			**all the services are ready and happy to use!!!**
 
-代表安装成功。
+>代表安装成功。
 
-访问http://IP:8080/decept-defense 进入系统登录页
-默认账户密码
+>访问http://IP:8080/decept-defense 进入系统登录页
+>默认账户密码
        <font color=Blue>用户名: admin</font>
        <font color=Blue>密码: 123456</font>
 
