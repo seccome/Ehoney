@@ -2,8 +2,13 @@
   <img width="200px" src="./doc/img/logo_ehoney_black.svg" alt="Ehoney" />
   <br/>
   <br/>
-  <h1 align="center">Ehoney 欺骗防御系统</h1>
+  <h1 align="center">Welcome To Ehoney 👋</h1>
   <br/>
+  <p>
+  <img align="center" src="https://img.shields.io/badge/release-v1.0.0-green" />
+  <img align="center" src="https://img.shields.io/badge/language-goland-orange" />
+  <img align="center" src="https://img.shields.io/badge/license-Apache%202-blue" />
+  </p>
 </p>
 
 
@@ -12,6 +17,7 @@
 ![介绍视频](./doc/img/介绍.gif)
 
 
+🏠 [使用文档](https://www.showdoc.com.cn/1432924569255366?page_id=7002138596779961)
 
 ## 📝 特点
 
@@ -32,6 +38,7 @@
 
 <br>
 
+ 
 ## 🔧 快速部署
 
 ```shell
@@ -55,8 +62,6 @@ cd Ehoney && chmod +x quick-start.sh && ./quick-start.sh
 ## 🖥️ 使用演示
 
 ![操作视频](./doc/img/操作视频.gif)
-
-系统的详细使用文档请参考[这里](https://www.showdoc.com.cn/1432924569255366?page_id=7002138596779961)
 
 <br>
 
