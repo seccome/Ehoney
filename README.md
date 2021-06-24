@@ -99,5 +99,5 @@ cd Ehoney && chmod +x quick-start.sh && ./quick-start.sh
 
 ## 🙏 关于 
 
-如果大家对系统有好的建议或想法, 请[创建issue](https://github.com/seccome/Ehoney/issues/new ), 我们会及时回复并处理。
+如果大家对系统有好的建议或想法, 请[创建issue](https://github.com/seccome/Ehoney/issues/new )。
 
