@@ -48,10 +48,9 @@
 
 ## ⛴ 环境准备
 
-- **系统要求**: CentOS 7
-- **配置要求**: 内存4G、磁盘空间10G以上
-
-> Note: 以上的配置要求为系统运行的最优配置
+- **系统要求**: CentOS 7 及以上
+- **最低配置：**: 内存1G、磁盘空间10G以上
+- **建议配置：**: 内存4G、磁盘空间10G以上
 
 <br>
 
@@ -61,16 +60,18 @@
 ```shell
 git clone https://github.com/seccome/Ehoney.git
 cd Ehoney && chmod +x quick-start.sh && ./quick-start.sh
+
+# 此安装过程会比较耗时、耐心等待
+
+**all the services are ready and happy to use!!!**
+# 代表安装成功。
 ```
 
-此安装过程会比较耗时、耐心等待后看到如下提示语
+访问 `http://IP:8080/decept-defense` 进入系统登录页
 
->​			**all the services are ready and happy to use!!!** 代表安装成功。
-
-访问`http://IP:8080/decept-defense` 进入系统登录页
-默认账户密码
-       <font color=Blue>用户名: admin</font>
-       <font color=Blue>密码: 123456</font>
+默认账户
+       <font color=Blue>用户名: `admin`</font>
+       <font color=Blue>密码: `123456`</font>
 
 <br>
 
