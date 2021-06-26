@@ -1,0 +1,95 @@
+# Project information
+site_name: Ehoney欺骗防御系统
+site_description: 
+site_author: 
+docs_dir: doc/
+
+# Configuration
+theme:
+  name: 'material'
+  logo: ''
+  favicon: ''
+  palette:
+    primary: 'white'
+  features:
+    - navigation.top
+    - header.autohide
+  language: 'zh'
+
+extra_css:
+  - 'stylesheets/logo.css'
+  - stylesheets/note.css
+  - stylesheets/extra.css
+  
+nav:
+
+  - 概述(银雪): prefix_2930d049ec7c2fa7494d7b208dad5b3f.md
+  - 快速开始: prefix_025c6f3784792a6743f1d2e4dff0fcf6.md
+  - 使用说明: prefix_8e1a7da074f1a263d55248b7645049c4.md
+  - 项目架构(银雪): prefix_bf0b400eab22e76a7bcb65260a69505a.md
+  - 常见问题: prefix_8c6f9ebd079cdd739a08d970be7881d7.md
+  - 生产安装(思涵): prefix_ad563916d137877b8105e2f91959ad40.md
+  - 模拟攻击: prefix_122855d226b47ff186a293cfdcdd1813.md
+  - 项目资源(银雪): prefix_2e12707f0a864d9dbca74fb979fe28c9.md
+  - 构建密网(银雪): prefix_f6d8d3b4cedcb1b8eb8c87dc9b6e4d63.md
+  - 蜜罐模块(思涵): prefix_d41806e7714db88014455964fdcb4495.md
+  - 诱饵(银雪): prefix_ded1d337dae4901614e468a713d22398.md
+  - 密签(银雪): prefix_7dc8ea88f24e28039cc9cb50f9b3d3bd.md
+  - 伪装代理(思涵): prefix_48be92e19964950c09c449dc911b3b3d.md
+  - 协议代理(思涵): prefix_27222b3f66e3fab8e8f305dfb1ccb3b8.md
+  - 云原生支持(思涵): prefix_737f0aaed0824fcc95465671a0591e14.md
+  - 探针agent(思涵): prefix_92706308285599c2a90b5ed865903108.md
+  - 审计与溯源: prefix_aa1c80ac66397146a7a985a820557c38.md
+  - 样本捕获与分析(思涵): prefix_b12d0267d75565b2e192adeec2319cfa.md
+  - 协议代理自定义(银雪): prefix_b9036e4ce19e5151de5abbd758ff054f.md
+  - 容器自定义(银雪): prefix_c9589f5e5218925a4cdd4dbf44f2dcb8.md
+  - 名词解释: prefix_e2c247a98ccd4263eab1dbb441cf8ae6.md
+  - 错误码(思涵): prefix_bf35027acc01a620678d2f72d1a938b4.md
+  - API介绍(高峰): prefix_ee875aabf2c930b6db09b28c142116cc.md
+  - 1.0版本(银雪): prefix_ff6c208ea2625d5127c51c92948363fb.md
+  - 所有程序命令行: prefix_f8fe23fc43f91558a1b0f72a67d2ae90.md
+  - 概述(瑶依): prefix_9f86f1827df33edc89791e9cf6c4e25e.md
+  - 测试用例v1.0: prefix_6a65e47241b0ec0dfff57ae72fe0c196.md
+  - pdf: pdf/Ehoney.pdf
+
+markdown_extensions:
+  - footnotes
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+#      toc_depth: 3
+      permalink: true
+      separator: "_"
+  - mdx_truly_sane_lists
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+
+static_templates:
+  - 404.html
+
+# Plugins
+plugins:
+  - macros
+  - git-revision-date-localized
+  - with-pdf:
+      copyright: 
+      cover_subtitle:  
+      author:  
+      cover: true
+      back_cover: true
+      cover_logo: './img/logo_ehoney_black.svg'
+      output_path: pdf/Ehoney.pdf
+      show_anchors: true
+      toc_level: 2
+
+extra_javascript:
+  - js/version-select.js
+  - js/config.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+#google_analytics:
+#  - UA-12345-78
+#  - auto
