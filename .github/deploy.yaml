@@ -1,0 +1,37 @@
+name: Publish docs via GitHub Pages
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # fetch all commits/branches
+
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.7'
+          architecture: 'x64'
+
+      - name: apt install
+        run: |
+          sudo apt update -y
+          sudo apt install -y $(cat pkglist.txt)
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r ./requirements.txt
+          
+      - name: Git Config
+        run: git config user.name hairy && git config user.email ${{secrets.GIT_EMAIL}}
+
+      - name: Mike Deploy
+        run: mike deploy master -p --rebase
+
+      - name: mike list
+        run: mike list
