@@ -16,11 +16,7 @@ theme:
     - header.autohide
   language: 'zh'
 
-extra_css:
-  - 'stylesheets/logo.css'
-  - stylesheets/note.css
-  - stylesheets/extra.css
-  
+ 
 nav:
 
   - 概述(银雪): prefix_2930d049ec7c2fa7494d7b208dad5b3f.md
