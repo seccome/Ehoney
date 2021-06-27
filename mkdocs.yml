@@ -1,7 +1,7 @@
 # Project information
 site_name: Ehoney欺骗防御系统
-site_description: 
-site_author: 
+site_description: www.seccome.com
+site_author: licheng
 docs_dir: doc/
 
 # Configuration
@@ -20,33 +20,33 @@ theme:
 nav:
 
   - 介绍:
-    - 什么是Ehoney: doc/Introduction/WEhoney.md
-    - 名词解释: doc/Introduction/Glossary.md
-    - 快速开始: doc/Introduction/QuickStart.md
-    - 使用说明: doc/Introduction/Description.md
-    - 项目架构: doc/Introduction/Architecture.md
-    - 常见问题: doc/Introduction/CommonProblem.md
-    - 贡献者: doc/Introduction/Contributor.md
+    - 什么是Ehoney: Introduction/WEhoney.md
+    - 名词解释: Introduction/Glossary.md
+    - 快速开始: Introduction/QuickStart.md
+    - 使用说明: Introduction/Description.md
+    - 项目架构: Introduction/Architecture.md
+    - 常见问题: Introduction/CommonProblem.md
+    - 贡献者: Introduction/Contributor.md
   - 入门: 
-    - 生产安装: doc/GetStart/ProductionSafety.md
-    - 模拟攻击: doc/GetStart/SimulatedAttack.md
-    - 社区参与: doc/GetStart/Community.md
+    - 生产安装: GetStart/ProductionSafety.md
+    - 模拟攻击: GetStart/SimulatedAttack.md
+    - 社区参与: GetStart/Community.md
   - 教程: 
-    - 构建密网: doc/Tutorials/HoneyNet.md
-    - 诱饵: doc/Tutorials/HoneyBait.md
-    - 密签: doc/Tutorials/HoneyPot.md
-    - 伪装代理: doc/Tutorials/CamouflageAgent.md
-    - 协议代理: doc/Tutorials/AgreementAgency.md 
-    - 云原生支持: doc/Tutorials/CloudNativeSupport.md
-    - 探针Agent:  doc/Tutorials/ProbeAgent.md
-    - 样本捕获与告警: doc/Tutorials/SampleCaptureAndAlert.md
+    - 构建密网: Tutorials/HoneyNet.md
+    - 诱饵: Tutorials/HoneyBait.md
+    - 密签: Tutorials/HoneyPot.md
+    - 伪装代理: Tutorials/CamouflageAgent.md
+    - 协议代理: Tutorials/AgreementAgency.md 
+    - 云原生支持: Tutorials/CloudNativeSupport.md
+    - 探针Agent:  Tutorials/ProbeAgent.md
+    - 样本捕获与告警: Tutorials/SampleCaptureAndAlert.md
   - 定制化指南:
-    - 协议代理自定义: doc/CustomizedGuide/ProtocolAgent.md
-    - 容器自定义: doc/CustomizedGuide/Docker.md
-    - 自定义harbo:  doc/CustomizedGuide/Harbo.md
+    - 协议代理自定义: CustomizedGuide/ProtocolAgent.md
+    - 容器自定义: CustomizedGuide/Docker.md
+    - 自定义harbo:  CustomizedGuide/Harbo.md
   - 参考手册:
-    - 1.0版本: doc/ReferenceBook/Version1.0.md
-    - 测试用例v1.0: doc/ReferenceBook/TestCase1.0.md
+    - 1.0版本: ReferenceBook/Version1.0.md
+    - 测试用例v1.0: ReferenceBook/TestCase1.0.md
   - pdf: pdf/Ehoney.pdf
 
 markdown_extensions:
