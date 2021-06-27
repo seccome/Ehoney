@@ -20,33 +20,33 @@ theme:
 nav:
 
   - 介绍:
-    - 什么是Ehoney: 什么是Ehoney.md
-    - 名词解释: 名词解释.md
-    - 快速开始: 快速开始.md
-    - 使用说明: 使用说明.md
-    - 项目架构: 项目架构.md
-    - 常见问题: 常见问题.md
-    - 贡献者: 贡献者.md
+    - 什么是Ehoney: doc/Introduction/WEhoney.md
+    - 名词解释: doc/Introduction/Glossary.md
+    - 快速开始: doc/Introduction/QuickStart.md
+    - 使用说明: doc/Introduction/Description.md
+    - 项目架构: doc/Introduction/Architecture.md
+    - 常见问题: doc/Introduction/CommonProblem.md
+    - 贡献者: doc/Introduction/Contributor.md
   - 入门: 
-    - 生产安装: 生产安装.md
-    - 模拟攻击: 模拟攻击.md
-    - 社区参与: 社区参与.md
+    - 生产安装: doc/GetStart/ProductionSafety.md
+    - 模拟攻击: doc/GetStart/SimulatedAttack.md
+    - 社区参与: doc/GetStart/Community.md
   - 教程: 
-    - 构建密网: 构建密网.md
-    - 诱饵: 诱饵.md
-    - 密签: 密签.md
-    - 伪装代理: 伪装代理.md
-    - 协议代理: 协议代理.md
-    - 云原生支持: 云原生支持.md
-    -  探针Agent:  探针Agent.md
-    - 样本捕获与告警: 样本捕获与告警.md
+    - 构建密网: doc/Tutorials/HoneyNet.md
+    - 诱饵: doc/Tutorials/HoneyBait.md
+    - 密签: doc/Tutorials/HoneyPot.md
+    - 伪装代理: doc/Tutorials/CamouflageAgent.md
+    - 协议代理: doc/Tutorials/AgreementAgency.md 
+    - 云原生支持: doc/Tutorials/CloudNativeSupport.md
+    - 探针Agent:  doc/Tutorials/ProbeAgent.md
+    - 样本捕获与告警: doc/Tutorials/SampleCaptureAndAlert.md
   - 定制化指南:
-    - 协议代理自定义: 协议代理自定义.md
-    - 容器自定义: 容器自定义.md
-    -  自定义harbo:  自定义harbo.md
+    - 协议代理自定义: doc/CustomizedGuide/ProtocolAgent.md
+    - 容器自定义: doc/CustomizedGuide/Docker.md
+    - 自定义harbo:  doc/CustomizedGuide/Harbo.md
   - 参考手册:
-    - 1.0版本: 1.0版本.md
-    - 测试用例v1.0: 测试用例v1.0.md
+    - 1.0版本: doc/ReferenceBook/Version1.0.md
+    - 测试用例v1.0: doc/ReferenceBook/TestCase1.0.md
   - pdf: pdf/Ehoney.pdf
 
 markdown_extensions:
