@@ -14,6 +14,9 @@
 * Falco 可以轻松使用内核事件，并使用 Kubernetes 和其他云本机中的信息补充和丰富事件。Falco 具有一组专门为 Kubernetes，Linux 和云原生构建的安全规则。如果系统中违反了规则，Falco 将发送警报，通知到用户
 
 
-![](https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/44963f789b39c221893f03bd21c5d807)
+![](../img/falco架构图.png)
 
 ## 实现设计
+* 使用helm方式部署
+* 增加自定义规则实现falco能够监听任意目录下的用户创建文件监听
+* 修改falco事件日志上报配置，实现falco日志以json格式上报到后端服务
