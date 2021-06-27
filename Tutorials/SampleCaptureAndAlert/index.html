@@ -1,0 +1,407 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="zh">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="www.seccome.com" name="description"/>
+<meta content="licheng" name="author"/>
+<link href="../.." rel="icon"/>
+<meta content="mkdocs-1.1.2, mkdocs-material-7.1.9" name="generator"/>
+<title>样本捕获与告警 - Ehoney欺骗防御系统</title>
+<link href="../../assets/stylesheets/main.ca7ac06f.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.f1a3b89f.min.css" rel="stylesheet"/>
+<meta content="#ffffff" name="theme-color"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+</head>
+<body data-md-color-accent="" data-md-color-primary="white" data-md-color-scheme="" dir="ltr">
+<script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#_1">
+          跳转至
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Ehoney欺骗防御系统" class="md-header__button md-logo" data-md-component="logo" href="../.." title="Ehoney欺骗防御系统">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Ehoney欺骗防御系统
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              样本捕获与告警
+            
+          </span>
+</div>
+</div>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Ehoney欺骗防御系统" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="Ehoney欺骗防御系统">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+    Ehoney欺骗防御系统
+  </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" id="__nav_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1">
+        介绍
+        <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="介绍" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_1">
+<span class="md-nav__icon md-icon"></span>
+          介绍
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Introduction/WEhoney/">
+        什么是Ehoney
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Introduction/Glossary/">
+        名词解释
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Introduction/QuickStart/">
+        快速开始
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Introduction/Description/">
+        使用说明
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Introduction/Architecture/">
+        项目架构
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Introduction/CommonProblem/">
+        常见问题
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Introduction/Contributor/">
+        贡献者
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2">
+        入门
+        <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="入门" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+          入门
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../GetStart/ProductionSafety/">
+        生产安装
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../GetStart/SimulatedAttack/">
+        模拟攻击
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../GetStart/Community/">
+        社区参与
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3">
+        教程
+        <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="教程" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+          教程
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../HoneyNet/">
+        构建密网
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../HoneyBait/">
+        诱饵
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../HoneyPot/">
+        密签
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../CamouflageAgent/">
+        伪装代理
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../AgreementAgency/">
+        协议代理
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../CloudNativeSupport/">
+        云原生支持
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../ProbeAgent/">
+        探针Agent
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          样本捕获与告警
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        样本捕获与告警
+      </a>
+<nav aria-label="目录" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_1">
+    概念
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_2">
+    使用说明
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_3">
+    实现设计
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4">
+        定制化指南
+        <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="定制化指南" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+          定制化指南
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../CustomizedGuide/ProtocolAgent/">
+        协议代理自定义
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../CustomizedGuide/Docker/">
+        容器自定义
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../CustomizedGuide/Harbo.md">
+        自定义harbo
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5">
+        参考手册
+        <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="参考手册" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+          参考手册
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ReferenceBook/Version1.0/">
+        1.0版本
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ReferenceBook/TestCase1.0/">
+        测试用例v1.0
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../pdf/Ehoney.pdf">
+        pdf
+      </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="目录" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_1">
+    概念
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_2">
+    使用说明
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_3">
+    实现设计
+  </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1>样本捕获与告警</h1>
+<h2 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
+<ul>
+<li>样本捕获的是攻击者上传的攻击脚本, 实现的原理为根据k3s上部署的falco容器上报的异常日志并对攻击脚本文件进行docker cp 操作，来获取到攻击者的攻击脚本的。</li>
+</ul>
+<ul>
+<li>falco 相关请参考<a href="https://www.showdoc.com.cn/1432924569255366/7002166374715945" title="云原生支持">云原生支持</a></li>
+</ul>
+<h2 id="_2">使用说明<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<h2 id="_3">实现设计<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
+<hr/>
+<div class="md-source-date">
+<small>
+    
+      最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2021年6月27日</span>
+</small>
+</div>
+</article>
+</div>
+</div>
+<a class="md-top md-icon" data-md-component="top" data-md-state="hidden" href="#" title="Back to top">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path></svg>
+</a>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="上一页: 探针Agent" class="md-footer__link md-footer__link--prev" href="../ProbeAgent/" rel="prev">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</div>
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                上一页
+              </span>
+              探针Agent
+            </div>
+</div>
+</a>
+<a aria-label="下一页: 协议代理自定义" class="md-footer__link md-footer__link--next" href="../../CustomizedGuide/ProtocolAgent/" rel="next">
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                下一页
+              </span>
+              协议代理自定义
+            </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+          Material for MkDocs
+        </a>
+ ... <a class="link--pdf-download" download href="../../pdf/Ehoney.pdf" title="PDF">download PDF</a></div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "header.autohide"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": null}</script>
+<script src="../../assets/javascripts/bundle.82b56eb2.min.js"></script>
+<script src="../../js/version-select.js"></script>
+<script src="../../js/config.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</body>
+</html>
