@@ -8,7 +8,7 @@
    
    2. 默认账号admin，密码123456。
    
-   ![登录页](https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/f07246296e20e5288244e5db367c6896)
+   ![登录页](../img/系统首页.png)
 2. 新建蜜罐
    1. 进入"蜜罐管理"->"蜜罐列表"页面，点击新建。
    
