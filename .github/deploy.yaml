@@ -30,8 +30,5 @@ jobs:
       - name: Git Config
         run: git config user.name hairy && git config user.email ${{secrets.GIT_EMAIL}}
 
-      - name: Mike Deploy
-        run: mike deploy master -p --rebase
-
-      - name: mike list
-        run: mike list
+      - name: mkdocs deploy
+        run: mkdocs gh-deploy
