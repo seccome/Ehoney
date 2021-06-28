@@ -18,7 +18,7 @@
 ![介绍视频](./doc/img/介绍.gif)
 
 
-🏠 [使用文档](https://seccome.github.io/Ehoney)
+🏠 [使用文档](https://seccome.github.io/Ehoney/)
 
 ## 📝 特点
 
