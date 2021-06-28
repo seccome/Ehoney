@@ -336,18 +336,21 @@
 <h1>样本捕获与告警</h1>
 <h2 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
 <ul>
-<li>样本捕获的是攻击者上传的攻击脚本, 实现的原理为根据k3s上部署的falco容器上报的异常日志并对攻击脚本文件进行docker cp 操作，来获取到攻击者的攻击脚本的。</li>
+<li>样本捕获的是攻击者上传的攻击脚本, 实现的原理为根据K3S上部署的falco容器上报的异常日志并对攻击脚本文件进行docker cp 操作，来获取到攻击者的攻击脚本的。</li>
 </ul>
 <ul>
 <li>falco 相关请参考<a href="https://www.showdoc.com.cn/1432924569255366/7002166374715945" title="云原生支持">云原生支持</a></li>
 </ul>
 <h2 id="_2">使用说明<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<p>当攻击者在被攻击的蜜罐只能够上传或新建任何文件时，欺骗防御 系统中的falco容器健康到文件变动，会告警到服务端。服务端通过调用K3S的接口，将变动的文件复制到木马检测目录进行检测，以判断攻击者是否上传了木马或者病毒。</p>
 <h2 id="_3">实现设计<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
+<p>1、falco容器会监控到蜜罐中的文件变动，一旦发现有蜜罐容器中存在变动的文件，falco容器会向服务端发起告警<br/>
+2、服务端通过调用K3S的接口，将变动的文件复制到木马检测目录，进行检测  </p>
 <hr/>
 <div class="md-source-date">
 <small>
     
-      最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2021年6月27日</span>
+      最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2021年6月28日</span>
 </small>
 </div>
 </article>
