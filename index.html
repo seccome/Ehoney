@@ -23,7 +23,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#ehoney">
+<a class="md-skip" href="#_1">
           跳转至
         </a>
 </div>
@@ -71,9 +71,46 @@
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Home
+          <span class="md-nav__icon md-icon"></span>
+</label>
 <a class="md-nav__link md-nav__link--active" href=".">
         Home
       </a>
+<nav aria-label="目录" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_1">
+    📝 特点
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_2">
+    ⛴ 环境准备
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_3">
+    🔧 快速部署
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_4">
+    🖥️ 使用演示
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_5">
+    🚀 效果展示
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
 <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
@@ -279,13 +316,131 @@
 <div class="md-sidebar__scrollwrap">
 <div class="md-sidebar__inner">
 <nav aria-label="目录" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_1">
+    📝 特点
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_2">
+    ⛴ 环境准备
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_3">
+    🔧 快速部署
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_4">
+    🖥️ 使用演示
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_5">
+    🚀 效果展示
+  </a>
+</li>
+</ul>
 </nav>
 </div>
 </div>
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<h1 id="ehoney">欢迎使用 Ehoney<a class="headerlink" href="#ehoney" title="Permanent link">¶</a></h1>
+<p align="center">
+<img alt="Ehoney" src="./doc/img/logo_ehoney_black.svg" width="200px"/>
+<br/>
+<br/>
+<h1 align="center">Welcome To Ehoney 👋</h1>
+<br/>
+<p align="center">
+<img align="center" src="https://img.shields.io/badge/release-v1.0.0-green"/>
+<img align="center" src="https://img.shields.io/badge/language-goland-orange"/>
+<img align="center" src="https://img.shields.io/badge/documentation-yes-ff69b4"/>
+<img align="center" src="https://img.shields.io/badge/license-Apache%202-blue"/>
+</p>
+</p>
+<blockquote>
+<p>⭐️ e签宝安全团队积累十几年的安全经验，都将对外逐步开放，首开的Ehoney欺骗防御系统，该系统是基于云原生的欺骗防御系统，也是业界唯一开源的对标商业系统的产品，欺骗防御系统通过部署高交互高仿真蜜罐及流量代理转发，再结合自研密签及诱饵，将攻击者攻击引导到蜜罐中达到扰乱引导以及延迟攻击的效果，可以很大程度上保护业务的安全。<code>护网必备良药</code>⭐️   </p>
+</blockquote>
+<p><img alt="介绍视频" src="./doc/img/介绍.gif"/></p>
+<p>🏠 <a href="https://seccome.github.io/Ehoney/">使用文档</a></p>
+<h2 id="_1">📝 特点<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>支持丰富的蜜罐类型</strong></li>
+</ul>
+<ol>
+<li><strong>通用蜜罐</strong>： SSH 蜜罐、Http蜜罐、Redis蜜罐、Telnet蜜罐、Mysql蜜罐、RDP 蜜罐</li>
+<li><strong>IOT蜜罐</strong>：  RTSP 蜜罐</li>
+<li><strong>工控蜜罐</strong>： ModBus 蜜罐</li>
+</ol>
+<ul>
+<li><strong>基于云原生技术</strong><br/>
+基于k3s打造saas平台欺骗防御，无限生成蜜罐，真实仿真业务环境</li>
+</ul>
+<ul>
+<li><strong>业内独一无二密签技术</strong><br/>
+独创的密签技术，支持20多种密签，如文件、图片，邮件等</li>
+</ul>
+<ul>
+<li><strong>强大诱饵</strong><br/>
+支持数十种诱饵，通过探针管理，进行欺骗引流</li>
+</ul>
+<ul>
+<li><strong>可视化拓扑</strong><br/>
+可以可视化展示攻击视图，让所有攻击可视化，形成完整的攻击链路</li>
+</ul>
+<ul>
+<li><strong>动态对抗技术</strong><br/>
+基于LSTM的预测算法，可以预测黑客下一步攻击手段，动态欺骗，延缓黑客攻击时间，保护真实业务</li>
+</ul>
+<ul>
+<li><strong>强大的定制化</strong><br/>
+支持自定义密签、诱饵、蜜罐等，插件化安装部署，满足一切特性需求</li>
+</ul>
+<h2 id="_2">⛴ 环境准备<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>系统要求</strong>: CentOS 7 及以上</li>
+<li><strong>最低配置：</strong>: 内存4G、磁盘空间10G以上</li>
+<li><strong>建议配置：</strong>: 内存8G、磁盘空间30G以上</li>
+</ul>
+<p><br/></p>
+<h2 id="_3">🔧 快速部署<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code>git clone https://github.com/seccome/Ehoney.git
+<span class="nb">cd</span> Ehoney <span class="o">&amp;&amp;</span> chmod +x quick-start.sh <span class="o">&amp;&amp;</span> ./quick-start.sh
+
+<span class="c1"># 此安装过程会比较耗时、耐心等待</span>
+
+**all the services are ready and happy to use!!!**
+<span class="c1"># 代表安装成功。</span>
+</code></pre></div>
+<p>访问 <code>http://IP:8080/decept-defense</code> 进入系统登录页</p>
+<p>默认账户
+       <font color="Blue">用户名: <code>admin</code></font>
+<font color="Blue">密码: <code>123456</code></font></p>
+<p><br/></p>
+<h2 id="_4">🖥️ 使用演示<a class="headerlink" href="#_4" title="Permanent link">¶</a></h2>
+<p><img alt="操作视频" src="./doc/img/操作视频.gif"/></p>
+<p><br/></p>
+<h2 id="_5">🚀 效果展示<a class="headerlink" href="#_5" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>攻击大屏</strong></li>
+</ul>
+<p><img alt="攻击事件大屏" src="./doc/img/攻击事件大屏.png"/></p>
+<ul>
+<li><strong>蜜罐拓扑</strong></li>
+</ul>
+<p><img alt="蜜罐拓扑图" src="./doc/img/蜜罐拓扑图.png"/></p>
+<ul>
+<li><strong>告警列表</strong></li>
+</ul>
+<p><img alt="告警列表" src="./doc/img/告警列表.png"/></p>
 <hr/>
 <div class="md-source-date">
 <small>
