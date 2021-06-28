@@ -19,6 +19,8 @@ theme:
  
 nav:
 
+  - Home: README.md
+
   - 介绍:
     - 什么是Ehoney: Introduction/WEhoney.md
     - 名词解释: Introduction/Glossary.md
@@ -64,7 +66,7 @@ markdown_extensions:
       generic: true
 
 static_templates:
-  - 404.html
+  - index.html
 
 # Plugins
 plugins:
