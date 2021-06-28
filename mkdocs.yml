@@ -2,6 +2,7 @@
 site_name: Ehoney欺骗防御系统
 site_description: www.seccome.com
 site_author: licheng
+edit_url: 'https://github.com/seccome/Ehoney/edit/master/doc/'
 docs_dir: doc/
 
 # Configuration
