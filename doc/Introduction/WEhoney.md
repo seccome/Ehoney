@@ -8,7 +8,7 @@ e签宝安全团队积累十几年的安全经验，都将对外逐步开放，�
 
 # 解决的问题
 <div align=center>
-<img src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/2265ca701c6352d0104281cf401e7563" width=70% />
+<img src="../img/attakc-chian.jpg" width=70% />
  </div>
 `Cyber​​ Kill Chain 不仅仅是一种攻击模型。Cyber​​ Kill Chain 的七个阶段为任何组织的安全设计提供了极好的基础。`
 
