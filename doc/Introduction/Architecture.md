@@ -18,7 +18,7 @@
 # 欺骗防御网络拓扑图
 #### 欺骗网络采用分布式部署
 <div align=center>
-<img src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/7542e77e6de406e24919b041e5d525b9" width=100% height=170px />
+<img src="../img/网络架构vsdx.jpg" width=100% height=170px />
 </div>
 
 - 探针Agent，部署在业务服务器的Agent，通过探针管理透明代理、密签、诱饵，支持动态策略，通过redis更新策略
