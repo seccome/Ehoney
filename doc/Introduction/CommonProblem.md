@@ -37,7 +37,7 @@
 2. 透明代理问题
 
 ```
-1. 透明代理下发后创建失败 请查看探针目录下的proxy/log/proxy.log 查看日志确定是否是用完端口被占用导致
+1. 透明代理下发后创建失败 请查看探针目录下的proxy/log/proxy.log 查看日志确定是否因为端口被占用导致的。
 ```
 
 3. 伪装代理问题
@@ -46,7 +46,7 @@
 1. 伪装代理无法下发成功
    1.1 登录蜜网服务器，进入/home/ehoney_proxy/目录，查看代理模块是否具有执行权限。
    1.2 请查看项目部署机器的/home/relay/agent/proxy/log/proxy.log 确实是否因为端口占用或端口过大导致。
-   1.3  请查看项目部署机器的/home/relay/agent/conf/agent.json的Redis配置是否正确
+   1.3 请查看项目部署机器的/home/relay/agent/conf/agent.json的Redis配置是否正确
 ```
 
 4. 探针问题
