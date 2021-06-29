@@ -437,9 +437,8 @@
 3、探针安装
  <code>1、如果探针启动后后端探针列表查看不到，需要确定探针目录下的conf/agent.json的Redis配置是否正确</code>
 4、其他问题
-   <div class="highlight"><pre><span></span><code>1、xxx
-2、xx
-3、.....
+   <div class="highlight"><pre><span></span><code>1、非首次过程中出现端口占用问题，可能是由于之前的docker容器对端口的占用，请先清楚之前的容器
+2、首次安装过程中出现端口占用问题，需先停止端口占用的服务才能继续安装过程
 </code></pre></div></p>
 <h3 id="2">2.使用问题<a class="headerlink" href="#2" title="Permanent link">¶</a></h3>
 <p>1、创建蜜罐问题
@@ -515,7 +514,7 @@
 <div class="md-source-date">
 <small>
     
-      最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2021年6月27日</span>
+      最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2021年6月29日</span>
 </small>
 </div>
 </article>
