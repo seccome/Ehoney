@@ -1,8 +1,8 @@
 # 欺骗防御架构图
 <div align=center>
-<img src="../img/架构.png" width=80% />
+<img src="../img/ar.png" width=80% />
 
-<img src="../img/欺骗防御.jpg" width=80% />
+<img src="../img/net.jpg" width=80% />
 </div>
 
 #### 欺骗防御由探针、蜜网、管理端三大部分组成：
@@ -18,7 +18,7 @@
 # 欺骗防御网络拓扑图
 #### 欺骗网络采用分布式部署
 <div align=center>
-<img src="../img/网络架构vsdx.jpg" width=100% height=170px />
+<img src="../img/vsdx.jpg" width=100% height=170px />
 </div>
 
 - 探针Agent，部署在业务服务器的Agent，通过探针管理透明代理、密签、诱饵，支持动态策略，通过redis更新策略
@@ -28,6 +28,6 @@
 
 # 欺骗防御技术全景图
 <div align=center>
-<img src="../img/技术全景.jpg" width=60% height=350px/>
+<img src="../img/all.jpg" width=60% height=350px/>
 </div>
 
