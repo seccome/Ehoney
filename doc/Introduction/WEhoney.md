@@ -7,7 +7,6 @@ e签宝安全团队积累十几年的安全经验，都将对外逐步开放，�
 
 
 # 解决的问题
-![](../img/attakcChian.jpg)
 <div align=center>
 <img src="https://github.com/seccome/Ehoney/blob/master/doc/img/attakcChian.jpg" width=70% />
  </div>
