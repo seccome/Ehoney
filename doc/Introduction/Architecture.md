@@ -1,8 +1,8 @@
 # 欺骗防御架构图
 <div align=center>
-<img src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/cdf83206f5f771fade952bd1423cd01c" width=80% />
+<img src="../img/架构.png" width=80% />
 
-<img src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/05fb9826a747c7d73248a4fd71e6f601" width=80% />
+<img src="../img/欺骗防御.jpg" width=80% />
 </div>
 
 #### 欺骗防御由探针、蜜网、管理端三大部分组成：
@@ -28,6 +28,6 @@
 
 # 欺骗防御技术全景图
 <div align=center>
-<img src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/0c4adf83667eb669a831d6b7971433be" width=60% height=350px/>
+<img src="../img/技术全景.jpg" width=60% height=350px/>
 </div>
 
