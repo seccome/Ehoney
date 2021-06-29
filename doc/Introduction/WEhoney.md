@@ -94,8 +94,8 @@ e签宝安全团队积累十几年的安全经验，都将对外逐步开放，�
 ![](../img/操作视频.gif)
 
 # 相关链接
-[官网](http://www.seccome.com "官网")
-[文档首页](# "文旦首页")
-[github](https://github.com/seccome/Ehoney "github地址")
+[官网](http://www.seccome.com "官网") &nbsp;&nbsp;
+[文档首页](#"文档首页") &nbsp;&nbsp;
+[GitHub](https://github.com/seccome/Ehoney "github地址") &nbsp;&nbsp;
 [演示环境](http://47.98.206.178:8080/decept-defense)
 
