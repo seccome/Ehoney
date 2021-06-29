@@ -116,4 +116,6 @@
 
 * 查看协议代理日志/home/relay/agent/proxy/log/proxy.log
 
-* 检查转发端口是否被占用/ssh_proxy文件是否正确
+* 检查转发端口是否被占用
+
+* proxy协议转发二进制文件是否被篡改
