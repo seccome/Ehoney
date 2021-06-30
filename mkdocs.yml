@@ -47,9 +47,12 @@ nav:
     - 协议代理自定义: CustomizedGuide/ProtocolAgent.md
     - 容器自定义: CustomizedGuide/Docker.md
     - 自定义harbo:  CustomizedGuide/Harbo.md
-  - 参考手册:
-    - 1.0版本: ReferenceBook/Version1.0.md
-    - 测试用例v1.0: ReferenceBook/TestCase1.0.md
+  - 模拟攻击:
+    - HTTP: AttackSample/HTTP.md
+    - SSH: AttackSample/SSH.md
+    - MYSQL: AttackSample/MYSQL.md
+    - REDIS: AttackSample/REDIS.md
+    - TELNET: AttackSample/TELNET.md
   - pdf: pdf/Ehoney.pdf
 
 markdown_extensions:
