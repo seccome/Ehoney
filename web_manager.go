@@ -908,7 +908,19 @@ func TestTransPolicyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	transInfo := policyCenter.SelectForwardByTaskId(transJson.TaskId)
 	if len(transInfo) > 0 {
-		if util.NetConnectTest(util.Strval(transInfo[0]["serverip"]), util.Strval(transInfo[0]["forwardport"])) {
+		iscon := false
+		ips := util.Strval(transInfo[0]["serverip"])
+		iplist := strings.Split(ips,",")
+		forwardport := util.Strval(transInfo[0]["forwardport"])
+		if len(iplist) >0 {
+			for _, ip := range iplist {
+				if util.NetConnectTest(ip, forwardport) {
+					iscon = true
+					break
+				}
+			}
+		}
+		if iscon {
 			comhttp.SendJSONResponse(w, comm.Response{Code: comm.SuccessCode, Data: nil, Message: comm.NetWorkSuccess})
 			return
 		} else {
@@ -1055,7 +1067,19 @@ func TestHoneyTransPolicyHandler(w http.ResponseWriter, r *http.Request) {
 		honeynamespce := util.Strval(transInfo[0]["honeynamespce"])
 		_, _, error, _, errorcode := k3s.CheckPodStatus(honeypotname, honeynamespce)
 		if errorcode == 5 {
-			if util.NetConnectTest(util.Strval(transInfo[0]["serverip"]), util.Strval(transInfo[0]["forwardport"])) {
+			iscon := false
+			ips := util.Strval(transInfo[0]["serverip"])
+			iplist := strings.Split(ips,",")
+			forwardport := util.Strval(transInfo[0]["forwardport"])
+			if len(iplist) >0  {
+				for _, ip := range iplist {
+					if util.NetConnectTest(ip, forwardport) {
+						iscon = true
+						break
+					}
+				}
+			}
+			if iscon {
 				comhttp.SendJSONResponse(w, comm.Response{Code: comm.SuccessCode, Data: nil, Message: comm.NetWorkSuccess})
 				return
 			} else {
