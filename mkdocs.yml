@@ -23,36 +23,28 @@ nav:
   - Home: README.md
 
   - 介绍:
-    - 什么是Ehoney: Introduction/Ehoney.md
-    - 名词解释: Introduction/Glossary.md
-    - 快速开始: Introduction/QuickStart.md
-    - 使用说明: Introduction/Description.md
-    - 项目架构: Introduction/Architecture.md
-    - 常见问题: Introduction/CommonProblem.md
-    - 贡献者: Introduction/Contributor.md
-  - 入门: 
-    - 生产安装: GetStart/ProductionSafety.md
-    - 模拟攻击: GetStart/SimulatedAttack.md
-    - 社区参与: GetStart/Community.md
-  - 教程: 
-    - 构建密网: Tutorials/HoneyNet.md
-    - 诱饵: Tutorials/HoneyBait.md
-    - 密签: Tutorials/HoneyPot.md
-    - 伪装代理: Tutorials/CamouflageAgent.md
-    - 协议代理: Tutorials/AgreementAgency.md 
-    - 云原生支持: Tutorials/CloudNativeSupport.md
-    - 探针Agent:  Tutorials/ProbeAgent.md
-    - 样本捕获与告警: Tutorials/SampleCaptureAndAlert.md
-  - 定制化指南:
-    - 协议代理自定义: CustomizedGuide/ProtocolAgent.md
-    - 容器自定义: CustomizedGuide/Docker.md
-    - 自定义harbo:  CustomizedGuide/Harbo.md
+    - Ehoney: Introduction/Ehoney.md
+  - 快速开始:
+    - 环境要求: QuickStart/Environment.md
+    - 部署安装: QuickStart/Deploy.md
+    - 快速使用: QuickStart/Start.md
+  - 功能说明: 
+    - 蜜罐拓扑: Tutorials/HoneypotTopology.md
+    - 蜜罐列表: Tutorials/HoneypotList.md
+    - 协议转发: Tutorials/ProtocolForward.md
+    - 透明转发: Tutorials/TransparentForward.md
+    - 探针列表: Tutorials/ProbeList.md 
+    - 攻击日志: Tutorials/AttackLog.md
+    - 系统设置: Tutorials/Settings.md
   - 模拟攻击:
     - HTTP: AttackSample/HTTP.md
     - SSH: AttackSample/SSH.md
     - MYSQL: AttackSample/MYSQL.md
     - REDIS: AttackSample/REDIS.md
     - TELNET: AttackSample/TELNET.md
+  - 其他:
+    - 名字解释: Others/Glossary.md
+    - FAQ:      Others/FAQ.md
   - pdf: pdf/Ehoney.pdf
 
 markdown_extensions:
