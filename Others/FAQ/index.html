@@ -9,7 +9,7 @@
 <meta content="licheng" name="author"/>
 <link href="../.." rel="icon"/>
 <meta content="mkdocs-1.1.2, mkdocs-material-7.1.9" name="generator"/>
-<title>HTTP - Ehoney欺骗防御系统</title>
+<title>FAQ - Ehoney欺骗防御系统</title>
 <link href="../../assets/stylesheets/main.ca7ac06f.min.css" rel="stylesheet"/>
 <link href="../../assets/stylesheets/palette.f1a3b89f.min.css" rel="stylesheet"/>
 <meta content="#ffffff" name="theme-color"/>
@@ -23,9 +23,6 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#http">
-          跳转至
-        </a>
 </div>
 <div data-md-component="announce">
 </div>
@@ -47,7 +44,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              HTTP
+              FAQ
             
           </span>
 </div>
@@ -174,8 +171,8 @@
 </ul>
 </nav>
 </li>
-<li class="md-nav__item md-nav__item--active md-nav__item--nested">
-<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" id="__nav_5" type="checkbox"/>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" id="__nav_5" type="checkbox"/>
 <label class="md-nav__link" for="__nav_5">
         模拟攻击
         <span class="md-nav__icon md-icon"></span>
@@ -186,54 +183,36 @@
           模拟攻击
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
-          HTTP
-          <span class="md-nav__icon md-icon"></span>
-</label>
-<a class="md-nav__link md-nav__link--active" href="./">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../AttackSample/HTTP/">
         HTTP
       </a>
-<nav aria-label="目录" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#http">
-    HTTP
-  </a>
-</li>
-</ul>
-</nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../SSH/">
+<a class="md-nav__link" href="../../AttackSample/SSH/">
         SSH
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../MYSQL/">
+<a class="md-nav__link" href="../../AttackSample/MYSQL/">
         MYSQL
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../REDIS/">
+<a class="md-nav__link" href="../../AttackSample/REDIS/">
         REDIS
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../TELNET/">
+<a class="md-nav__link" href="../../AttackSample/TELNET/">
         TELNET
       </a>
 </li>
 </ul>
 </nav>
 </li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" id="__nav_6" type="checkbox"/>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" id="__nav_6" type="checkbox"/>
 <label class="md-nav__link" for="__nav_6">
         其他
         <span class="md-nav__icon md-icon"></span>
@@ -245,12 +224,13 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../Others/Glossary/">
+<a class="md-nav__link" href="../Glossary/">
         名字解释
       </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../Others/FAQ/">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<a class="md-nav__link md-nav__link--active" href="./">
         FAQ
       </a>
 </li>
@@ -267,37 +247,57 @@
 </div>
 </div>
 </div>
-<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
-<div class="md-sidebar__scrollwrap">
-<div class="md-sidebar__inner">
-<nav aria-label="目录" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#http">
-    HTTP
-  </a>
-</li>
-</ul>
-</nav>
-</div>
-</div>
-</div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<h1>HTTP</h1>
-<h2 id="http">HTTP<a class="headerlink" href="#http" title="Permanent link">¶</a></h2>
-<blockquote>
-<p>通过终端或其他方式尝试对建立了透明转发到协议转发（HTTP）链路的探针进行http探测</p>
-</blockquote>
-<p><img alt="攻击样本-http" src="../../img/%E6%94%BB%E5%87%BB%E6%A0%B7%E6%9C%AC-http.png"/></p>
-<blockquote>
-<p>在攻击列表中可查看具体的攻击详情信息、详情可查看http连接具体的信息</p>
-</blockquote>
-<p><img alt="攻击样本-http-detail" src="../../img/%E6%94%BB%E5%87%BB%E6%A0%B7%E6%9C%AC-http-detail.png"/></p>
+<h1>FAQ</h1>
+<ul>
+<li>一键安装成功，但是浏览器无法访问？</li>
+</ul>
+<ol>
+<li>检查docker容器状态是否正常</li>
+<li>检查web服务器容器日志
+    <code>docker logs -f $(docker ps | grep decept-defense:latest | awk '{print $1}')</code></li>
+</ol>
+<ul>
+<li>为什么模拟攻击没有攻击日志？</li>
+</ul>
+<ol>
+<li>通过透明代理列表，网络探测检查攻击IP、端口可以访问。</li>
+<li>确保密网服务器上/home/ehoney_proxy目录下对应的代理文件存在。</li>
+</ol>
+<ul>
+<li>为什么我部署了多台探针Agent，但是探针列表只显示一个？</li>
+</ul>
+<ol>
+<li>删除agent/conf目录下agent文件，重新启动agent进程，确保每台服务器上agentID不一致。</li>
+</ol>
+<ul>
+<li>为什么蜜罐列表中新建蜜罐失败？</li>
+</ul>
+<ol>
+<li>检查密网服务器资源状态，有可能是磁盘、cpu利用率满了。一般一台2核4G服务器上最多支持部署20个蜜罐。</li>
+<li>如果访问harbor不是https协议，需要在docker启动的时候指定insecure-registry。可以通过<code>kubectl describe pod</code>查看具体报错信息。</li>
+</ol>
+<ul>
+<li>为什么蜜罐拓扑图不显示蜜罐和相关连线？</li>
+</ul>
+<ol>
+<li>蜜罐拓扑图中是以协议代理、透明代理为维度，如果没有代理则不会显示相关蜜罐。</li>
+</ol>
+<ul>
+<li>为什么我部署了探针但是探针列表却不显示？</li>
+</ul>
+<ol>
+<li>检查agent中配置是否正确。主要检查conf/agent.json中strategyAddr(redis地址)、strategyPass(redis密码)、sshKeyUploadUrl(服务端更新sshkey地址)。</li>
+<li>确认探针服务器和web/蜜网服务器网络可以通信。</li>
+</ol>
+<ul>
+<li>为什么协议代理创建失败？</li>
+</ul>
+<ol>
+<li>查看协议代理日志/home/relay/agent/proxy/log/proxy.log</li>
+<li>检查转发端口是否被占用/ssh_proxy文件是否正确</li>
+</ol>
 <hr/>
 <div class="md-source-date">
 <small>
@@ -314,7 +314,7 @@
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="上一页: 系统设置" class="md-footer__link md-footer__link--prev" href="../../Tutorials/Settings/" rel="prev">
+<a aria-label="上一页: 名字解释" class="md-footer__link md-footer__link--prev" href="../Glossary/" rel="prev">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
 </div>
@@ -323,21 +323,8 @@
 <span class="md-footer__direction">
                 上一页
               </span>
-              系统设置
+              名字解释
             </div>
-</div>
-</a>
-<a aria-label="下一页: SSH" class="md-footer__link md-footer__link--next" href="../SSH/" rel="next">
-<div class="md-footer__title">
-<div class="md-ellipsis">
-<span class="md-footer__direction">
-                下一页
-              </span>
-              SSH
-            </div>
-</div>
-<div class="md-footer__button md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"></path></svg>
 </div>
 </a>
 </nav>
