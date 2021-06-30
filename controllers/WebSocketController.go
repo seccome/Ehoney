@@ -232,13 +232,13 @@ func QueryTopology() ([]TopologyNode, []TopologyLine, bool) {
 	attackLog := QueryLatestAttackLog()
 
 	NewAttack = true
-	if attackLog.attackip != "" && (LastAttackLog.attacktime == 0 || LastAttackLog.attacktime < attackLog.attacktime-5 || NodeSum != len(nodes)) { // 第一次或 比上次日志延迟至少5毫秒之后
+	if attackLog.attackIp != "" && (LastAttackLog.attackTime == 0 || LastAttackLog.attackTime < attackLog.attackTime-5 || NodeSum != len(nodes)) { // 第一次或 比上次日志延迟至少5毫秒之后
 		LastAttackLog = attackLog
 		mark := false
 		var tmpNodes []TopologyNode
 
 		for _, node := range nodes {
-			if node.Ip == attackLog.attackip || strings.Index(node.Ip, attackLog.attackip) > -1 {
+			if node.Ip == attackLog.attackIp || strings.Index(node.Ip, attackLog.attackIp+",") > -1 {
 				node.NodeType = "HACK"
 				mark = true
 			}
@@ -249,9 +249,9 @@ func QueryTopology() ([]TopologyNode, []TopologyLine, bool) {
 
 		if !mark {
 			hackNode := TopologyNode{
-				Id:       fmt.Sprintf("%s-%s", attackLog.attackip, "HACK"),
-				Ip:       attackLog.attackip,
-				HostName: attackLog.attackip,
+				Id:       fmt.Sprintf("%s-%s", attackLog.attackIp, "HACK"),
+				Ip:       attackLog.attackIp,
+				HostName: attackLog.attackIp,
 				NodeType: "HACK",
 			}
 			nodes = append(nodes, hackNode)
@@ -262,7 +262,7 @@ func QueryTopology() ([]TopologyNode, []TopologyLine, bool) {
 
 	lineMap = QueryTopologyLines(attackLog, nodes, "GREEN")
 
-	if NewAttack || attackLog.attackip == "" {
+	if NewAttack || attackLog.attackIp == "" {
 		dyeingRedLines(nodes, attackLog, lineMap, "RELAY")
 	} else {
 		return LastNodes, LastLines, NewAttack
@@ -317,7 +317,7 @@ func dyeingRedLines(nodes []TopologyNode, attackLog AttackLog, lineMap map[strin
 			}
 			// 有连线的情况
 			for key, line := range lineMap {
-				attackPodId := fmt.Sprintf("%s-%s", attackLog.attackPotIp, "POT")
+				attackPodId := fmt.Sprintf("%s-%s", attackLog.honeyIp, "POT")
 				if line.Source == node.Id && line.Target == attackPodId {
 					line.Status = "RED"
 					lineMap[key] = line
@@ -370,24 +370,39 @@ func QueryLatestAttackLog() AttackLog {
 	var attackLog AttackLog
 	defer sqlCon.Close()
 
-	queryLatestAttackLogSql := "SELECT a.attackip, h.honeyip, a.attacktime, a.srchost as byIp FROM attacklog a LEFT JOIN honeypots h on a.honeypotid = h.honeypotid WHERE a.attackip IS NOT NULL AND a.honeypotid  IS NOT NULL AND a.proxytype IS NOT NULL AND a.proxytype != \"falco\" ORDER BY a.attacktime DESC LIMIT 1"
-	rows, err := DbCon.Query(queryLatestAttackLogSql)
+	queryLatestRelayAttackLogSql := "SELECT a.attackip AS edgeIp, h.honeyip AS honeyIp, a.attacktime, a.srchost as relayIp, srcport as relayPort FROM attacklog a LEFT JOIN honeypots h on a.honeypotid = h.honeypotid WHERE a.attackip IS NOT NULL AND a.honeypotid  IS NOT NULL AND a.proxytype IS NOT NULL AND a.proxytype != \"falco\" ORDER BY a.attacktime DESC LIMIT 1"
+	rows, err := DbCon.Query(queryLatestRelayAttackLogSql)
 	if err != nil {
 		fmt.Errorf("[SelectTopAttackTypes] select list error,%s", err)
 	}
 
 	if rows != nil {
 		for rows.Next() {
-			err = rows.Scan(&attackLog.attackip, &attackLog.attackPotIp, &attackLog.attacktime, &attackLog.byIp)
+			err = rows.Scan(&attackLog.edgeIp, &attackLog.honeyIp, &attackLog.attackTime, &attackLog.relayIp, &attackLog.relayPort)
 			if err != nil {
 				fmt.Errorf("attackLog row init err %s", err)
 			}
 		}
 	}
 
-	if strings.Index(attackLog.byIp, ",") > -1 {
-		ips := strings.Split(attackLog.byIp, ",")
-		attackLog.byIp = ips[0]
+	queryLatestEdgeAttackLogSql := fmt.Sprintf("SELECT attackip FROM attacklog WHERE proxytype = \"EDGE\" AND srchost ='%s' ORDER BY attacktime DESC LIMIT 1", attackLog.edgeIp)
+	rows, err = DbCon.Query(queryLatestEdgeAttackLogSql)
+	if err != nil {
+		fmt.Errorf("[SelectTopAttackTypes] select list error,%s", err)
+	}
+
+	if rows != nil {
+		for rows.Next() {
+			err = rows.Scan(&attackLog.attackIp)
+			if err != nil {
+				fmt.Errorf("attackLog row init err %s", err)
+			}
+		}
+	}
+
+	if strings.Index(attackLog.relayIp, ",") > -1 {
+		ips := strings.Split(attackLog.relayIp, ",")
+		attackLog.relayIp = ips[0]
 	}
 
 	return attackLog
@@ -424,11 +439,6 @@ func QueryTopologyNodes() []TopologyNode {
 		}
 	}
 
-	//for _, node := range nodes {
-	//
-	//
-	//}
-
 	return nodes
 }
 
@@ -438,9 +448,23 @@ func QueryTopologyLines(attackLog AttackLog, topologyNodes []TopologyNode, lineT
 
 	lineMap := map[string]TopologyLine{}
 
+	edgeFlag := false
+
 	for _, topologyNode := range topologyNodes {
-		if topologyNode.Ip == attackLog.byIp || strings.Index(topologyNode.Ip, attackLog.byIp) > -1 {
-			attackId := fmt.Sprintf("%s-%s", attackLog.attackip, "HACK")
+		if topologyNode.Ip == attackLog.edgeIp || strings.Index(topologyNode.Ip, attackLog.edgeIp+",") > -1 {
+			edgeFlag = true
+			attackId := fmt.Sprintf("%s-%s", attackLog.attackIp, "HACK")
+			line := TopologyLine{
+				Source: attackId,
+				Target: topologyNode.Id,
+				Status: "RED",
+			}
+			lineKey := fmt.Sprintf("%s-%s", attackId, topologyNode.Id)
+			lineMap[lineKey] = line
+		}
+
+		if !edgeFlag && (topologyNode.Ip == attackLog.relayIp || strings.Index(topologyNode.Ip, attackLog.relayIp+",") > -1) {
+			attackId := fmt.Sprintf("%s-%s", attackLog.attackIp, "HACK")
 			line := TopologyLine{
 				Source: attackId,
 				Target: topologyNode.Id,
@@ -552,10 +576,12 @@ type TopologyLine struct {
 }
 
 type AttackLog struct {
-	attackip    string
-	attackPotIp string
-	attacktime  int32
-	byIp        string
+	attackIp   string `json:"attackIp"`
+	edgeIp     string `json:"edgeIp"`
+	honeyIp    string `json:"honeyIp"`
+	attackTime int32  `json:"attackTime"`
+	relayIp    string `json:"relayIp"`
+	relayPort  int32  `json:"relayPort"`
 }
 
 func GetBetweenStr(str, start, end string) string {
