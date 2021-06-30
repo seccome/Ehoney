@@ -1,0 +1,52 @@
+{{- if .Values.podSecurityPolicy.create}}
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: {{ template "falco.fullname" . }}
+  labels:
+    app: {{ template "falco.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  privileged: true
+  hostNetwork: true
+  allowedCapabilities: ['*']
+  fsGroup:
+    rule: RunAsAny
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes: ['*']
+{{- end }}
+{{- if (and .Values.podSecurityPolicy.create .Values.fakeEventGenerator.enabled) }}
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: event-generator-{{ template "falco.fullname" . }}
+  labels:
+    app: {{ template "falco.fullname" . }}-event-generator
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  privileged: false
+  hostNetwork: false
+  readOnlyRootFilesystem: true
+  requiredDropCapabilities:
+  - ALL
+  fsGroup:
+    rule: RunAsAny
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes: []
+{{- end }}

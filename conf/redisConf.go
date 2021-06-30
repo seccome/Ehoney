@@ -1,0 +1,3 @@
+package conf
+
+//key := "test"

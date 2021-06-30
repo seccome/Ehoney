@@ -1,0 +1,10 @@
+2021/06/28 17:19:25.332 [E] [main.go:351]  [MAIN] mysql connect error: register db Ping `default`, dial tcp 127.0.0.1:3306: connect: connection refused
+2021/06/28 17:21:08.012 [E] [asm_amd64.s:1374]  FreshPods err: stat /private/var/folders/73/zjt7w16s0ns7yyj1ds03172w0000gn/T/conf/.kube/config: no such file or directory
+2021/06/28 17:21:24.082 [E] [asm_amd64.s:1374]  FreshPods err: stat /private/var/folders/73/zjt7w16s0ns7yyj1ds03172w0000gn/T/conf/.kube/config: no such file or directory
+2021/06/29 15:13:39.925 [E] [asm_amd64.s:1374]  FreshPods err: stat /private/var/folders/73/zjt7w16s0ns7yyj1ds03172w0000gn/T/conf/.kube/config: no such file or directory
+2021/06/29 17:00:31.281 [E] [asm_amd64.s:1374]  FreshPods err: stat /private/var/folders/73/zjt7w16s0ns7yyj1ds03172w0000gn/T/conf/.kube/config: no such file or directory
+2021/06/29 17:08:40.945 [E] [asm_amd64.s:1374]  FreshPods err: stat /private/var/folders/73/zjt7w16s0ns7yyj1ds03172w0000gn/T/conf/.kube/config: no such file or directory
+2021/06/29 17:58:22.755 [E] [asm_amd64.s:1374]  FreshPods err: stat /private/var/folders/73/zjt7w16s0ns7yyj1ds03172w0000gn/T/conf/.kube/config: no such file or directory
+2021/06/29 18:12:49.862 [E] [asm_amd64.s:1374]  FreshPods err: stat /private/var/folders/73/zjt7w16s0ns7yyj1ds03172w0000gn/T/conf/.kube/config: no such file or directory
+2021/06/30 17:42:22.461 [E] [main.go:336]  [MAIN] mysql connect error: register db Ping `default`, dial tcp 127.0.0.1:3306: connect: connection refused
+2021/06/30 17:43:56.026 [E] [main.go:336]  [MAIN] mysql connect error: register db Ping `default`, Error 1045: Access denied for user 'sec_security'@'192.168.7.232' (using password: YES)

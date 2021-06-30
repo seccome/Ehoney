@@ -1,0 +1,3 @@
+.vscode
+/_examples/**/node_modules
+/_examples/issue-*

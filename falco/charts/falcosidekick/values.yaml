@@ -1,0 +1,233 @@
+# Default values for falcosidekick.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: falcosecurity/falcosidekick
+  tag: 2.20.0
+  pullPolicy: IfNotPresent
+
+podSecurityContext:
+  runAsUser: 1234
+  fsGroup: 1234
+
+# One or more secrets to be used when pulling images
+imagePullSecrets: []
+# - registrySecretName
+
+nameOverride: ""
+fullnameOverride: ""
+
+podSecurityPolicy:
+  create: false
+
+priorityClassName: ""
+
+config:
+  existingSecret: ""
+  extraEnv: []
+  debug: false
+  ##
+  ## a list of comma separated custom fields to add to falco events, syntax is "key:value,key:value"
+  customfields: ""
+  checkcert: true
+
+  slack:
+    webhookurl: ""
+    footer: ""
+    icon: ""
+    username: ""
+    outputformat: "all"
+    minimumpriority: ""
+    messageformat: ""
+
+  rocketchat:
+    webhookurl: ""
+    icon: ""
+    username: ""
+    outputformat: "all"
+    minimumpriority: ""
+    messageformat: ""
+
+  mattermost:
+    webhookurl: ""
+    footer: ""
+    icon: ""
+    username: ""
+    outputformat: "all"
+    minimumpriority: ""
+    messageformat: ""
+
+  teams:
+    webhookurl: ""
+    activityimage: ""
+    outputformat: "all"
+    minimumpriority: ""
+
+  datadog:
+    apikey: ""
+    minimumpriority: ""
+
+  alertmanager:
+    hostport: ""
+    minimumpriority: ""
+
+  elasticsearch:
+    hostport: ""
+    index: "falco"
+    type: "event"
+    minimumpriority: ""
+
+  influxdb:
+    hostport: ""
+    database: "falco"
+    user: ""
+    password: ""
+    minimumpriority: ""
+
+  loki:
+    hostport: ""
+    minimumpriority: ""
+
+  nats:
+    hostport: ""
+    minimumpriority: ""
+
+  stan:
+    hostport: ""
+    clusterid: ""
+    clientid: ""
+    minimumpriority: ""
+
+  aws:
+    accesskeyid: ""
+    secretaccesskey: ""
+    region: ""
+    cloudwatchlogs:
+      loggroup: ""
+      logstream: ""
+      minimumpriority: ""
+    lambda:
+      functionname: ""
+      minimumpriority: ""
+    sns:
+      topicarn: ""
+      rawjson: false
+      minimumpriority: ""
+    sqs:
+      url: ""
+      minimumpriority: ""
+
+  smtp:
+    hostport: ""
+    user: ""
+    password: ""
+    from: ""
+    to: ""
+    outputformat: "html"
+    minimumpriority: ""
+
+  opsgenie:
+    apikey: ""
+    region: ""
+    minimumpriority: ""
+
+  statsd:
+    forwarder: ""
+    namespace: "falcosidekick."
+
+  dogstatsd:
+    forwarder: ""
+    namespace: "falcosidekick."
+    tags: ""
+
+  webhook:
+    address: ""
+    customHeaders: ""  # a list of comma separated custom headers to add, syntax is "key:value,key:value"
+    minimumpriority: ""
+
+  azure:
+    subscriptionID: ""
+    resourceGroupName: ""
+    podIdentityClientID: ""
+    podIdentityName: ""
+    eventHub:
+      namespace: ""
+      name: ""
+      minimumpriority: ""
+
+  discord:
+    webhookurl: ""
+    icon: ""
+    minimumpriority: ""
+
+  gcp:
+    credentials: ""  # The base64-encoded JSON key file for the GCP service account
+    pubsub:
+      projectid: ""  # The GCP Project ID containing the Pub/Sub Topic
+      topic: ""  # The name of the Pub/Sub topic
+      minimumpriority: ""
+
+  googlechat:
+    webhookurl: ""
+    outputformat: "all"
+    minimumpriority: ""
+    messageformat: ""
+
+  kafka:
+    url: ""
+    topic: ""
+    partition: "0"
+    messageformat: ""
+    minimumpriority: ""
+
+  pagerduty:
+    apikey: ""
+    service: ""
+    assignee: ""
+    escalationpolicy: ""
+    minimumpriority: ""
+
+  kubeless:
+    function: ""
+    namespace: ""
+    port: 8080
+    minimumpriority: ""
+
+service:
+  type: ClusterIP
+  port: 2801
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: falcosidekick.local
+      paths: []
+
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

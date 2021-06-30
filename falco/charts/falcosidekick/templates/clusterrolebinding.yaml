@@ -1,0 +1,19 @@
+{{- if .Values.podSecurityPolicy.create }}
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ template "falcosidekick.fullname" .}}
+  labels:
+    app: {{ template "falcosidekick.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "falcosidekick.fullname" .}}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ template "falcosidekick.fullname" .}}
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

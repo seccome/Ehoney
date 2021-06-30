@@ -1,0 +1,16 @@
+apiVersion: v1
+appVersion: 2.20.0
+description: A simple daemon to help you with falco's outputs
+home: https://github.com/falcosecurity/falcosidekick
+icon: https://raw.githubusercontent.com/falcosecurity/falcosidekick/master/imgs/falcosidekick_color.png
+keywords:
+- monitoring
+- security
+- alerting
+maintainers:
+- email: cncf-falco-dev@lists.cncf.io
+  name: Issif
+name: falcosidekick
+sources:
+- https://github.com/falcosecurity/falcosidekick
+version: 0.2.2

@@ -1,0 +1,44 @@
+{{- if .Values.auditLog.enabled }}
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ template "falco.fullname" .}}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "falco.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  {{- if .Values.falco.webserver.nodePort }}
+  type: NodePort
+  {{- end }}
+  selector:
+    app: {{ template "falco.fullname" .}}
+  ports:
+  - protocol: TCP
+    port: {{ .Values.falco.webserver.listenPort }}
+    {{- with .Values.falco.webserver.nodePort }}
+    nodePort: {{ . }}
+    {{- end }}
+{{- end }}
+{{- if and .Values.falco.grpc.enabled (not .Values.falco.grpc.unixSocketPath)}}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ template "falco.fullname" .}}-grpc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "falco.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  clusterIP: None
+  selector:
+    app: {{ template "falco.fullname" .}}
+  ports:
+  - protocol: TCP
+    port: {{ .Values.falco.grpc.listenPort }}
+{{- end }}

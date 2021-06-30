@@ -1,0 +1,5 @@
+# CI values for Falco.
+# To deploy Falco on CI we need to set an argument to bypass the installation
+# of the kernel module, so we bypass that.
+extraArgs:
+  - --userspace
