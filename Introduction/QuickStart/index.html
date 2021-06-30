@@ -87,7 +87,7 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../WEhoney/">
+<a class="md-nav__link" href="../WEhoney.md">
         什么是Ehoney
       </a>
 </li>
@@ -98,9 +98,55 @@
 </li>
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          快速开始
+          <span class="md-nav__icon md-icon"></span>
+</label>
 <a class="md-nav__link md-nav__link--active" href="./">
         快速开始
       </a>
+<nav aria-label="目录" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_1">
+    环境要求
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_2">
+    部署安装
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_3">
+    快速使用
+  </a>
+<nav aria-label="快速使用" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1">
+    1. 创建蜜罐
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2">
+    2. 创建协议转发
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3">
+    3.创建透明转发
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../Description/">
@@ -279,40 +325,93 @@
 <div class="md-sidebar__scrollwrap">
 <div class="md-sidebar__inner">
 <nav aria-label="目录" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_1">
+    环境要求
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_2">
+    部署安装
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_3">
+    快速使用
+  </a>
+<nav aria-label="快速使用" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1">
+    1. 创建蜜罐
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2">
+    2. 创建协议转发
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3">
+    3.创建透明转发
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
 </nav>
 </div>
 </div>
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<h1 id="_1">环境准备<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<h1>快速开始</h1>
+<h2 id="_1">环境要求<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
 <ul>
-<li>一台Linux服务器</li>
-<li>系统要求:CentOS 7</li>
-<li>配置要求:2核 4G内存 可用磁盘空间10G以上</li>
+<li><strong>系统要求:</strong>  CentOS 7 及以上</li>
+<li><strong>最低配置:</strong>  内存4G、磁盘空间10G以上</li>
+<li><strong>建议配置:</strong>  内存8G、磁盘空间30G以上</li>
 </ul>
-<h1 id="_2">部署安装<a class="headerlink" href="#_2" title="Permanent link">¶</a></h1>
-<div class="highlight"><pre><span></span><code><span class="m">1</span>. <span class="c1"># 克隆代码实例</span>
-git clone https://github.com/seccome/Ehoney.git
-<span class="m">2</span>. <span class="c1"># cd 到程序目录，执行一键启动脚本</span>
-<span class="nb">cd</span> Ehoney <span class="o">&amp;&amp;</span> chmod +x quick-start.sh <span class="o">&amp;&amp;</span> ./quick-start.sh
-<span class="m">3</span>. <span class="c1"># 【输入序号选择服务器内网IP】，等待约20分钟(视网络情况而定)后安装成功。</span>
-
-安装过程如有任何问题，请看FAQ或ask@seccome.com
+<h2 id="_2">部署安装<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code>git clone https://github.com/seccome/Ehoney.git             //clone代码
+cd Ehoney &amp;&amp; chmod +x quick-start.sh &amp;&amp; ./quick-start.sh    //执行一键安装脚本
+输入序号选择服务器IP、安装需等待约10-20分钟（视网络情况而定
 </code></pre></div>
-<h1 id="_3">安装成功<a class="headerlink" href="#_3" title="Permanent link">¶</a></h1>
-<p>如看到"Please visit url: xxxx"文案提示，则证明安装成功。
-<img alt="安装成功示意图" src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/597b4eed51be24c5141aedebd6c85ff6" title="安装成功示意图"/>
-<div class="highlight"><pre><span></span><code>打开浏览器后,输入该URL 
-http://服务器IP:8080/decept-defense
-默认用户名:admin，密码:123456。
+<p>安装完成后、访问<strong>http://服务器IP:8080/decept-defense</strong></p>
+<p>默认账号密码如下</p>
+<div class="highlight"><pre><span></span><code>账户: admin
+密码: 123456
 </code></pre></div>
-<img alt="登录页" src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/f8fb7e3012ecf7203838e0aa79650de0" title="登录页"/></p>
+<h2 id="_3">快速使用<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
+<h3 id="1">1. 创建蜜罐<a class="headerlink" href="#1" title="Permanent link">¶</a></h3>
+<p><strong>蜜罐管理&gt;&gt;&gt;蜜罐列表&gt;&gt;&gt;新建</strong></p>
+<p><img alt="蜜罐管理-创建蜜罐" src="../../img/%E8%9C%9C%E7%BD%90%E7%AE%A1%E7%90%86-%E5%88%9B%E5%BB%BA%E8%9C%9C%E7%BD%90.png"/></p>
+<p><strong>创建成功后、蜜罐列表显示蜜罐信息、同时可对蜜罐进行下线、存活探测等操作</strong></p>
+<p><img alt="蜜罐管理-创建成功" src="../../img/%E8%9C%9C%E7%BD%90%E7%AE%A1%E7%90%86-%E5%88%9B%E5%BB%BA%E6%88%90%E5%8A%9F.png"/></p>
+<h3 id="2">2. 创建协议转发<a class="headerlink" href="#2" title="Permanent link">¶</a></h3>
+<p><strong>影子代理&gt;&gt;&gt;协议转发&gt;&gt;&gt;新建</strong></p>
+<p><img alt="影子代理-协议转发" src="../../img/%E5%BD%B1%E5%AD%90%E4%BB%A3%E7%90%86-%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8F%91.png"/></p>
+<p><strong>创建成功后、显示如下、协议转发表示建立了蜜网端口到蜜罐端口的流量转发、样例创建的协议转发将1026端口的ssh流量转发到IP地址为10.42.0.57:22的蜜罐中</strong></p>
+<p><img alt="协议转发-创建成功" src="../../img/%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8F%91-%E5%88%9B%E5%BB%BA%E6%88%90%E5%8A%9F.png"/></p>
+<h3 id="3">3.创建透明转发<a class="headerlink" href="#3" title="Permanent link">¶</a></h3>
+<p><strong>影子代理&gt;&gt;&gt;透明转发&gt;&gt;&gt;新建</strong></p>
+<p><img alt="影子代理-透明转发" src="../../img/%E5%BD%B1%E5%AD%90%E4%BB%A3%E7%90%86-%E9%80%8F%E6%98%8E%E8%BD%AC%E5%8F%91.png"/></p>
+<p><strong>创建成功后、显示如下、透明转发表示建立了探针端口到蜜网端口的流量转发、样例创建的透明转发将1063端口的流量转发到蜜网的1026端口</strong></p>
+<p><img alt="透明转发-创建成功" src="../../img/%E9%80%8F%E6%98%8E%E8%BD%AC%E5%8F%91-%E5%88%9B%E5%BB%BA%E6%88%90%E5%8A%9F.png"/></p>
+<blockquote>
+<p>完成上述几个步骤后、当黑客探测到业务服务器的1063端口并进行攻击时、就会将黑客引诱到ssh服务蜜罐中、同时探针以及蜜罐可以部署密签、诱饵等诱使黑客对蜜罐的攻击、延缓以及防治业务服务被攻击。具体请详读功能说明</p>
+</blockquote>
 <hr/>
 <div class="md-source-date">
 <small>
     
-      最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2021年6月27日</span>
+      最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2021年6月30日</span>
 </small>
 </div>
 </article>
