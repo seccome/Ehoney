@@ -2,8 +2,10 @@
 site_name: Ehoney欺骗防御系统
 site_description: www.seccome.com
 site_author: licheng
-edit_url: 'https://github.com/seccome/Ehoney/edit/master/doc/'
+edit_url: 'edit/master/doc/'
 docs_dir: doc/
+repo_name: 'seccome/Ehoney'
+repo_url: 'https://github.com/seccome/Ehoney'
 
 # Configuration
 theme:
@@ -21,7 +23,6 @@ theme:
 nav:
 
   - Home: README.md
-
   - 介绍:
     - Ehoney: Introduction/Ehoney.md
   - 快速开始:
