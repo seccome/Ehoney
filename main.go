@@ -91,8 +91,6 @@ func makeRouter() *mux.Router {
 	api.HandleFunc("/applicationsignpolicydelete", DeleteApplicationSignPolicyHandler)
 	api.HandleFunc("/downloadapplicationsign", DownloadApplicationSignPolicyHandler)
 
-	/**应用集群密签详情*/
-	//api.HandleFunc("/getapplocationssignmsg", ApplicationSignMsgHandler)
 
 	/*策略管理*/
 	/*诱饵策略管理*/
