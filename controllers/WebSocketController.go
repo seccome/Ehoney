@@ -370,7 +370,7 @@ func QueryLatestAttackLog() AttackLog {
 	var attackLog AttackLog
 	defer sqlCon.Close()
 
-	queryLatestRelayAttackLogSql := "SELECT a.attackip AS edgeIp, h.honeyip AS honeyIp, a.attacktime, a.srchost as relayIp, srcport as relayPort FROM attacklog a LEFT JOIN honeypots h on a.honeypotid = h.honeypotid WHERE a.attackip IS NOT NULL AND a.honeypotid  IS NOT NULL AND a.proxytype IS NOT NULL AND a.proxytype != \"falco\" ORDER BY a.attacktime DESC LIMIT 1"
+	queryLatestRelayAttackLogSql := "SELECT a.attackip AS edgeIp, h.honeyip AS honeyIp, a.attacktime as attackTime, a.srchost as relayIp, srcport as relayPort FROM attacklog a LEFT JOIN honeypots h on a.honeypotid = h.honeypotid WHERE a.attackip != \"\" AND a.honeypotid != \"\" AND a.proxytype != \"\" AND a.proxytype != \"falco\" ORDER BY a.attacktime DESC LIMIT 1"
 	rows, err := DbCon.Query(queryLatestRelayAttackLogSql)
 	if err != nil {
 		fmt.Errorf("[SelectTopAttackTypes] select list error,%s", err)
@@ -385,7 +385,7 @@ func QueryLatestAttackLog() AttackLog {
 		}
 	}
 
-	queryLatestEdgeAttackLogSql := fmt.Sprintf("SELECT attackip FROM attacklog WHERE proxytype = \"EDGE\" AND srchost ='%s' ORDER BY attacktime DESC LIMIT 1", attackLog.edgeIp)
+	queryLatestEdgeAttackLogSql := fmt.Sprintf("SELECT attackip as attackIp FROM attacklog WHERE proxytype = \"EDGE\" AND srchost ='%s' ORDER BY attacktime DESC LIMIT 1", attackLog.edgeIp)
 	rows, err = DbCon.Query(queryLatestEdgeAttackLogSql)
 	if err != nil {
 		fmt.Errorf("[SelectTopAttackTypes] select list error,%s", err)
@@ -576,12 +576,12 @@ type TopologyLine struct {
 }
 
 type AttackLog struct {
-	attackIp   string `json:"attackIp"`
-	edgeIp     string `json:"edgeIp"`
-	honeyIp    string `json:"honeyIp"`
-	attackTime int32  `json:"attackTime"`
-	relayIp    string `json:"relayIp"`
-	relayPort  int32  `json:"relayPort"`
+	attackIp   string
+	edgeIp     string
+	honeyIp    string
+	attackTime int32
+	relayIp    string
+	relayPort  int32
 }
 
 func GetBetweenStr(str, start, end string) string {
