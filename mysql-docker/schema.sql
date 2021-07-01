@@ -241,7 +241,7 @@ DROP TABLE IF EXISTS `honeypotservers`;
 CREATE TABLE `honeypotservers` (
   `id` int(128) NOT NULL AUTO_INCREMENT,
   `servername` varchar(128) DEFAULT NULL,
-  `serverip` varchar(64) DEFAULT NULL,
+  `serverip` varchar(512) DEFAULT NULL,
   `serverid` varchar(128) DEFAULT NULL,
   `status` int(10) DEFAULT NULL,
   `agentid` varchar(128) DEFAULT NULL,
@@ -345,7 +345,7 @@ DROP TABLE IF EXISTS `servers`;
 CREATE TABLE `servers` (
   `id` int(128) NOT NULL AUTO_INCREMENT,
   `servername` varchar(128) DEFAULT NULL,
-  `serverip` varchar(128) DEFAULT NULL,
+  `serverip` varchar(512) DEFAULT NULL,
   `serverid` varchar(50) DEFAULT NULL,
   `agentid` varchar(128) DEFAULT NULL,
   `vpcname` varchar(50) DEFAULT NULL,

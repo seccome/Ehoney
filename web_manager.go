@@ -3068,10 +3068,6 @@ func CreateHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 				comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "密签目录创建失败"})
 				return
 			}
-			//error := util.CopyDir("upload/honeytoken/"+datas[0]["signname"].(string), signfilepath)
-			//if error != nil {
-			//	logs.Error("[CreateHoneySignPolicyHandler] util.CopyDir err:", error)
-			//}
 			var Suffix = regexp.MustCompile(`.(ppt|pptx|doc|docx|pdf|xls|xlsx)$`)
 			if len(Suffix.FindString(signfilename)) > 0 {
 				err :=honeytoken.DoFileSignTrace(signfilename, signfilename, signsourcepath, signfilepath, traceurl)
@@ -3104,7 +3100,6 @@ func CreateHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var cmdlist [][]string
-		//cmd1 := []string{"wget", "-O", "/tmp/", signurl}
 		cmd1 := []string{"wget", "-P", "/tmp/", signurl}
 		cmd2 := []string{"mkdir", "/tmp/" + signname}
 		cmd3 := []string{"tar", "-zxvf", "/tmp/" + signname + ".tar.gz", "-C", "/tmp/" + signname}
@@ -3262,7 +3257,6 @@ func DeleteHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 		uninstallpath := "/tmp/uninstall" + taskid
 		var cmdlist [][]string
 		cmd1 := []string{"mkdir", uninstallpath}
-		//cmd2 := []string{"wget", "-P", uninstallpath, baiturl}
 		cmd2 := []string{"wget", "-O", uninstallpath + "/" + "uninstall.tar.gz", signurl}
 		cmd3 := []string{"tar", "-zxvf", uninstallpath + "/" + "uninstall.tar.gz", "-C", uninstallpath}
 		cmd4 := []string{"/bin/sh", uninstallpath + "/install.sh"}
@@ -3402,7 +3396,6 @@ func DownloadHoneyBaits(w http.ResponseWriter, r *http.Request) {
 		baitname := datas[0]["baitname"].(string)
 		baitfilename := datas[0]["baitfilename"].(string)
 		filePath := util.GetCurrentPathString() + "/upload/" + baitname + "/" + baitfilename
-		//log.Println("filePath:", filePath)
 		file, err := os.Open(filePath)
 		if err != nil {
 			logs.Error("sign download fail: %v , %s", err, filePath)
