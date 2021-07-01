@@ -16,7 +16,7 @@
 
 2. 解压文件tar -zxvf decept-agent.tar.gz
 
-3. 修改解压目录中的conf目录下的agent.json，修改strategyAddr参数ip为redis地址的ip，默认安装为当前服务器ip。修改sshKeyUploadUrl的ip尾web服务的ip，默认安装为当前服务器ip。
+3. 修改解压目录中的conf目录下的agent.json，修改strategyAddr参数ip为redis地址的ip，默认安装为当前服务器ip 以及strategyPass的值为redis的密码默认为123456。修改sshKeyUploadUrl的ip尾web服务的ip，默认安装为当前服务器ip。
 
 4. 执行 chmod +x decept-agent &&  ./decept-agent -mode=EDGE
 
