@@ -487,7 +487,7 @@ db_data_dir=/var/lib/ehoney-db-data
 if [ ! -d "${db_data_dir}" ]; then
     echo "start mkdir $db_data_dir"
 	mkdir $db_data_dir
-	sudo chmod -R 755 $db_data_dir
+	sudo chmod -R 777 $db_data_dir
 fi
 docker run -d -p $DB_Port:3306 -v $db_data_dir:/var/lib/mysql --name ehoney-mysql  ehoney-mysql:latest
 
@@ -502,7 +502,7 @@ stop_docker_container_if_exist ehoney-mysql
 db_data_dir=/var/lib/ehoney-db-data
 if [ ! -d "${db_data_dir}" ]; then
 	mkdir $db_data_dir
-	sudo chmod -R 755 $db_data_dir
+	sudo chmod -R 777 $db_data_dir
 fi
 docker pull 47.96.71.197:90/ehoney-images/ehoney-db:v1.1
 docker run -d -p $DB_Port:3306 -v $db_data_dir:/var/lib/mysql --name ehoney-mysql  47.96.71.197:90/ehoney-images/ehoney-db:v1.1
