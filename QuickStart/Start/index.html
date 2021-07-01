@@ -138,12 +138,17 @@
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#2">
-    2. 创建协议转发
+    2.部署探针服务器
   </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#3">
-    3. 创建透明转发
+    3. 创建协议转发
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#4">
+    4. 创建透明转发
   </a>
 </li>
 </ul>
@@ -293,12 +298,17 @@
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#2">
-    2. 创建协议转发
+    2.部署探针服务器
   </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#3">
-    3. 创建透明转发
+    3. 创建协议转发
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#4">
+    4. 创建透明转发
   </a>
 </li>
 </ul>
@@ -314,12 +324,31 @@
 <p><img alt="蜜罐管理-创建蜜罐" src="../../img/%E8%9C%9C%E7%BD%90%E7%AE%A1%E7%90%86-%E5%88%9B%E5%BB%BA%E8%9C%9C%E7%BD%90.png"/></p>
 <p><strong>创建成功后、蜜罐列表显示蜜罐信息、同时可对蜜罐进行下线、存活探测等操作</strong></p>
 <p><img alt="蜜罐管理-创建成功" src="../../img/%E8%9C%9C%E7%BD%90%E7%AE%A1%E7%90%86-%E5%88%9B%E5%BB%BA%E6%88%90%E5%8A%9F.png"/></p>
-<h3 id="2">2. 创建协议转发<a class="headerlink" href="#2" title="Permanent link">¶</a></h3>
+<h3 id="2">2.部署探针服务器<a class="headerlink" href="#2" title="Permanent link">¶</a></h3>
+<ol>
+<li>
+<p>点击右上角的下载支持，将压缩包拷贝到即将部署的服务器上。</p>
+</li>
+<li>
+<p>解压文件tar -zxvf decept-agent.tar.gz</p>
+</li>
+<li>
+<p>修改解压目录中的conf目录下的agent.json，修改strategyAddr参数ip为redis地址的ip，默认安装为当前服务器ip。修改sshKeyUploadUrl的ip尾web服务的ip，默认安装为当前服务器ip。</p>
+</li>
+<li>
+<p>执行 chmod +x decept-agent &amp;&amp;  ./decept-agent -mode=EDGE</p>
+</li>
+<li>
+<p>查看启动日志和探针列表是否有此探针服务确认启动是否正常。</p>
+</li>
+</ol>
+<p><img alt="部署agent" src="../../img/%E9%83%A8%E7%BD%B2agent.png"/></p>
+<h3 id="3">3. 创建协议转发<a class="headerlink" href="#3" title="Permanent link">¶</a></h3>
 <p><strong>影子代理&gt;&gt;&gt;协议转发&gt;&gt;&gt;新建</strong></p>
 <p><img alt="影子代理-协议转发" src="../../img/%E5%BD%B1%E5%AD%90%E4%BB%A3%E7%90%86-%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8F%91.png"/></p>
 <p><strong>创建成功后、显示如下、协议转发表示建立了蜜网端口到蜜罐端口的流量转发、样例创建的协议转发将1026端口的ssh流量转发到IP地址为10.42.0.57:22的蜜罐中</strong></p>
 <p><img alt="协议转发-创建成功" src="../../img/%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8F%91-%E5%88%9B%E5%BB%BA%E6%88%90%E5%8A%9F.png"/></p>
-<h3 id="3">3. 创建透明转发<a class="headerlink" href="#3" title="Permanent link">¶</a></h3>
+<h3 id="4">4. 创建透明转发<a class="headerlink" href="#4" title="Permanent link">¶</a></h3>
 <p><strong>影子代理&gt;&gt;&gt;透明转发&gt;&gt;&gt;新建</strong></p>
 <p><img alt="影子代理-透明转发" src="../../img/%E5%BD%B1%E5%AD%90%E4%BB%A3%E7%90%86-%E9%80%8F%E6%98%8E%E8%BD%AC%E5%8F%91.png"/></p>
 <p><strong>创建成功后、显示如下、透明转发表示建立了探针端口到蜜网端口的流量转发、样例创建的透明转发将1063端口的流量转发到蜜网的1026端口</strong></p>
@@ -331,7 +360,7 @@
 <div class="md-source-date">
 <small>
     
-      最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2021年6月30日</span>
+      最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2021年7月1日</span>
 </small>
 </div>
 </article>
