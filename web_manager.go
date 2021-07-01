@@ -3018,7 +3018,7 @@ func CreateHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 	honeypotinfo := honeycluster.SelectHoneyInfoById(honeypotid)
 	honeysigndespath := honeysign.Address
 	honeysigndespath = strings.ReplaceAll(honeysigndespath,"'","''")
-	signdespathcheckcmdstr := []string{"/bin/sh", "-c", "find " + honeysigndespath +"'"}
+	signdespathcheckcmdstr := []string{"/bin/sh", "-c", "find '" + honeysigndespath +"'"}
 	checkerr := k3s.ExecPodCmd(honeypotid, signdespathcheckcmdstr)
 	if checkerr != nil {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: honeysigndespath + " 目录不存在"})
@@ -3148,7 +3148,7 @@ func CreateHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 
 		}
 		signdespath = strings.ReplaceAll(signdespath,"'","''")
-		cmdstr := []string{"/bin/sh", "-c", "find " + signdespath +"'"}
+		cmdstr := []string{"/bin/sh", "-c", "find '" + signdespath +"'"}
 		err = k3s.ExecPodCmd(honeypotid, cmdstr)
 		if err != nil {
 			logs.Error("[CreateHoneySignPolicyHandler] err:", err)
@@ -3302,7 +3302,7 @@ func DeleteHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 
 		}
 		signfilepath = strings.ReplaceAll(signfilepath,"'","''")
-		cmdstr := []string{"/bin/sh", "-c", "find " + signfilepath +"'"}
+		cmdstr := []string{"/bin/sh", "-c", "find '" + signfilepath +"'"}
 		err = k3s.ExecPodCmd(honeypotid, cmdstr)
 		if err != nil {
 			deletesignstatus = 5
