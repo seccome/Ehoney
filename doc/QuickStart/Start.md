@@ -20,7 +20,7 @@
 
 4. 执行 chmod +x decept-agent &&  ./decept-agent -mode=EDGE
 
-5. 查看启动日志和探针列表是否有此探针服务确认启动是否正常。
+5. 查看启动日志和探针列表是否有此探针服务确认启动是否正常(由于agent端口判断需要，需提前安装lsof)。
 
 ![部署agent](../img/部署agent.png)
 
