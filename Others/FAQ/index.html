@@ -274,10 +274,18 @@
 </a>
 <h1>FAQ</h1>
 <ul>
+<li>部署服务器对配置有什么要求？</li>
+</ul>
+<ol>
+<li>系统要求CentOS 7以上，内存4G、磁盘空间10G以上</li>
+<li>3306、6379、5000、8080、8082端口未被使用</li>
+</ol>
+<ul>
 <li>一键安装成功，但是浏览器无法访问？</li>
 </ul>
 <ol>
-<li>检查docker容器状态是否正常</li>
+<li>检查docker容器状态是否正常 
+    <code>docker ps</code></li>
 <li>检查web服务器容器日志
     <code>docker logs -f $(docker ps | grep decept-defense:latest | awk '{print $1}')</code></li>
 </ol>
@@ -325,7 +333,7 @@
 <div class="md-source-date">
 <small>
     
-      最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2021年6月30日</span>
+      最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2021年7月2日</span>
 </small>
 </div>
 </article>
