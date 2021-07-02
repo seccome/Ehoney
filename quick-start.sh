@@ -287,12 +287,11 @@ function setupFalco() {
     pwd
   )
   echo "start setup falco"
-  
+  cp helm /usr/local/bin/helm
+  chmod +x /usr/local/bin/helm
   exist=`helm list | grep falco`
   if [ "${exist}" == "" ]; then
-	cd $Project_Dir/helm
-	  cp helm /usr/local/bin/helm
-	  chmod +x /usr/local/bin/helm
+	cd $Project_Dir/helm  
 	  helm repo add stable http://mirror.azure.cn/kubernetes/charts/
 	  helm repo add falcosecurity https://falcosecurity.github.io/charts
 	  helm repo update
