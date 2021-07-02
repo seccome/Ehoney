@@ -1,6 +1,12 @@
+- 部署服务器对配置有什么要求？
+
+1. 系统要求CentOS 7以上，内存4G、磁盘空间10G以上
+2. 3306、6379、5000、8080、8082端口未被使用
+
 - 一键安装成功，但是浏览器无法访问？
 
-1. 检查docker容器状态是否正常
+1. 检查docker容器状态是否正常 
+    `docker ps`
 2. 检查web服务器容器日志
     `docker logs -f $(docker ps | grep decept-defense:latest | awk '{print $1}')`
 
