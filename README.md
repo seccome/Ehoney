@@ -105,4 +105,4 @@ cd Ehoney && chmod +x quick-start.sh && ./quick-start.sh
 3. 邮箱: ask@seccome.com
 4. 微信群: 扫描以下二维码关注 seccome 公众号，点击菜单加群，按照提示进行操作即可。
 
-<img src="doc/img/weixinqun.png" height="200px">
+<img src="doc/img/ewm.png" height="200px">
