@@ -27,6 +27,7 @@ CREATE TABLE `attacklog` (
   `honeytypeid` varchar(45) DEFAULT NULL,
   `honeypotport` int(10) DEFAULT NULL COMMENT 'dst_port',
   `attackip` varchar(128) DEFAULT NULL,
+  `attackport` int(10) DEFAULT NULL,
   `country` varchar(45) DEFAULT NULL,
   `province` varchar(100) DEFAULT NULL,
   `attacktime` varchar(128) DEFAULT NULL COMMENT 'local_time',
@@ -36,6 +37,7 @@ CREATE TABLE `attacklog` (
   `logdata` longtext,
   `longitude` varchar(64) DEFAULT NULL,
   `latitude` varchar(64) DEFAULT NULL,
+  `exportport` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1376 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
