@@ -1608,28 +1608,15 @@ func AddHarborConfig(w http.ResponseWriter, r *http.Request) {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "harbor配置只支持单条记录"})
 		return
 	}
-	harborip := ""
-	harborport := ""
-	harborhost := util.GetHost(harborinfo.HarborUrl)
-	if harborhost != ""  {
-		harborhostinfo := strings.Split(harborhost,":")
-		if len(harborhostinfo) == 1 {
-			harborip = harborhostinfo[0]
-			harborport = "80"
-		}else {
-			harborip = harborhostinfo[0]
-			harborport = harborhostinfo[1]
-		}
-	}else {
-		err := fmt.Errorf("%s", "harhost解析异常")
-		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: err.Error()})
-		return
-	}
-	if ! util.NetConnectTest(harborip,harborport){
-		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "harbor url网络异常"})
-		return
-	}
 
+	hearders := make(map[string]string)
+	authorizationstr := util.Base64Encode(harborinfo.UserName + ":" + harborinfo.Password)
+	hearders["authorization"] = "Basic " + authorizationstr
+	resp := comhttp.GetResponseByHttp("GET", harborinfo.HarborUrl + "/api/v2.0/projects/" + harborinfo.ProjectName + "/repositories", "", hearders)
+	if resp == nil || resp.StatusCode != 200 {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "harbor连接异常、请检测参数是否设置正确"})
+		return
+	}
 	createtime := time.Now().Unix()
 	harborid := util.GetStrMd5("ehoney")
 	data, msg, msgcode := honeycluster.InsertHarborInfo(harborid, harborinfo.HarborUrl, harborinfo.UserName, harborinfo.Password, harborinfo.ProjectName, createtime)
