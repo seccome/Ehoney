@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego/logs"
+	"github.com/ip2location/ip2location-go/v9"
 	"github.com/satori/go.uuid"
 	"io"
 	"io/ioutil"
@@ -23,6 +24,21 @@ import (
 	"strings"
 	"time"
 )
+
+func GetLocationByIP(ip string) (*ip2location.IP2Locationrecord, error){
+	db, err := ip2location.OpenDB("./data/IP2LOCATION-LITE-DB.BIN")
+	if err != nil {
+		fmt.Print(err)
+		return nil, err
+	}
+	results, err := db.Get_all(ip)
+
+	if err != nil {
+		fmt.Print(err)
+		return nil, err
+	}
+	return &results, nil
+}
 
 func GetUUID() string {
 	u2 := uuid.NewV4()

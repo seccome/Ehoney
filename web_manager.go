@@ -1783,53 +1783,15 @@ func InsertAttackLogHandler(w http.ResponseWriter, r *http.Request) {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: fmt.Sprintf("[InsertAttackLogHandler] open mysql fail %v", err)})
 		return
 	}
-	country := "局域网"
-	province := "局域网"
-	//if attackLog.AttackHost != "" {
-	//	data := models.GetGeoDataForAliYun(attackLog.AttackHost)
-	//	if data.Country != "" {
-	//		if data.CountryCode == "CN" {
-	//			country = data.Country
-	//			province = data.Province
-	//			//site = data.Province + "-" + data.City
-	//		} else if data.Country == "局域网" {
-	//			country = data.Country
-	//			province = "局域网"
-	//		} else {
-	//			if data.City != "" && data.Province != "" {
-	//				country = data.Country
-	//				province = data.Province
-	//				//site = data.Country + data.Province + "-" + data.City
-	//			} else {
-	//				datas := models.GetGeoData(attackLog.AttackHost)
-	//				log.Println(datas)
-	//				if datas.CountryCode == "unk" {
-	//					country = ""
-	//					province = ""
-	//				} else {
-	//					country = data.Country
-	//					province = datas.RegionName
-	//					//site = data.Country + "-" + datas.RegionName + "-" + datas.City
-	//				}
-	//			}
-	//		}
-	//	} else {
-	//		datas := models.GetGeoData(attackLog.AttackHost)
-	//		if datas.CountryCode == "unk" {
-	//			country = ""
-	//			province = ""
-	//		} else if datas.CountryCode == "CN" {
-	//			country = datas.CountryName
-	//			province = datas.RegionName
-	//			//site = datas.RegionName + "-" + datas.City
-	//		} else {
-	//			country = datas.CountryName
-	//			province = datas.RegionName
-	//			//site = datas.CountryName + "-" + datas.RegionName + "-" + datas.City
-	//		}
-	//
-	//	}
-	//}
+
+	result, err := util.GetLocationByIP(attackLog.AttackHost)
+	if err != nil{
+		logs.Error("get location error: %v\n", err)
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: fmt.Sprintf("get location error %v", err)})
+		return
+	}
+	country := result.Country_long
+	province := result.City
 
 	honeymaps := honeycluster.SelectHoneyPotByIp(attackLog.DstHost)
 	if len(honeymaps) > 0 {
