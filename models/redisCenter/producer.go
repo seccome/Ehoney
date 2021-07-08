@@ -113,7 +113,7 @@ func (rs *redisServer) BaitListen(pool *redis.Pool, key string) {
 		case redis.Subscription: //Subscribe一个Channel时
 			fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			RedisPubConsumerBaitPolicyResponse()
+			//RedisPubConsumerBaitPolicyResponse()
 			return
 		}
 	}
@@ -160,7 +160,7 @@ func (rs *redisServer) TransListen(pool *redis.Pool, key string) {
 		case redis.Subscription: //Subscribe一个Channel时
 			fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			RedisPubConsumerTransPolicyResponse()
+			//RedisPubConsumerTransPolicyResponse()
 			return
 		}
 	}
@@ -217,7 +217,7 @@ func (rs *redisServer) ServerHeartBeatListen(pool *redis.Pool, key string) {
 		case redis.Subscription: //Subscribe一个Channel时
 			fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			RedisPubConsumerServerRegResponse()
+			//RedisPubConsumerServerRegResponse()
 			return
 		}
 	}
@@ -264,7 +264,7 @@ func (rs *redisServer) TransEventListen(pool *redis.Pool, key string) {
 		case redis.Subscription: //Subscribe一个Channel时
 			fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			RedisPubConsumerTransEventResponse()
+			//RedisPubConsumerTransEventResponse()
 			return
 		}
 	}
