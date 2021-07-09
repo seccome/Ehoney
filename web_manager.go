@@ -673,6 +673,17 @@ func ApplicationSignMsgHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	datas := honeycluster.ApplicationSelectSignMsg(fileList.Tracecode, fileList.Map, fileList.StartTime, fileList.EndTime, fileList.PageSize, fileList.PageNum)
+	for _, data := range datas["list"].([]interface{}){
+		ip := data.(map[string]interface{})["openip"].(string)
+		if util.IsLocalIP(ip){
+			data.(map[string]interface{})["ipcountry"] = "局域网"
+			data.(map[string]interface{})["ipcity"] = "局域网"
+		}else{
+			result,_ := util.GetLocationByIP(ip)
+			data.(map[string]interface{})["ipcountry"] = result.Country_long
+			data.(map[string]interface{})["ipcity"] = result.City
+		}
+	}
 	comhttp.SendJSONResponse(w, comm.Response{Code: comm.SuccessCode, Data: datas, Message: "成功"})
 	return
 }
@@ -3366,6 +3377,17 @@ func HoneySignMsgHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	datas := honeycluster.HoneySelectSignMsg(fileList.Tracecode, fileList.Map, fileList.StartTime, fileList.EndTime, fileList.PageSize, fileList.PageNum)
+	for _, data := range datas["list"].([]interface{}){
+		ip := data.(map[string]interface{})["openip"].(string)
+		if util.IsLocalIP(ip){
+			data.(map[string]interface{})["ipcountry"] = "局域网"
+			data.(map[string]interface{})["ipcity"] = "局域网"
+		}else{
+			result,_ := util.GetLocationByIP(ip)
+			data.(map[string]interface{})["ipcountry"] = result.Country_long
+			data.(map[string]interface{})["ipcity"] = result.City
+		}
+	}
 	comhttp.SendJSONResponse(w, comm.Response{Code: 0, Data: datas, Message: "成功"})
 	return
 
