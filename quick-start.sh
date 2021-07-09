@@ -152,6 +152,7 @@ function is_port_bind(){
 function stop_docker_container_if_exist(){
     docker_container_name=$1
     processor=$(docker ps | grep docker_container_name)
+	echo "stop docker container if exist [$docker_container_name]..."
     if [ "$processor" != "" ]; then
 	    docker stop $docker_container_name
 		sleep 2s
@@ -335,7 +336,7 @@ function setupK3s() {
   swpConfValue /etc/rancher/k3s/k3s.yaml 5 127.0.0.1 $Local_Host
   echo \ export KUBECONFIG=/etc/rancher/k3s/k3s.yaml >>/etc/profile
   # 覆盖项目中的k3s 配置
-  yes | cp -rf /etc/rancher/k3s/k3s.yaml ${Project_Dir}/conf/.kube/config
+  # yes | cp -rf /etc/rancher/k3s/k3s.yaml ${Project_Dir}/conf/.kube/config
   source /etc/profile
   sleep 1s
   #exit_if_process_error docker
@@ -394,6 +395,7 @@ function setupDocker() {
   
   sudo tee /etc/docker/daemon.json <<-'EOF'
   {
+   "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"],
    "fixed-cidr":"172.17.0.0/24"
   }
 EOF
@@ -512,6 +514,8 @@ function setupDeceptDefence() {
   stop_docker_container_if_exist decept-defense-web
   chmod +x $Project_Dir/dockerStart.sh
   dos2unix $Project_Dir/dockerStart.sh
+  # 覆盖项目中的k3s 配置
+  yes | cp -rf /etc/rancher/k3s/k3s.yaml ${Project_Dir}/conf/.kube/config
   docker build -t decept-defense .
   # docker run -d -p $Project_Port:8082 -p $Project_Front_Port:8080 --name decept-defense-web -e CONFIGS="" decept-defense:latest
   docker run -d -v $Project_Dir/conf/.kube/:/apps/conf/.kube/ -p $Project_Port:8082 -p $Project_Front_Port:8080 --name decept-defense-web -e CONFIGS="apphost:${Local_Host};dbhost:${Local_Host};dbport:${DB_Port};dbuser:${DB_User};dbpassword:${DB_Password};dbname:${DB_Database};redisurl:${Local_Host};redisport:${REDIS_Port};redispwd:${REDIS_Password};" decept-defense:latest
@@ -588,9 +592,9 @@ function main() {
   yum install -y dos2unix
   prepare_conf
   ports_check
+  setup_iptables
   prepare_base_install
   component_installer
-  setup_iptables
   echo "----------------------------------------------------------"
   echo "all the services are ready and happy to use!!!"
   echo "Please visit url: http://${Local_Host}:${Project_Front_Port}/decept-defense"

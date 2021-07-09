@@ -101,7 +101,7 @@ func makeRouter() *mux.Router {
 	/*透明转发策略管理*/
 	api.HandleFunc("/transPolicyAdd", CreateTransPolicyHandler)
 	api.HandleFunc("/transPolicyDelete", DeleteTransPolicyHandler)
-	api.HandleFunc("/transPolicyRemove ", RemoveTransPolicyHandler)
+	api.HandleFunc("/transPolicyRemove", RemoveTransPolicyHandler)
 	api.HandleFunc("/transPolicySelectAgentId", SelectTransPolicyHandler)
 	api.HandleFunc("/transpolicytest", TestTransPolicyHandler)
 

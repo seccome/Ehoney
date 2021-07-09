@@ -435,7 +435,7 @@ func SelectAllSignType() []comm.SignType {
 func DeleteTransPolicy(taskid string) {
 	o := orm.NewOrm()
 	var maps []orm.Params
-	_, err := o.Raw("delete form fowards where taskid=?", taskid).Values(&maps)
+	_, err := o.Raw("delete from fowards where taskid=?", taskid).Values(&maps)
 	if err != nil {
 		logs.Error("[Delete TransPolicy]  error,%s", err)
 	}
@@ -1154,7 +1154,7 @@ func SelectAttackLogList(serverid string, honeytypeid string, srchost string, at
 	DbCon := sqlCon
 	defer sqlCon.Close()
 	sqltotal := "select count(1) from `attacklog` T0 left JOIN `attacklog` T ON T0.attackip = T.srchost left join `honeypotservers` T1 on T1.`serverid` = T0.`serverid` left join `honeypotstype` T2 on T2.`typeid` = T0.`honeytypeid` LEFT JOIN honeypots T3 ON T0.honeypotid= T3.honeypotid where 1=1 AND T0.attackport = T.exportport AND T0.honeypotid != ''"
-	sqlstr := "select T. attackip, T0.`id`,T0.`srchost`,T0.`attackip` as propleIp, T0.`attacktime`,T1.`servername`,T1.`serverip`,T2.`honeypottype`,T0.`country`,T0.`province`,T3.honeyip from `attacklog` T0 left JOIN `attacklog` T ON T0.attackip = T.srchost left join `honeypotservers` T1 on T1.`serverid` = T0.`serverid` left join `honeypotstype` T2 on T2.`typeid` = T0.`honeytypeid` LEFT JOIN honeypots T3 ON T0.honeypotid= T3.honeypotid where 1=1 AND T0.attackport = T.exportport AND T0.honeypotid != ''"
+	sqlstr := "select T.attackip, T0.`id`, T0.`srchost`, T0.`attackip` as probeip, T0.`attacktime`,T1.`servername`,T1.`serverip`,T2.`honeypottype`,T0.`country`,T0.`province`,T3.honeyip from `attacklog` T0 left JOIN `attacklog` T ON T0.attackip = T.srchost left join `honeypotservers` T1 on T1.`serverid` = T0.`serverid` left join `honeypotstype` T2 on T2.`typeid` = T0.`honeytypeid` LEFT JOIN honeypots T3 ON T0.honeypotid= T3.honeypotid where 1=1 AND T0.attackport = T.exportport AND T0.honeypotid != ''"
 
 	var condition string
 	var argsList []interface{}
@@ -1198,6 +1198,7 @@ func SelectAttackLogList(serverid string, honeytypeid string, srchost string, at
 	argsList = append(argsList, offset)
 	argsList = append(argsList, pagesize)
 	sqlstr = sqlstr + condition
+	logs.Info(sqlstr)
 	rows, err := DbCon.Query(sqlstr, argsList...)
 	if err != nil {
 		logs.Error("[SelectAttackLogList] select list error,%s", err)
@@ -1205,6 +1206,7 @@ func SelectAttackLogList(serverid string, honeytypeid string, srchost string, at
 		return data, msg, comm.ErrorCode
 	}
 	columns, err := rows.Columns()
+	logs.Info(columns)
 	if err != nil {
 		logs.Error("[SelectAttackLogList] rows.Columns() error,%s", err)
 		msg = "数据库查询失败"
@@ -1218,6 +1220,7 @@ func SelectAttackLogList(serverid string, honeytypeid string, srchost string, at
 	}
 
 	list, count, err := util.GetAttackLogListMysqlJson(rows, columns, total, values, scanArgs, pagenum, pagesize, totalpage)
+	logs.Info(list)
 	if count > 0 {
 		err = json.Unmarshal([]byte(list), &data)
 		if err != nil {

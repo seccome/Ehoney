@@ -1465,7 +1465,7 @@ func CreateProtocolType(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	typeid := util.GetStrMd5(protocolName)
-	softPath := "/home/sys_admin/" + protocolFileName
+	softPath := "/home/ehoney_proxy/" + protocolFileName
 	createTime := time.Now().Unix()
 	data, msg, msgCode := honeycluster.InsertProtocol(protocolName, typeid, softPath, createTime)
 

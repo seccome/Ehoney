@@ -153,7 +153,7 @@ function is_port_bind(){
 function stop_docker_container_if_exist(){
     docker_container_name=$1
     processor=$(docker ps -a | grep $docker_container_name)
-	echo "---------start stop_docker_container_if_exist [$docker_container_name]-----------"
+	echo "stop docker container if exist [$docker_container_name]..."
 
     if [ "$processor" != "" ]; then
 	    docker stop $docker_container_name
@@ -401,6 +401,7 @@ function setupDocker(){
   
   sudo tee /etc/docker/daemon.json <<-'EOF'
   {
+   "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"],
    "fixed-cidr":"172.17.0.0/24"
   }
 EOF
@@ -408,7 +409,7 @@ EOF
   sudo systemctl daemon-reload 
   sudo systemctl restart docker
   sleep 1s
-  check_docker_service
+  check_docker_service:
 }
 
 function setupRelayAgent(){
@@ -519,6 +520,8 @@ function setupDeceptDefence(){
   stop_docker_container_if_exist decept-defense-web
   chmod +x $Project_Dir/dockerStart.sh
   dos2unix $Project_Dir/dockerStart.sh
+  # 覆盖项目中的k3s 配置
+  yes | cp -rf /etc/rancher/k3s/k3s.yaml ${Project_Dir}/conf/.kube/config
   docker build -t decept-defense .
   # docker run -d -p $Project_Port:8082 -p $Project_Front_Port:8080 --name decept-defense-web -e CONFIGS="" decept-defense:latest
   docker run -d -v $Project_Dir/conf/.kube/:/apps/conf/.kube/ -p $Project_Port:8082 -p $Project_Front_Port:8080 --name decept-defense-web -e CONFIGS="apphost:${Local_Host};dbhost:${Local_Host};dbport:${DB_Port};dbuser:${DB_User};dbpassword:${DB_Password};dbname:${DB_Database};redisurl:${Local_Host};redisport:${REDIS_Port};redispwd:${REDIS_Password};" decept-defense:latest
@@ -716,14 +719,21 @@ function startupAll(){
     cd $(dirname $0)
     pwd
   )
+  dos2unix $Project_Dir/conf/app.conf >/dev/null
   clear
-  echo "----------------------------------------------------------------------------------"
   Local_Host=$(readConfValue $Project_Dir/conf/app.conf apphost)  
-  if [ "${Local_Host}" == "localhost" ]; then
+  echo "--------------------------------[${Local_Host}]-------------------------------------------"
+  if [[ "${Local_Host}" == "localhost" ]] || [[ "${Local_Host}" == "" ]]; then
 	setUpIp
 	replaceConfHost
   fi
   prepare_conf
+  echo -e "DB_Port: "$DB_Port
+  echo -e "DB_User: "$DB_User
+  echo -e "DB_Database: "$DB_Database
+  echo -e "DB_Password: "$DB_Password 
+  echo -e "REDIS_Port: "$REDIS_Port
+  echo -e "REDIS_Password: "$REDIS_Password 
   if [ "${cmd}" == "install" ]; then
 	startupAll
   elif [ "${cmd}" == "uninstall" ]; then
@@ -745,14 +755,15 @@ function startupAll(){
 		stop_docker_container_if_exist ehoney-mysql
 		setupMysqlDockerBak
 		
-		stop_docker_container_if_exist decept-defense-web
-	    setupDeceptDefence
+		stop_docker_container_if_exist decept-redis
+		setupRedis
 		
 		kill_if_process_exist2 filetracemsg
 		setupFileTrace
 		
-	    kill_if_process_exist2 filetracemsg
-		setupFileTrace
+		stop_docker_container_if_exist decept-defense-web
+	    setupDeceptDefence
+		
 	 fi
   elif [ "${cmd}" == "status" ]; then
 	 if [ "${options}" == "db" ]; then
