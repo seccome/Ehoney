@@ -38,3 +38,11 @@
 1. 查看协议代理日志/home/relay/agent/proxy/log/proxy.log
 2. 检查转发端口是否被占用/ssh_proxy文件是否正确
 
+- 配置修改
+
+1. redis、mysql修改请在部署服务前、修改源代码conf目录下的app.conf分别修改mysql或redis条目
+
+2. 同时、当前版本暂时不支持对后端web服务占用端口的修改、后续版本会支持
+
+    
+

@@ -113,7 +113,7 @@ func (rs *redisServer) BaitListen(pool *redis.Pool, key string) {
 		case redis.Subscription: //Subscribe一个Channel时
 			fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			RedisPubConsumerBaitPolicyResponse()
+			//RedisPubConsumerBaitPolicyResponse()
 			return
 		}
 	}
@@ -160,7 +160,7 @@ func (rs *redisServer) TransListen(pool *redis.Pool, key string) {
 		case redis.Subscription: //Subscribe一个Channel时
 			fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			RedisPubConsumerTransPolicyResponse()
+			//RedisPubConsumerTransPolicyResponse()
 			return
 		}
 	}
@@ -217,7 +217,7 @@ func (rs *redisServer) ServerHeartBeatListen(pool *redis.Pool, key string) {
 		case redis.Subscription: //Subscribe一个Channel时
 			fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			RedisPubConsumerServerRegResponse()
+			//RedisPubConsumerServerRegResponse()
 			return
 		}
 	}
@@ -242,6 +242,7 @@ func (rs *redisServer) TransEventListen(pool *redis.Pool, key string) {
 			destport := gjson.Get(data, "DestPort")
 			eventtime := gjson.Get(data, "EventTime")
 			proxytype := gjson.Get(data, "ProxyType")
+			exportport := gjson.Get(data, "ExportPort")
 			serverip := ""
 			honeypotid := ""
 			honeypotport := ""
@@ -259,12 +260,13 @@ func (rs *redisServer) TransEventListen(pool *redis.Pool, key string) {
 			}
 			hport, _ := strconv.Atoi(honeypotport)
 			bport, _ := strconv.Atoi(bindport.Raw)
-			policyCenter.InsertAttackLog(proxytype.Str, serverip, bport, util.GetIP(sourceaddr.Str), honeypotid, hport, honeytypeid, eventtime.Int())
+			eport, _ := strconv.Atoi(exportport.Raw)
+			policyCenter.InsertAttackLog(proxytype.Str, serverip, bport, util.GetIP(sourceaddr.Str), honeypotid, hport, honeytypeid, eventtime.Int(), eport)
 
 		case redis.Subscription: //Subscribe一个Channel时
 			fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			RedisPubConsumerTransEventResponse()
+			//RedisPubConsumerTransEventResponse()
 			return
 		}
 	}

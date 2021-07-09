@@ -765,6 +765,17 @@ func InsertSign(signtype string, signname string, createtime int64, creator stri
 	return data, msg, comm.SuccessCode
 }
 
+func SelectSignByName(name string) []orm.Params {
+	o := orm.NewOrm()
+	var maps []orm.Params
+	_, err := o.Raw("SELECT * FROM `signs`  where signname=?", name).Values(&maps)
+	if err != nil {
+		logs.Error("[SelectHoneyInfoById] select event list error,%s", err)
+
+	}
+	return maps
+}
+
 /**
 删除诱饵
 */

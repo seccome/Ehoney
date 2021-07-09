@@ -16,4 +16,4 @@
 site/*
 /.idea/*
 /logs/*
-
+.DS_Store

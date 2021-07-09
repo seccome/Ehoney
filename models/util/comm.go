@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego/logs"
+	"github.com/ip2location/ip2location-go/v9"
 	"github.com/satori/go.uuid"
 	"io"
 	"io/ioutil"
@@ -23,6 +24,41 @@ import (
 	"strings"
 	"time"
 )
+
+func IsLocalIP(ip string) bool {
+	IP := net.ParseIP(ip)
+	if IP.IsLoopback() || IP.IsLinkLocalMulticast() || IP.IsLinkLocalUnicast() {
+		return true
+	}
+	if ip4 := IP.To4(); ip4 != nil {
+		switch true {
+		case ip4[0] == 10:
+			return true
+		case ip4[0] == 172 && ip4[1] >= 16 && ip4[1] <= 31:
+			return true
+		case ip4[0] == 192 && ip4[1] == 168:
+			return true
+		default:
+			return false
+		}
+	}
+	return false
+}
+
+func GetLocationByIP(ip string) (*ip2location.IP2Locationrecord, error){
+	db, err := ip2location.OpenDB("./data/IP2LOCATION-LITE-DB.BIN")
+	if err != nil {
+		fmt.Print(err)
+		return nil, err
+	}
+	results, err := db.Get_all(ip)
+
+	if err != nil {
+		fmt.Print(err)
+		return nil, err
+	}
+	return &results, nil
+}
 
 func GetUUID() string {
 	u2 := uuid.NewV4()
