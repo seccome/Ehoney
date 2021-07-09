@@ -2511,7 +2511,11 @@ func CreateSignHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if isfalse {
-		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: "上传失败", Message: "上传类型只支持doc,docx,ppt,pptx,xlsx,xls,pdf"})
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: "上传失败", Message: "上传类型只支持docx,pptx,xlsx,pdf"})
+		return
+	}
+	if len(honeycluster.SelectSignByName(signname)) != 0{
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: "密签文件名称重复", Message: "密签文件名称重复"})
 		return
 	}
 	createtime := time.Now().Unix()
