@@ -12,7 +12,7 @@ Project_Front_Port=8080
 Local_Host="127.0.0.1"
 File_Trace_port=5000
 
-function install_soft() {
+function install_soft(){
   echo -e "[ start install soft [ $1 ]"
   if command -v yum >/dev/null; then
     yum -q -y install $1
@@ -81,6 +81,7 @@ function check_docker_container_state(){
 	fi
 }
 
+
 function check_file_trace_service(){
 	sleep 7s
 	curl http://localhost:5000/health | grep 'SUCCEED' &> /dev/null
@@ -118,8 +119,8 @@ function kill_if_process_exist(){
 
 
 # 检查软件是否安装 curl wget zip go redis mysql docker kubectl;
-function prepare_base_install() {
-  for i in yum vim wget curl unzip kernel-devel-$(uname -r); do
+function prepare_base_install(){
+  for i in yum vim wget ifconfig curl unzip kernel-devel-$(uname -r); do
     command -v $i &>/dev/null || install_soft $i
   done
   # yumRepoUpdate
@@ -151,8 +152,9 @@ function is_port_bind(){
 
 function stop_docker_container_if_exist(){
     docker_container_name=$1
-    processor=$(docker ps | grep docker_container_name)
+    processor=$(docker ps -a | grep $docker_container_name)
 	echo "stop docker container if exist [$docker_container_name]..."
+
     if [ "$processor" != "" ]; then
 	    docker stop $docker_container_name
 		sleep 2s
@@ -214,7 +216,7 @@ echo "--------------------Iptables设置完毕-----------------------------"
 
 }
 
-function prepare_check() {
+function prepare_check(){
   Project_Dir=$(
     cd $(dirname $0)
     pwd
@@ -240,21 +242,19 @@ function prepare_check() {
   fi
 }
 
-function prepare_conf() {
-  dos2unix $Project_Dir/conf/app.conf
+function prepare_conf(){
+  dos2unix $Project_Dir/conf/app.conf >/dev/null
   DB_Port=$(readConfValue $Project_Dir/conf/app.conf dbport)
   DB_User=$(readConfValue $Project_Dir/conf/app.conf dbuser)
   DB_Database=$(readConfValue $Project_Dir/conf/app.conf dbname)
   DB_Password=$(readConfValue $Project_Dir/conf/app.conf dbpassword)
   REDIS_Port=$(readConfValue $Project_Dir/conf/app.conf redisport)
   REDIS_Password=$(readConfValue $Project_Dir/conf/app.conf redispwd)
-  echo -e "DB_Port: "$DB_Port
-  echo -e "DB_User: "$DB_User
-  echo -e "DB_Database: "$DB_Database
-  echo -e "DB_Password: "$DB_Password 
-  echo -e "REDIS_Port: "$REDIS_Port
-  echo -e "REDIS_Password: "$REDIS_Password 
-  #替换mysql 配置
+}
+
+function replaceConfHost(){
+
+ #替换mysql 配置
   sed -i "7c dbhost=${Local_Host}" $Project_Dir/conf/app.conf
   sed -i "9c dbuser=root" $Project_Dir/conf/app.conf
 
@@ -270,7 +270,7 @@ function prepare_conf() {
 }
 
 
-function component_installer() {
+function component_installer(){
   setupDocker # 安装Docker
   setupK3s    # 安装K3S
   setupRedis  # 安装Redis
@@ -281,28 +281,34 @@ function component_installer() {
   setupDeceptDefence
   setupRelayAgent
 }
-function setupFalco() {
+function setupFalco(){
   echo "--------------------Start deploying Falco----------------------------"
   Project_Dir=$(
     cd $(dirname $0)
     pwd
   )
   echo "start setup falco"
-  cp helm /usr/local/bin/helm
-  chmod +x /usr/local/bin/helm
-  cd $Project_Dir/helm  
-  helm repo add stable http://mirror.azure.cn/kubernetes/charts/
-  helm repo add falcosecurity https://falcosecurity.github.io/charts
-  helm repo update
-  cd $Project_Dir/falco
-  helm delete falco
-  falcoLogAddr=$(readConfValue $Project_Dir/conf/app.conf falcoLogUploadAddr)
-  swpConfValue $Project_Dir/falco/values.yaml 258 false true
-  swpConfValue $Project_Dir/falco/values.yaml 259 127.0.0.1 $Local_Host
-  helm install falco . -n default
+  
+  exist=`helm list | grep falco`
+  if [ "${exist}" == "" ]; then
+	cd $Project_Dir/helm
+	  cp helm /usr/local/bin/helm
+	  chmod +x /usr/local/bin/helm
+	  helm repo add stable http://mirror.azure.cn/kubernetes/charts/
+	  helm repo add falcosecurity https://falcosecurity.github.io/charts
+	  helm repo update
+	  cd $Project_Dir/falco
+	  helm delete falco
+	  falcoLogAddr=$(readConfValue $Project_Dir/conf/app.conf falcoLogUploadAddr)
+	  swpConfValue $Project_Dir/falco/values.yaml 258 false true
+	  swpConfValue $Project_Dir/falco/values.yaml 259 127.0.0.1 $Local_Host
+	  helm install falco . -n default
+  else 
+	 echo "Falco has been installed, Skip!"
+  fi
   echo "--------------------End of Falco installation-----------------------------"
 }
-function readConfValue() {
+function readConfValue(){
   configfile=$1
   key=$2
   ww='"'
@@ -315,14 +321,14 @@ function readConfValue() {
     fi
   done <$configfile
 }
-function swpConfValue() {
+function swpConfValue(){
   configfile=$1
   old=$3
   value=$4
   echo "$2s/$old/$value/" $configfile
   sed -i "$2s/$old/$value/" $configfile
 }
-function setupK3s() {
+function setupK3s(){
   echo "--------------------Start deploying K3S-----------------------------"
   # curl -sfL https://get.k3s.io | sh -
   # K3S 配置修改
@@ -336,7 +342,7 @@ function setupK3s() {
   swpConfValue /etc/rancher/k3s/k3s.yaml 5 127.0.0.1 $Local_Host
   echo \ export KUBECONFIG=/etc/rancher/k3s/k3s.yaml >>/etc/profile
   # 覆盖项目中的k3s 配置
-  # yes | cp -rf /etc/rancher/k3s/k3s.yaml ${Project_Dir}/conf/.kube/config
+  yes | cp -rf /etc/rancher/k3s/k3s.yaml ${Project_Dir}/conf/.kube/config
   source /etc/profile
   sleep 1s
   #exit_if_process_error docker
@@ -344,7 +350,7 @@ function setupK3s() {
   check_k3s_service
 }
 
-function setupRedis() {
+function setupRedis(){
   echo "--------------------Start deploying Redis-----------------------------"
   stop_docker_container_if_exist decept-redis
   rm -f /etc/decept-defense/conf/redis.conf
@@ -365,7 +371,7 @@ function setupRedis() {
   echo "--------------------End of redis installation------------------------------"
 }
 
-function setupDocker() {
+function setupDocker(){
   echo "--------------------Start deploying Docker-----------------------------"
   #  安装依赖包
   sudo yum install -y yum-utils \
@@ -403,10 +409,10 @@ EOF
   sudo systemctl daemon-reload 
   sudo systemctl restart docker
   sleep 1s
-  check_docker_service
+  check_docker_service:
 }
 
-function setupRelayAgent() {
+function setupRelayAgent(){
   echo "--------------------Start deploying protocol agent-----------------------------"
   RelayDir=/home/relay
   
@@ -420,7 +426,7 @@ function setupRelayAgent() {
 			echo "Failed to create folder ${RelayDir}"
 			exit 1
 		else
-			sudo chmod -R 755 ${RelayDir}
+			sudo chmod -R 777 ${RelayDir}
 			echo "Create folder ${RelayDir} successfully"
 		fi
   fi
@@ -465,7 +471,7 @@ function setupProxyFile(){
   fi
 
  cp -r ${Project_Dir}/protocol/* ${ProtocolPath}
- sudo chmod -R 755 /home/ehoney_proxy/
+ sudo chmod -R 777 /home/ehoney_proxy/
  echo "--------------------Protocol file deployment complete-----------------------------"
 }
 
@@ -508,7 +514,7 @@ echo "--------------------End of database container installation----------------
 }
 
 
-function setupDeceptDefence() {
+function setupDeceptDefence(){
   echo "--------------------Start install DeceptDefence-------------------------"
   cd $Project_Dir
   stop_docker_container_if_exist decept-defense-web
@@ -548,7 +554,7 @@ function setupFileTrace(){
 	echo "--------------------End of  FileTrace installation---------------------------"
 }
 
-function setupFileTraceBak2() {
+function setupFileTraceBak2(){
     echo "--------------------Start install FileTrace---------------------------"
     stop_docker_container_if_exist filetrace-msg-service
 	dbUrl=$(readConfValue $Project_Dir/conf/app.conf dbhost)
@@ -562,7 +568,7 @@ function setupFileTraceBak2() {
 	echo "--------------------End of  FileTrace installation---------------------------"
 }
 
-function setupFileTraceBak() {
+function setupFileTraceBak(){
   echo "--------------------Start install FileTrace-----------------------------"
   dbUrl=$(readConfValue $Project_Dir/conf/app.conf dbhost)
   dbPort=$(readConfValue $Project_Dir/conf/app.conf dbport)
@@ -582,25 +588,7 @@ function setupFileTraceBak() {
   echo "--------------------End of  FileTrace installation-----------------------------"
 }
 
-function main() {
-  echo "Notice [If there is a coding problem during startup, Please install dos2unix and execute dos2unix quick-start.sh]"
-  setUpIp
-  Project_Dir=$(
-    cd $(dirname $0)
-    pwd
-  )
-  yum install -y dos2unix
-  prepare_conf
-  ports_check
-  setup_iptables
-  prepare_base_install
-  component_installer
-  echo "----------------------------------------------------------"
-  echo "all the services are ready and happy to use!!!"
-  echo "Please visit url: http://${Local_Host}:${Project_Front_Port}/decept-defense"
-  echo "----------------------------------------------------------"
-}
-function yumRepoUpdate() {
+function yumRepoUpdate(){
   wget http://mirrors.163.com/.help/CentOS7-Base-163.repo
   mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
   mv CentOS7-Base-163.repo /etc/yum.repos.d/CentOS-Base.repo
@@ -608,7 +596,7 @@ function yumRepoUpdate() {
   yum makecache
 }
 
-function getIpAddr() {
+function getIpAddr(){
   # 获取IP命令
   ipaddr=$(ifconfig -a | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}' | tr -d "addr:"​)
   array=($(echo $ipaddr | tr '\n' ' ')) # IP地址分割，区分是否多网卡
@@ -639,8 +627,29 @@ function getIpAddr() {
   fi
 }
 
+function query_file_trace_service(){
+	curl http://localhost:5000/health | grep 'SUCCEED' &> /dev/null
+    if [ $? -ne 0 ];then
+        echo -e "file-trace service is 		\033[032m* Stoped \033[0m"
+    else
+        echo -e "file-trace service is 		\033[032m* Running \033[0m"
+    fi
+}
+
+
+function query_docker_container_status(){
+	containerName=$1
+	exist=`docker inspect --format '{{.State.Running}}' ${containerName}`
+	if [ "${exist}" != "true" ]; then
+		echo -e "${containerName} is 		\033[032m* Stoped \033[0m"
+	else
+		echo -e "${containerName} is 		\033[032m* Running \033[0m"
+	fi
+}
+
+
 # 校验IP地址合法性
-function isValidIp() {
+function isValidIp(){
   local ip=$1
   local ret=1
   if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
@@ -651,7 +660,7 @@ function isValidIp() {
   return $ret
 }
 
-function setUpIp() {
+function setUpIp(){
   getIpAddr               #自动获取IP
   isValidIp ${Local_Host} # IP校验
   if [ $? -ne 0 ]; then
@@ -661,4 +670,143 @@ function setUpIp() {
   echo "The IP used by this machine is set to: ${Local_Host}"
 }
 
-main
+function kill_if_process_exist2(){
+	PROC_NAME=$1
+	echo "--------Start killing $PROC_NAME process and its child processes---------"
+	ProcNumber=`ps -ef | grep $PROC_NAME | grep -v "grep" | awk '{print $2}'`
+	if [ $ProcNumber ];then
+		echo "进程ID: $ProcNumber"
+		kill -9 $ProcNumber
+		echo "--------------------End of killing process---------------------------"
+	fi
+}
+
+function uninstallAll(){
+
+ stop_docker_container_if_exist decept-defense-web
+ 
+ stop_docker_container_if_exist ehoney-mysql
+ 
+ stop_docker_container_if_exist decept-redis
+
+ kill_if_process_exist2 filetracemsg
+
+}
+
+
+function startupAll(){
+  setUpIp
+  Project_Dir=$(
+    cd $(dirname $0)
+    pwd
+  )
+  yum install -y dos2unix
+  prepare_conf
+  replaceConfHost
+  ports_check
+  prepare_base_install
+  component_installer
+  setup_iptables
+  echo "----------------------------------------------------------"
+  echo "all the services are ready and happy to use!!!"
+  echo "Please visit url: http://${Local_Host}:${Project_Front_Port}/decept-defense"
+  echo "----------------------------------------------------------"
+}
+
+  cmd=$1
+  options=$2
+  Project_Dir=$(
+    cd $(dirname $0)
+    pwd
+  )
+  dos2unix $Project_Dir/conf/app.conf >/dev/null
+  clear
+  Local_Host=$(readConfValue $Project_Dir/conf/app.conf apphost)  
+  echo "--------------------------------[${Local_Host}]-------------------------------------------"
+  if [[ "${Local_Host}" == "localhost" ]] || [[ "${Local_Host}" == "" ]]; then
+	setUpIp
+	replaceConfHost
+  fi
+  prepare_conf
+  echo -e "DB_Port: "$DB_Port
+  echo -e "DB_User: "$DB_User
+  echo -e "DB_Database: "$DB_Database
+  echo -e "DB_Password: "$DB_Password 
+  echo -e "REDIS_Port: "$REDIS_Port
+  echo -e "REDIS_Password: "$REDIS_Password 
+  if [ "${cmd}" == "install" ]; then
+	startupAll
+  elif [ "${cmd}" == "uninstall" ]; then
+	uninstallAll
+  elif [[ "${cmd}" == "restart" ]] || [[ "${cmd}" == "start" ]]; then
+	 if [ "${options}" == "db" ]; then
+		stop_docker_container_if_exist ehoney-mysql
+		setupMysqlDockerBak
+	 elif [ "${options}" == "web" ]; then
+		stop_docker_container_if_exist decept-defense-web
+	    setupDeceptDefence
+	 elif [ "${options}" == "redis" ]; then
+		stop_docker_container_if_exist decept-redis
+		setupRedis
+	 elif [ "${options}" == "filetrace" ]; then
+	    kill_if_process_exist2 filetracemsg
+		setupFileTrace
+	 else
+		stop_docker_container_if_exist ehoney-mysql
+		setupMysqlDockerBak
+		
+		stop_docker_container_if_exist decept-redis
+		setupRedis
+		
+		kill_if_process_exist2 filetracemsg
+		setupFileTrace
+		
+		stop_docker_container_if_exist decept-defense-web
+	    setupDeceptDefence
+		
+	 fi
+  elif [ "${cmd}" == "status" ]; then
+	 if [ "${options}" == "db" ]; then
+		query_docker_container_status ehoney-mysql
+	 elif [ "${options}" == "web" ]; then
+		query_docker_container_status decept-defense-web
+	 elif [ "${options}" == "redis" ]; then
+		query_docker_container_status decept-redis
+	 elif [ "${options}" == "filetrace" ]; then
+	    query_file_trace_service
+	 else
+		query_docker_container_status ehoney-mysql
+		query_docker_container_status decept-defense-web
+		query_docker_container_status decept-redis
+		query_file_trace_service
+	 fi
+  elif [ "${cmd}" == "config" ]; then
+    echo "Local_Host:     	${Local_Host}"
+	echo "DB_Port:     	  	${DB_Port}"
+	echo "DB_User:     	  	${DB_User}"
+	echo "DB_Database:    	${DB_Database}"
+	echo "DB_Password:    	${DB_Password}"
+	echo "REDIS_Port:     	${REDIS_Port}"
+	echo "REDIS_Password: 	${REDIS_Password}"
+	
+  else   
+	echo -e "Run the control.sh in this way: \033[032m sh control.sh [cmd] [options] \033[0m"
+	echo "-cmd:"
+	echo "	  install 	  (It means to deploy all the services, but does not include docker, k3s, etc)"
+	echo "	  uninstall   (It means to uninstall all services)"
+	echo "	  restart 	  (It means to restart the specified service)"
+	echo "	  start 	  (It means to start the specified service)"
+	echo "	  staus 	  (It means to detect the state of the specified service)"
+	echo "	  config 	  (It means to list the parameter configurations used)"
+	echo ""
+	echo "-options:"
+	echo "	  web"
+	echo "	  db"
+	echo "	  redis"
+	echo "	  filetrace"
+  fi
+  	echo ""
+	echo "----------------------------------------------------------------------------------"
+	echo ""
+	echo ""
+  

@@ -313,7 +313,7 @@ func CreateApplicationBaitPolicyHandler(w http.ResponseWriter, r *http.Request) 
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyUnmarshalEorrMsg})
 		return
 	}
-	if strings.Contains(bait.Address,"./") || strings.Contains(bait.Address,".\\")  {
+	if strings.Contains(bait.Address, "./") || strings.Contains(bait.Address, ".\\") {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.DirUseError})
 		return
 	}
@@ -399,6 +399,44 @@ func CreateBaitPolicyHandler(agentid string, baitid string, baittype string, bai
 	return
 }
 
+// 删除协议转发 不包含下线功能
+func RemoveHoneyTransPolicyHandler(w http.ResponseWriter, r *http.Request) {
+	var transJson comm.TransOfflineJson
+	body := comhttp.GetPostBody(w, r)
+
+	if body == "" {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyNullMsg})
+		return
+	}
+	if err := json.Unmarshal([]byte(body), &transJson); err != nil {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyUnmarshalEorrMsg})
+		return
+	}
+	policyCenter.DeleteHoneyTransPolicy(transJson.TaskId)
+	comhttp.SendJSONResponse(w, comm.Response{Code: comm.SuccessCode, Data: nil, Message: comm.DataSelectSuccess})
+	return
+}
+
+// 删除透明转发策略
+func RemoveTransPolicyHandler(w http.ResponseWriter, r *http.Request) {
+	// 前端json转换为结构体
+	var transJson comm.TransOfflineJson
+	body := comhttp.GetPostBody(w, r)
+
+	if body == "" {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyNullMsg})
+
+		return
+	}
+	if err := json.Unmarshal([]byte(body), &transJson); err != nil {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyUnmarshalEorrMsg})
+		return
+	}
+	policyCenter.DeleteTransPolicy(transJson.TaskId)
+	comhttp.SendJSONResponse(w, comm.Response{Code: comm.SuccessCode, Data: nil, Message: comm.DataSelectSuccess})
+	return
+}
+
 func DeleteProtocolTypePolicyHandler(agentID string, protocolType string, status int, protocolURL string, fileMD5 string) {
 
 	// 前端json转换成策略结构体
@@ -424,7 +462,6 @@ func DeleteProtocolTypePolicyHandler(agentID string, protocolType string, status
 */
 // 新增诱饵策略，insert数据库，下发策略到Redis,返回taskid
 func DeleteAppBaitPolicyHandler(taskid string, agentid string, baitid string, baittype string, baitdata string, baitpath string, baitstatus int, filemd5 string) {
-
 
 	// 前端json转换成策略结构体
 	var baitPolicyJson comm.BaitPolicyJson
@@ -481,7 +518,7 @@ func CreateApplicationSignPolicyHandler(w http.ResponseWriter, r *http.Request) 
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyUnmarshalEorrMsg})
 		return
 	}
-	if strings.Contains(sign.Address,"./") || strings.Contains(sign.Address,".\\")  {
+	if strings.Contains(sign.Address, "./") || strings.Contains(sign.Address, ".\\") {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.DirUseError})
 		return
 	}
@@ -699,7 +736,7 @@ func SelectAllBaitTypeHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func SelectAllHoneyBaitTypeHandler(w http.ResponseWriter, r *http.Request)  {
+func SelectAllHoneyBaitTypeHandler(w http.ResponseWriter, r *http.Request) {
 	results := policyCenter.SelectAllHoneyBaitType()
 	comhttp.SendJSONResponse(w, comm.Response{Code: comm.SuccessCode, Data: results, Message: comm.DataSelectSuccess})
 	return
@@ -910,9 +947,9 @@ func TestTransPolicyHandler(w http.ResponseWriter, r *http.Request) {
 	if len(transInfo) > 0 {
 		iscon := false
 		ips := util.Strval(transInfo[0]["serverip"])
-		iplist := strings.Split(ips,",")
+		iplist := strings.Split(ips, ",")
 		forwardport := util.Strval(transInfo[0]["forwardport"])
-		if len(iplist) >0 {
+		if len(iplist) > 0 {
 			for _, ip := range iplist {
 				if util.NetConnectTest(ip, forwardport) {
 					iscon = true
@@ -1006,14 +1043,14 @@ func CreateHoneyTransPolicyHandler(w http.ResponseWriter, r *http.Request) {
 						cmdstr := []string{"mkdir", "/root/.ssh"}
 						makeerr := k3s.ExecPodCmd(honeytrans.HoneyPotId, cmdstr)
 						if makeerr != nil {
-							logs.Error("[CreateHoneyTransPolicyHandler] makedir /root/.ssh err:",makeerr)
+							logs.Error("[CreateHoneyTransPolicyHandler] makedir /root/.ssh err:", makeerr)
 							comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: "makedirsshkeyerr", Message: "ssh 蜜罐创建失败"})
 							return
-						}else {
+						} else {
 							cmdstr = []string{"/bin/sh", "-c", "echo " + sshkey + " |  base64 -d > /root/.ssh/authorized_keys"}
 							echosshkeyerr := k3s.ExecPodCmd(honeytrans.HoneyPotId, cmdstr)
 							if echosshkeyerr != nil {
-								logs.Error("[CreateHoneyTransPolicyHandler] write sshkey err:",echosshkeyerr)
+								logs.Error("[CreateHoneyTransPolicyHandler] write sshkey err:", echosshkeyerr)
 								comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: "echosshkeyerr", Message: "ssh 蜜罐创建失败"})
 								return
 							}
@@ -1069,9 +1106,9 @@ func TestHoneyTransPolicyHandler(w http.ResponseWriter, r *http.Request) {
 		if errorcode == 5 {
 			iscon := false
 			ips := util.Strval(transInfo[0]["serverip"])
-			iplist := strings.Split(ips,",")
+			iplist := strings.Split(ips, ",")
 			forwardport := util.Strval(transInfo[0]["forwardport"])
-			if len(iplist) >0  {
+			if len(iplist) > 0 {
 				for _, ip := range iplist {
 					if util.NetConnectTest(ip, forwardport) {
 						iscon = true
@@ -1428,7 +1465,7 @@ func CreateProtocolType(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	typeid := util.GetStrMd5(protocolName)
-	softPath := "/home/sys_admin/" + protocolFileName
+	softPath := "/home/ehoney_proxy/" + protocolFileName
 	createTime := time.Now().Unix()
 	data, msg, msgCode := honeycluster.InsertProtocol(protocolName, typeid, softPath, createTime)
 
@@ -1608,15 +1645,28 @@ func AddHarborConfig(w http.ResponseWriter, r *http.Request) {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "harbor配置只支持单条记录"})
 		return
 	}
-
-	hearders := make(map[string]string)
-	authorizationstr := util.Base64Encode(harborinfo.UserName + ":" + harborinfo.Password)
-	hearders["authorization"] = "Basic " + authorizationstr
-	resp := comhttp.GetResponseByHttp("GET", harborinfo.HarborUrl + "/api/v2.0/projects/" + harborinfo.ProjectName + "/repositories", "", hearders)
-	if resp == nil || resp.StatusCode != 200 {
-		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "harbor连接异常、请检测参数是否设置正确"})
+	harborip := ""
+	harborport := ""
+	harborhost := util.GetHost(harborinfo.HarborUrl)
+	if harborhost != "" {
+		harborhostinfo := strings.Split(harborhost, ":")
+		if len(harborhostinfo) == 1 {
+			harborip = harborhostinfo[0]
+			harborport = "80"
+		} else {
+			harborip = harborhostinfo[0]
+			harborport = harborhostinfo[1]
+		}
+	} else {
+		err := fmt.Errorf("%s", "harhost解析异常")
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: err.Error()})
 		return
 	}
+	if !util.NetConnectTest(harborip, harborport) {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "harbor url网络异常"})
+		return
+	}
+
 	createtime := time.Now().Unix()
 	harborid := util.GetStrMd5("ehoney")
 	data, msg, msgcode := honeycluster.InsertHarborInfo(harborid, harborinfo.HarborUrl, harborinfo.UserName, harborinfo.Password, harborinfo.ProjectName, createtime)
@@ -1886,8 +1936,8 @@ func InsertAttackLogHandler(w http.ResponseWriter, r *http.Request) {
 			if honeyTypeId == "" {
 				honeyTypeId = honeytypeid.(string)
 			}
-			res, err3 := db1.Exec("INSERT INTO attacklog(srchost,srcport,serverid,honeypotid,honeypotport,attackip,attacktime,eventdetail,proxytype,sourcetype,logdata,honeytypeid,country,province) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				srchost, attackLog.SrcPort, serverid, honeypotid, honeyportport, attackLog.AttackHost, attacktime, eventDetail, attackLog.LogType, attackLog.SourceType, logdatas, honeyTypeId, country, province)
+			res, err3 := db1.Exec("INSERT INTO attacklog(srchost,srcport,serverid,honeypotid,honeypotport,attackip,attackport,attacktime,eventdetail,proxytype,sourcetype,logdata,honeytypeid,country,province) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				srchost, attackLog.SrcPort, serverid, honeypotid, honeyportport, attackLog.AttackHost, attackLog.AttackPort, attacktime, eventDetail, attackLog.LogType, attackLog.SourceType, logdatas, honeyTypeId, country, province)
 			if err3 != nil {
 				logs.Error("insert mysql fail: ", err3)
 				comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: fmt.Sprintf("[InsertAttackLogHandler] insert mysql fail: %v", err3)})
@@ -1975,7 +2025,7 @@ func AddPod(w http.ResponseWriter, r *http.Request) {
 	deployment := &unstructured.Unstructured{
 		Object: map[string]interface{}{
 			"apiVersion": "apps/v1",
-			"kind": "Deployment",
+			"kind":       "Deployment",
 			"metadata": map[string]interface{}{
 				"name": podinfo.Name,
 			},
@@ -2084,7 +2134,7 @@ func AddPodv2(w http.ResponseWriter, r *http.Request) {
 	deployment := &unstructured.Unstructured{
 		Object: map[string]interface{}{
 			"apiVersion": "apps/v1",
-			"kind": "Deployment",
+			"kind":       "Deployment",
 			"metadata": map[string]interface{}{
 				"name": podinfo.Name,
 			},
@@ -2324,20 +2374,20 @@ func GetPodImageList() error {
 		harborprojectname := harborinfo[0]["projectname"]
 		harborproject := util.Strval(harborprojectname)
 		harborhost := util.GetHost(harborurl)
-		if harborhost != ""  {
-			harborhostinfo := strings.Split(harborhost,":")
+		if harborhost != "" {
+			harborhostinfo := strings.Split(harborhost, ":")
 			if len(harborhostinfo) == 1 {
 				harborip = harborhostinfo[0]
 				harborport = "80"
-			}else {
+			} else {
 				harborip = harborhostinfo[0]
 				harborport = harborhostinfo[1]
 			}
-		}else {
+		} else {
 			err := fmt.Errorf("%s", "harhost解析异常")
 			return err
 		}
-		if util.NetConnectTest(harborip,harborport){
+		if util.NetConnectTest(harborip, harborport) {
 			harborUname := util.Strval(harborinfo[0]["username"])
 			harborPwd := util.Strval(harborinfo[0]["password"])
 			hearders := make(map[string]string)
@@ -2386,7 +2436,7 @@ func GetPodImageList() error {
 			err := fmt.Errorf("%s", "harbor 网络异常")
 			return err
 		}
-	}else {
+	} else {
 		err := fmt.Errorf("%s", "harbor记录为空")
 		return err
 	}
@@ -2716,15 +2766,15 @@ func CreateHoneyBaitPolicyHandler(w http.ResponseWriter, r *http.Request) {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyUnmarshalEorrMsg})
 		return
 	}
-	if strings.Contains(honeybait.Address,"./") || strings.Contains(honeybait.Address,".\\")  {
+	if strings.Contains(honeybait.Address, "./") || strings.Contains(honeybait.Address, ".\\") {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.DirUseError})
 		return
 	}
 	honeypotid := honeybait.HoneypotId
 	honeypotinfo := honeycluster.SelectHoneyInfoById(honeypotid)
 	honeybaitdespath := honeybait.Address
-	honeybaitdespath =	strings.ReplaceAll(honeybaitdespath, "'","''")
-	baitdespathcheckcmdstr := []string{"/bin/sh", "-c", "find '" + honeybaitdespath +"'"}
+	honeybaitdespath = strings.ReplaceAll(honeybaitdespath, "'", "''")
+	baitdespathcheckcmdstr := []string{"/bin/sh", "-c", "find '" + honeybaitdespath + "'"}
 	checkerr := k3s.ExecPodCmd(honeypotid, baitdespathcheckcmdstr)
 	if checkerr != nil {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: honeybaitdespath + " 目录不存在"})
@@ -2820,8 +2870,8 @@ func CreateHoneyBaitPolicyHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-	baitdespath = strings.ReplaceAll(baitdespath, "'","''")
-	cmdstr := []string{"/bin/sh", "-c", "find '" + baitdespath +"'"}
+	baitdespath = strings.ReplaceAll(baitdespath, "'", "''")
+	cmdstr := []string{"/bin/sh", "-c", "find '" + baitdespath + "'"}
 	err = k3s.ExecPodCmd(honeypotid, cmdstr)
 	if err != nil {
 		logs.Error("[CreateHoneyBaitPolicyHandler] err:", err)
@@ -2935,8 +2985,8 @@ func DeleteHoneyBaitPolicyHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 		}
-		baitfilepath = strings.ReplaceAll(baitfilepath,"'","''")
-		cmdstr := []string{"/bin/sh", "-c", "find '" + baitfilepath +"'"}
+		baitfilepath = strings.ReplaceAll(baitfilepath, "'", "''")
+		cmdstr := []string{"/bin/sh", "-c", "find '" + baitfilepath + "'"}
 		err = k3s.ExecPodCmd(honeypotid, cmdstr)
 		if err != nil {
 			deletebaitstatus = 5
@@ -2966,7 +3016,7 @@ func CreateHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyUnmarshalEorrMsg})
 		return
 	}
-	if strings.Contains(honeysign.Address,"./") || strings.Contains(honeysign.Address,".\\") {
+	if strings.Contains(honeysign.Address, "./") || strings.Contains(honeysign.Address, ".\\") {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.DirUseError})
 		return
 	}
@@ -2974,8 +3024,8 @@ func CreateHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 	honeypotid := honeysign.HoneypotId
 	honeypotinfo := honeycluster.SelectHoneyInfoById(honeypotid)
 	honeysigndespath := honeysign.Address
-	honeysigndespath = strings.ReplaceAll(honeysigndespath,"'","''")
-	signdespathcheckcmdstr := []string{"/bin/sh", "-c", "find '" + honeysigndespath +"'"}
+	honeysigndespath = strings.ReplaceAll(honeysigndespath, "'", "''")
+	signdespathcheckcmdstr := []string{"/bin/sh", "-c", "find '" + honeysigndespath + "'"}
 	checkerr := k3s.ExecPodCmd(honeypotid, signdespathcheckcmdstr)
 	if checkerr != nil {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: honeysigndespath + " 目录不存在"})
@@ -3027,7 +3077,7 @@ func CreateHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			var Suffix = regexp.MustCompile(`.(ppt|pptx|doc|docx|pdf|xls|xlsx)$`)
 			if len(Suffix.FindString(signfilename)) > 0 {
-				err :=honeytoken.DoFileSignTrace(signfilename, signfilename, signsourcepath, signfilepath, traceurl)
+				err := honeytoken.DoFileSignTrace(signfilename, signfilename, signsourcepath, signfilepath, traceurl)
 				if err != nil {
 					error := util.CopyDir(signsourcepath, signfilepath)
 					if error != nil {
@@ -3104,8 +3154,8 @@ func CreateHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 		}
-		signdespath = strings.ReplaceAll(signdespath,"'","''")
-		cmdstr := []string{"/bin/sh", "-c", "find '" + signdespath +"'"}
+		signdespath = strings.ReplaceAll(signdespath, "'", "''")
+		cmdstr := []string{"/bin/sh", "-c", "find '" + signdespath + "'"}
 		err = k3s.ExecPodCmd(honeypotid, cmdstr)
 		if err != nil {
 			logs.Error("[CreateHoneySignPolicyHandler] err:", err)
@@ -3115,7 +3165,7 @@ func CreateHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		createtime := time.Now().Unix()
 
-		datas, msg, _ := honeycluster.InsertHonetSign(createsignstatus, taskid, honeysign.SignId, signdespath , honeysign.HoneypotId, createtime, "admin", tracecode)
+		datas, msg, _ := honeycluster.InsertHonetSign(createsignstatus, taskid, honeysign.SignId, signdespath, honeysign.HoneypotId, createtime, "admin", tracecode)
 		comhttp.SendJSONResponse(w, comm.Response{Code: 0, Data: datas, Message: msg})
 	} else {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "SignType is needed!"})
@@ -3258,8 +3308,8 @@ func DeleteHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 		}
-		signfilepath = strings.ReplaceAll(signfilepath,"'","''")
-		cmdstr := []string{"/bin/sh", "-c", "find '" + signfilepath +"'"}
+		signfilepath = strings.ReplaceAll(signfilepath, "'", "''")
+		cmdstr := []string{"/bin/sh", "-c", "find '" + signfilepath + "'"}
 		err = k3s.ExecPodCmd(honeypotid, cmdstr)
 		if err != nil {
 			deletesignstatus = 5

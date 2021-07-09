@@ -1137,6 +1137,12 @@ func GetAttackLogListMysqlJson(rows *sql.Rows, columns []string, all int, values
 				} else {
 					cell = fmt.Sprintf(`"attackIP":"%s"`, value)
 				}
+			} else if columName == "probeip" {
+				if value == "" || value == "NULL" {
+					cell = fmt.Sprintf(`"probeIp":""`)
+				} else {
+					cell = fmt.Sprintf(`"probeIp":"%s"`, value)
+				}
 			} else if columName == "country" {
 				if value != "" && value != "NULL" {
 					location += value
@@ -2435,7 +2441,7 @@ func GetHoneySignsListMysqlJson(rows *sql.Rows, columns []string, all int, value
 				} else {
 					cell = fmt.Sprintf(`"signinfo":"%s"`, value)
 				}
-			}  else if columName == "signfilename" {
+			} else if columName == "signfilename" {
 				if value == "" || value == "NULL" {
 					cell = fmt.Sprintf(`"signfilename":""`)
 				} else {
