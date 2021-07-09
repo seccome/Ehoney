@@ -91,7 +91,6 @@ func makeRouter() *mux.Router {
 	api.HandleFunc("/applicationsignpolicydelete", DeleteApplicationSignPolicyHandler)
 	api.HandleFunc("/downloadapplicationsign", DownloadApplicationSignPolicyHandler)
 
-
 	/*策略管理*/
 	/*诱饵策略管理*/
 	api.HandleFunc("/baitPolicyDelete", DeleteBaitPolicyHandler)
@@ -99,16 +98,17 @@ func makeRouter() *mux.Router {
 	api.HandleFunc("/getAllBaitType", SelectAllBaitTypeHandler)
 	api.HandleFunc("/getallhoneybaittype", SelectAllHoneyBaitTypeHandler)
 
-
 	/*透明转发策略管理*/
 	api.HandleFunc("/transPolicyAdd", CreateTransPolicyHandler)
 	api.HandleFunc("/transPolicyDelete", DeleteTransPolicyHandler)
+	api.HandleFunc("/transPolicyRemove ", RemoveTransPolicyHandler)
 	api.HandleFunc("/transPolicySelectAgentId", SelectTransPolicyHandler)
 	api.HandleFunc("/transpolicytest", TestTransPolicyHandler)
 
 	/*协议转发策略管理*/
 	api.HandleFunc("/honeytranspolicyadd", CreateHoneyTransPolicyHandler)
 	api.HandleFunc("/honeytranspolicydelete", DeleteHoneyTransPolicyHandler)
+	api.HandleFunc("/honeytransPolicyRemove", RemoveHoneyTransPolicyHandler)
 	api.HandleFunc("/honeytranspolicyselectagentid", SelectHoneyTransPolicyHandler)
 	api.HandleFunc("/honeytranspolicytest", TestHoneyTransPolicyHandler)
 

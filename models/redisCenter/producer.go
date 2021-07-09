@@ -242,6 +242,7 @@ func (rs *redisServer) TransEventListen(pool *redis.Pool, key string) {
 			destport := gjson.Get(data, "DestPort")
 			eventtime := gjson.Get(data, "EventTime")
 			proxytype := gjson.Get(data, "ProxyType")
+			exportport := gjson.Get(data, "ExportPort")
 			serverip := ""
 			honeypotid := ""
 			honeypotport := ""
@@ -259,7 +260,8 @@ func (rs *redisServer) TransEventListen(pool *redis.Pool, key string) {
 			}
 			hport, _ := strconv.Atoi(honeypotport)
 			bport, _ := strconv.Atoi(bindport.Raw)
-			policyCenter.InsertAttackLog(proxytype.Str, serverip, bport, util.GetIP(sourceaddr.Str), honeypotid, hport, honeytypeid, eventtime.Int())
+			eport, _ := strconv.Atoi(exportport.Raw)
+			policyCenter.InsertAttackLog(proxytype.Str, serverip, bport, util.GetIP(sourceaddr.Str), honeypotid, hport, honeytypeid, eventtime.Int(), eport)
 
 		case redis.Subscription: //Subscribe一个Channel时
 			fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
