@@ -790,7 +790,7 @@ function startupAll(){
 	echo "REDIS_Password: 	${REDIS_Password}"
 	
   else   
-	echo -e "Run the control.sh in this way: \033[032m sh control.sh [cmd] [options] \033[0m"
+	echo -e "Run the manage.sh in this way: \033[032m sh manage.sh [cmd] [options] \033[0m"
 	echo "-cmd:"
 	echo "	  install 	  (It means to deploy all the services, but does not include docker, k3s, etc)"
 	echo "	  uninstall   (It means to uninstall all services)"
