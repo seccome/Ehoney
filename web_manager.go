@@ -559,7 +559,7 @@ func CreateApplicationSignPolicyHandler(w http.ResponseWriter, r *http.Request) 
 			traceurl = fmt.Sprintf("http://%s/api/msgreceive?tracecode=%s", tracehost, tracecode)
 		}
 		signinfoname := datas[0]["signinfo"].(string)
-		var Suffix = regexp.MustCompile(`.(ppt|pptx|doc|docx|pdf|xls|xlsx)$`)
+		var Suffix = regexp.MustCompile(`.(pptx|docx|pdf|xlsx)$`)
 		if len(Suffix.FindString(signinfoname)) > 0 {
 
 			err := honeytoken.DoFileSignTrace(signinfoname, signinfoname, signsourcepath, signfilepath, traceurl)
@@ -3086,7 +3086,7 @@ func CreateHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 				comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "密签目录创建失败"})
 				return
 			}
-			var Suffix = regexp.MustCompile(`.(ppt|pptx|doc|docx|pdf|xls|xlsx)$`)
+			var Suffix = regexp.MustCompile(`.(pptx|docx|pdf|xlsx)$`)
 			if len(Suffix.FindString(signfilename)) > 0 {
 				err := honeytoken.DoFileSignTrace(signfilename, signfilename, signsourcepath, signfilepath, traceurl)
 				if err != nil {
@@ -3769,7 +3769,7 @@ func SignFileUpload(r *http.Request, signname string) (string, error, bool) {
 	}
 	defer file.Close()
 	filename := handler.Filename
-	if path.Ext(filename) == ".doc" || path.Ext(filename) == ".docx" || path.Ext(filename) == ".pdf" || path.Ext(filename) == ".ppt" || path.Ext(filename) == ".pptx" || path.Ext(filename) == ".xls" || path.Ext(filename) == ".xlsx" {
+	if  path.Ext(filename) == ".docx" || path.Ext(filename) == ".pdf" || path.Ext(filename) == ".pptx" || path.Ext(filename) == ".xlsx" {
 		err = os.MkdirAll("upload/honeytoken/", os.ModePerm)
 		if err != nil {
 			isfalse = true
