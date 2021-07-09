@@ -1784,14 +1784,22 @@ func InsertAttackLogHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := util.GetLocationByIP(attackLog.AttackHost)
-	if err != nil{
-		logs.Error("get location error: %v\n", err)
-		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: fmt.Sprintf("get location error %v", err)})
-		return
+	country := ""
+	province := ""
+
+	if util.IsLocalIP(attackLog.AttackHost){
+		country = "局域网"
+		province = "局域网"
+	}else{
+		result, err := util.GetLocationByIP(attackLog.AttackHost)
+		if err != nil{
+			logs.Error("get location error: %v\n", err)
+			comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: fmt.Sprintf("get location error %v", err)})
+			return
+		}
+		country = result.Country_long
+		province = result.City
 	}
-	country := result.Country_long
-	province := result.City
 
 	honeymaps := honeycluster.SelectHoneyPotByIp(attackLog.DstHost)
 	if len(honeymaps) > 0 {
