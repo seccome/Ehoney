@@ -1251,7 +1251,7 @@ func SelectAttackLogDetail(id int, honeytypeid string, srchost string, attackip 
 	DbCon := sqlCon
 	defer sqlCon.Close()
 	sqltotal := "select count(1) from `attacklog` T0 left join `honeypotservers` T1 on T1.`serverid` = T0.`serverid` left join `honeypotstype` T2 on T2.`typeid` = T0.`honeytypeid` where 1=1"
-	sqlstr := "select T0.`srchost`,T0.`srcport`,T0.`attackip`,T0.`attacktime`,T0.`honeypotport`,T0.`logdata`,T0.`eventdetail`,T1.`serverip`,T2.`honeypottype`, T3.honeyip from `attacklog` T0 left join `honeypotservers` T1 on T1.`serverid` = T0.`serverid` left join `honeypotstype` T2 on T2.`typeid` = T0.`honeytypeid` LEFT JOIN honeypots T3 ON T0.honeypotid = T3.honeypotid where 1=1"
+	sqlstr := "select T0.`srchost`,T0.`srcport`,T.`attackip`,T0.`attacktime`,T0.`honeypotport`,T0.`logdata`,T0.`eventdetail`,T1.`serverip`,T2.`honeypottype`, T3.honeyip from `attacklog` T0 left JOIN `attacklog` T ON T0.attackip = T.srchost left join `honeypotservers` T1 on T1.`serverid` = T0.`serverid` left join `honeypotstype` T2 on T2.`typeid` = T0.`honeytypeid` LEFT JOIN honeypots T3 ON T0.honeypotid = T3.honeypotid where 1=1 AND T0.attackport = T.exportport"
 
 	var condition string
 	var argsList []interface{}
