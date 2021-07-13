@@ -2,7 +2,8 @@
   <img width="200px" src="./doc/img/logo_ehoney_black.svg" alt="Ehoney" />
   <br/>
   <br/>
-  <h1 align="center">Welcome To Ehoney 👋</h1>
+  <br> 中文 | <a href="README-EN.md">English</a>
+  <h1 align="center">欢迎来到Ehoney 👋</h1>
   <br/>
   <p align="center">
   <img align="center" src="https://img.shields.io/badge/release-v1.0.0-green" />
@@ -54,7 +55,7 @@
 
 <br>
 
- 
+
 ## 🔧 快速部署
 
 ```shell
