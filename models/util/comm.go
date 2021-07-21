@@ -73,7 +73,7 @@ func GetCurrentPathString() string {
 }
 
 func ModifyFile(sys, newpath string, newbaitpath string, baitname string, baitfilename string) {
-
+	logs.Info("[%s],[%s],[%s],[%s],[%s]", sys, newpath, newbaitpath, baitname, baitfilename)
 	var pocpath string
 	var fileName string
 	if sys == "Windows" {
@@ -124,6 +124,7 @@ func ModifyFile(sys, newpath string, newbaitpath string, baitname string, baitfi
 			}
 
 			newLine := strings.Replace(string(line), "FilepathToSubstitution", newbaitpath+slash+baitfilename, -1)
+			logs.Info("newline: %s", newLine)
 			_, err = out.WriteString(newLine + "\n")
 			if err != nil {
 				logs.Error("ModifyFile write to file fail:", err)
@@ -131,6 +132,7 @@ func ModifyFile(sys, newpath string, newbaitpath string, baitname string, baitfi
 			}
 		} else if find := strings.Contains(string(line), "SourcePathToSubstitution"); find {
 			newLine := strings.Replace(string(line), "SourcePathToSubstitution", baitfilename, -1)
+			logs.Info("newline: %s", newLine)
 			_, err = out.WriteString(newLine + "\n")
 			if err != nil {
 				logs.Error("ModifyFile write to file fail:", err)

@@ -1,7 +1,7 @@
 
 set BASE_DIR=%~dp0
-set Filepath=D:\\admin.sql
-set Sourcepath=%BASE_DIR%\admin.sql
+set Filepath=FilepathToSubstitution
+set Sourcepath=%BASE_DIR%SourcePathToSubstitution
 echo %BASE_DIR%
 
 if exist %Filepath% (
