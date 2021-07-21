@@ -1403,6 +1403,12 @@ func GetApplicationClustersListMysqlJson(rows *sql.Rows, columns []string, all i
 				} else {
 					cell = fmt.Sprintf(`"serverip":"%s"`, value)
 				}
+			} else if columName == "sys" {
+				if value == "" || value == "NULL" {
+					cell = fmt.Sprintf(`"sys":""`)
+				} else {
+					cell = fmt.Sprintf(`"sys":"%s"`, value)
+				}
 			} else if columName == "serverid" {
 				if value == "" || value == "NULL" {
 					cell = fmt.Sprintf(`"serverid":""`)

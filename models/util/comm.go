@@ -45,7 +45,7 @@ func IsLocalIP(ip string) bool {
 	return false
 }
 
-func GetLocationByIP(ip string) (*ip2location.IP2Locationrecord, error){
+func GetLocationByIP(ip string) (*ip2location.IP2Locationrecord, error) {
 	db, err := ip2location.OpenDB("./data/IP2LOCATION-LITE-DB.BIN")
 	if err != nil {
 		fmt.Print(err)
@@ -72,9 +72,18 @@ func GetCurrentPathString() string {
 	return path
 }
 
-func ModifyFile(newpath string, newbaitpath string, baitname string, baitfilename string) {
-	pocpath := GetCurrentPathString() + "/policy/"
-	fileName := "install.sh"
+func ModifyFile(sys, newpath string, newbaitpath string, baitname string, baitfilename string) {
+
+	var pocpath string
+	var fileName string
+	if sys == "Windows" {
+		pocpath = GetCurrentPathString() + "/policy/windows/"
+		fileName = "install.bat"
+	} else {
+		pocpath = GetCurrentPathString() + "/policy/linux/"
+		fileName = "install.sh"
+	}
+
 	pocpath = pocpath + fileName
 	in, err := os.Open(pocpath)
 	if err != nil {
@@ -108,15 +117,20 @@ func ModifyFile(newpath string, newbaitpath string, baitname string, baitfilenam
 			fmt.Println("read err:", err)
 			//os.Exit(-1)
 		}
-		if find := strings.Contains(string(line), "7779f3be0bbddcf3d9f4870d44629681"); find {
-			newLine := strings.Replace(string(line), "7779f3be0bbddcf3d9f4870d44629681", newbaitpath+"/"+baitfilename, -1)
+		if find := strings.Contains(string(line), "FilepathToSubstitution"); find {
+			slash := "/"
+			if sys == "Windows" {
+				slash = "\\"
+			}
+
+			newLine := strings.Replace(string(line), "FilepathToSubstitution", newbaitpath+slash+baitfilename, -1)
 			_, err = out.WriteString(newLine + "\n")
 			if err != nil {
 				logs.Error("ModifyFile write to file fail:", err)
 				fmt.Println("write to file fail:", err)
 			}
-		} else if find := strings.Contains(string(line), "6669f3be0bbddcf3d9f4870d44629681"); find {
-			newLine := strings.Replace(string(line), "6669f3be0bbddcf3d9f4870d44629681", baitfilename, -1)
+		} else if find := strings.Contains(string(line), "SourcePathToSubstitution"); find {
+			newLine := strings.Replace(string(line), "SourcePathToSubstitution", baitfilename, -1)
 			_, err = out.WriteString(newLine + "\n")
 			if err != nil {
 				logs.Error("ModifyFile write to file fail:", err)
@@ -129,16 +143,23 @@ func ModifyFile(newpath string, newbaitpath string, baitname string, baitfilenam
 				fmt.Println("write to file fail:", err)
 			}
 		}
-		// fmt.Println("done ", index)
-		// index++
 	}
 	fmt.Println("FINISH!")
 
 }
 
-func ModifySignUninstallFile(newpath string, baitname string) {
-	pocpath := GetCurrentPathString() + "/policy/uninstall/"
-	fileName := "install.sh"
+func ModifySignUninstallFile(sys, newpath string, baitname string) {
+
+	logs.Info("ModifySignUninstallFile sys:%s newpath: %s, baitname: %s", sys, newpath, baitname)
+	var pocpath string
+	var fileName string
+	if sys == "Windows" {
+		pocpath = GetCurrentPathString() + "/policy/windows/uninstall/"
+		fileName = "install.bat"
+	} else {
+		pocpath = GetCurrentPathString() + "/policy/linux/uninstall/"
+		fileName = "install.sh"
+	}
 	pocpath = pocpath + fileName
 	in, err := os.Open(pocpath)
 	if err != nil {
@@ -182,9 +203,18 @@ func ModifySignUninstallFile(newpath string, baitname string) {
 
 }
 
-func ModifyUninstallFile(newpath string, baitname string) {
-	pocpath := GetCurrentPathString() + "/policy/uninstall/"
-	fileName := "install.sh"
+func ModifyUninstallFile(sys, newpath string, baitname string) {
+
+	var pocpath string
+	var fileName string
+	if sys == "Windows" {
+		pocpath = GetCurrentPathString() + "/policy/windows/uninstall/"
+		fileName = "install.bat"
+	} else {
+		pocpath = GetCurrentPathString() + "/policy/linux/uninstall/"
+		fileName = "install.sh"
+	}
+
 	pocpath = pocpath + fileName
 	in, err := os.Open(pocpath)
 	if err != nil {
@@ -211,7 +241,7 @@ func ModifyUninstallFile(newpath string, baitname string) {
 		if err != nil {
 			logs.Error("[ModifyUninstallFile] read err:", err)
 		}
-		newLine := strings.Replace(string(line), "8889f3be0bbddcf3d9f4870d44629681", newpath, -1)
+		newLine := strings.Replace(string(line), "FilepathToSubstitution", newpath, -1)
 		_, err = out.WriteString(newLine + "\n")
 		if err != nil {
 			logs.Error("[ModifyUninstallFile] write to file fail:", err)
@@ -568,6 +598,15 @@ func UntarAll(reader io.Reader, destDir, prefix string) error {
 	return nil
 }
 
+func GetIp2(srcip string) string {
+	if strings.Index(srcip, ":") > -1 {
+		ipParts := strings.Split(srcip, ":")
+		return ipParts[0]
+	}
+
+	return srcip
+}
+
 func GetIP(srcip string) string {
 	resultip := ""
 	ipRegexp := regexp.MustCompile(`^?([^:]*)`)
@@ -624,7 +663,6 @@ func NetConnectTest(host string, port string) bool {
 	}
 	return iscon
 }
-
 
 func DoStr(str string) string {
 	var a = []byte(str)

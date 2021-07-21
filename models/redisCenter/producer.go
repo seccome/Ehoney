@@ -202,6 +202,13 @@ func (rs *redisServer) ServerHeartBeatListen(pool *redis.Pool, key string) {
 			ips := gjson.Get(data, "IPs")
 			servername := gjson.Get(data, "HostName")
 			servertype := gjson.Get(data, "Type")
+			sys := gjson.Get(data, "Sys")
+			var system string
+			if sys.Str == "" {
+				system = "Linux"
+			} else {
+				system = sys.Str
+			}
 			timenow := time.Now().Unix()
 			status1 := 0
 			if status.Str == "running" {
@@ -209,7 +216,7 @@ func (rs *redisServer) ServerHeartBeatListen(pool *redis.Pool, key string) {
 			}
 			if strings.ToLower(servertype.Str) == "edge" {
 				//fmt.Println(fmt.Println("EDGE data：", data))
-				honeycluster.ServerHeartBeatAct(agentid.Str, status1, ips.Str, servername.Str, timenow)
+				honeycluster.ServerHeartBeatAct(agentid.Str, system, status1, ips.Str, servername.Str, timenow)
 			} else if strings.ToLower(servertype.Str) == "relay" {
 				//fmt.Println(fmt.Println("RELAY data：", data))
 				honeycluster.HoneyServerHeartBeatAct(agentid.Str, status1, ips.Str, servername.Str, timenow)
@@ -261,7 +268,7 @@ func (rs *redisServer) TransEventListen(pool *redis.Pool, key string) {
 			hport, _ := strconv.Atoi(honeypotport)
 			bport, _ := strconv.Atoi(bindport.Raw)
 			eport, _ := strconv.Atoi(exportport.Raw)
-			policyCenter.InsertAttackLog(proxytype.Str, serverip, bport, util.GetIP(sourceaddr.Str), honeypotid, hport, honeytypeid, eventtime.Int(), eport)
+			policyCenter.InsertAttackLog(proxytype.Str, serverip, bport, util.GetIp2(sourceaddr.Str), honeypotid, hport, honeytypeid, eventtime.Int(), eport)
 
 		case redis.Subscription: //Subscribe一个Channel时
 			fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)

@@ -11,7 +11,6 @@ import (
 	"decept-defense/models/util"
 	"decept-defense/models/util/comhttp"
 	"decept-defense/models/util/comm"
-	"decept-defense/models/util/k3s"
 	"flag"
 	"fmt"
 	"github.com/astaxie/beego"
@@ -43,11 +42,15 @@ func makeRouter() *mux.Router {
 	/*管理员登录*/
 	r.HandleFunc("/deceptdefense/api/login", AdminLogin)
 	r.HandleFunc("/deceptdefense/api/logout", AdminLogout)
+	/*更新管理员密码*/
+	r.HandleFunc("/deceptdefense/api/passwordupdate", AdminUpdatePassword)
 
 	/*镜像列表更新*/
 	r.HandleFunc("/deceptdefense/api/refreshimages", RefreshImages)
 
 	r.HandleFunc("/deceptdefense/api/agent/download", Download)
+
+	r.HandleFunc("/deceptdefense/api/agent/downloadwin", DownloadWindowsAgent)
 
 	//add route for 思瀚
 	r.HandleFunc("/deceptdefense/api/dbportmap", controllers.Map)
@@ -63,8 +66,13 @@ func makeRouter() *mux.Router {
 
 	r.HandleFunc("/deceptdefense/api/insertAttackLog", InsertAttackLogHandler)
 
+	r.HandleFunc("/deceptdefense/api/getAttackLog", GetAttackLogListByIp)
+
 	/*SSH Key 插入*/
 	r.HandleFunc("/deceptdefense/api/insertsshkey", InsertSSHKeyHandler)
+
+	/*反制攻击者信息 插入*/
+	r.HandleFunc("/deceptdefense/api/ainfo", InsertAttackInfo)
 
 	/*服务器心跳*/
 	r.HandleFunc("/deceptdefense/api/getapplocationssignmsg", ApplicationSignMsgHandler)
@@ -300,7 +308,7 @@ func initiLogger() {
 	// 根据心跳注册主机
 	go redisCenter.RedisPubConsumerServerRegResponse()
 
-	go k3s.FreshPods()
+	//go k3s.FreshPods()
 	return
 }
 

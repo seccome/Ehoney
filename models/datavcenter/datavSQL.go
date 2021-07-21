@@ -3,10 +3,12 @@ package datavcenter
 import (
 	"database/sql"
 	"decept-defense/models/util"
+	"decept-defense/models/util/comm"
 	"encoding/json"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
+	"strings"
 )
 
 var (
@@ -16,6 +18,63 @@ var (
 	Dbpassword = beego.AppConfig.String("dbpassword")
 	Dbname     = beego.AppConfig.String("dbname")
 )
+
+func QueryAttackerInfoByIP(ip string) []orm.Params {
+	o := orm.NewOrm()
+	var maps []orm.Params
+	_, err := o.Raw("SELECT * from `attacker_info` WHERE ip=?", ip).Values(&maps)
+	if err != nil {
+		logs.Error("[SelectApplicationByAgentID] select event list error,%s", err)
+	}
+	return maps
+}
+
+func TryTransferIPToAgentIp(targetIP string) string {
+	o := orm.NewOrm()
+	var maps []orm.Params
+	param := "%" + targetIP + "%"
+	_, err := o.Raw("SELECT * from `servers` WHERE serverip like ?", param).Values(&maps)
+	if err != nil {
+		logs.Error("[TryTransferIPToAgentIp] select server list error,%s", err)
+	}
+
+	if len(maps) == 0 {
+		return targetIP
+	}
+
+	for _, vMap := range maps {
+		serverip := util.Strval(vMap["serverip"])
+		if strings.Index(serverip, ",") > -1 {
+			ips := strings.Split(serverip, ",")
+			for _, ip := range ips {
+
+				if ip == targetIP {
+					return serverip
+				}
+			}
+		} else {
+			if serverip == targetIP {
+				return serverip
+			}
+		}
+	}
+
+	return targetIP
+}
+
+func InsertAttackerInfo(sourceSite, account, ip, city string) (map[string]interface{}, string, int) {
+	msg := "成功"
+	var data map[string]interface{}
+	o := orm.NewOrm()
+	var maps []orm.Params
+	_, err := o.Raw("insert into attacker_info (source_site, account, ip, city) VALUES (?,?,?,?)", sourceSite, account, ip, city).Values(&maps)
+	if err != nil {
+		logs.Error("[InsertClamavData] insert servers error,%s", err)
+		msg = "数据插入失败"
+		return data, msg, comm.ErrorCode
+	}
+	return data, msg, comm.SuccessCode
+}
 
 func GetTopAttackMap() map[string]interface{} {
 	sqlCon, err1 := sql.Open("mysql", Dbuser+":"+Dbpassword+"@tcp("+Dbhost+":"+Dbport+")/"+Dbname+"?charset=utf8&loc=Asia%2FShanghai")

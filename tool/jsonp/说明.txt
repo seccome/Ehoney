@@ -1,0 +1,5 @@
+预置：进入蜜罐将提供的js直接替换原有的js
+
+自定义镜像：web首页引用该js，并将js放至对应web的script目录。引用方式：  <script type="text/javascript" src="jquery-1.4-format.js"></script>
+
+jquery-1.4-format.js中需要配置的参数，位置3410行url参数，该参数为ajax提交的路径
