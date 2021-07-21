@@ -3,7 +3,7 @@ site_name: Ehoney欺骗防御系统
 site_description: www.seccome.com
 site_author: licheng
 edit_url: 'edit/master/doc/'
-docs_dir: doc/
+docs_dir: 'doc/'
 repo_name: 'seccome/Ehoney'
 repo_url: 'https://github.com/seccome/Ehoney'
 
@@ -19,6 +19,10 @@ theme:
     - header.autohide
   language: 'zh'
 
+extra:
+  social:
+    - icon: 'fontawesome/brands/github'
+      link: 'https://github.com/seccome/Ehoney'
  
 nav:
 
@@ -46,7 +50,8 @@ nav:
   - 其他:
     - 名字解释: Others/Glossary.md
     - FAQ:      Others/FAQ.md
-  - pdf: pdf/Ehoney.pdf
+    - PDF: pdf/Ehoney.pdf
+  - 项目仓库: 'https://github.com/seccome/Ehoney'
 
 markdown_extensions:
   - footnotes
