@@ -291,7 +291,7 @@ function setupFalco(){
   
   exist=`helm list | grep falco`
   if [ "${exist}" == "" ]; then
-	cd $Project_Dir/helm
+	  cd $Project_Dir/helm
 	  cp helm /usr/local/bin/helm
 	  chmod +x /usr/local/bin/helm
 	  helm repo add stable http://mirror.azure.cn/kubernetes/charts/
