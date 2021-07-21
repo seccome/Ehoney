@@ -2,7 +2,8 @@
   <img width="200px" src="./doc/img/logo_ehoney_black.svg" alt="Ehoney" />
   <br/>
   <br/>
-  <h1 align="center">Welcome To Ehoney 👋</h1>
+  <br> 中文 | <a href="README-EN.md">English</a>
+  <h1 align="center">欢迎来到Ehoney 👋</h1>
   <br/>
   <p align="center">
   <img align="center" src="https://img.shields.io/badge/release-v1.0.0-green" />
@@ -13,7 +14,8 @@
 </p>
 
 
-> ⭐️ Seccome Teamer积累十几年的安全经验，都将对外逐步开放，首开的Ehoney欺骗防御系统，该系统是基于云原生的欺骗防御系统，也是业界唯一开源的对标商业系统的产品，欺骗防御系统通过部署高交互高仿真蜜罐及流量代理转发，再结合自研密签及诱饵，将攻击者攻击引导到蜜罐中达到扰乱引导以及延迟攻击的效果，可以很大程度上保护业务的安全。`护网必备良药`⭐️   
+> ⭐️ Seccome Teamer积累十几年的安全经验，都将对外逐步开放，首开的Ehoney欺骗防御系统，该系统是基于云原生的欺骗防御系统，也是业界唯一开源的对标商业系统的产品，欺骗防御系统通过部署高交互高仿真蜜罐及流量代理转发，再结合自研密签及诱饵，将攻击者攻击引导到蜜罐中达到扰乱引导以及延迟攻击的效果，可以很大程度上保护业务的安全。`护网必备良药`，该平台只提供安全技术防护能力，任何人不得用于任何不法行为⭐️   
+
 
 ![介绍视频](./doc/img/介绍.gif)
 
@@ -54,7 +56,7 @@
 
 <br>
 
- 
+
 ## 🔧 快速部署
 
 ```shell
