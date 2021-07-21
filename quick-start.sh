@@ -287,19 +287,24 @@ function setupFalco() {
     cd $(dirname $0)
     pwd
   )
-  echo "start setup falco"
-  cp helm /usr/local/bin/helm
-  chmod +x /usr/local/bin/helm
-  cd $Project_Dir/helm  
-  helm repo add stable http://mirror.azure.cn/kubernetes/charts/
-  helm repo add falcosecurity https://falcosecurity.github.io/charts
-  helm repo update
-  cd $Project_Dir/falco
-  helm delete falco
-  falcoLogAddr=$(readConfValue $Project_Dir/conf/app.conf falcoLogUploadAddr)
-  swpConfValue $Project_Dir/falco/values.yaml 258 false true
-  swpConfValue $Project_Dir/falco/values.yaml 259 127.0.0.1 $Local_Host
-  helm install falco . -n default
+ echo "start setup falco"
+ helmFile=/usr/local/bin/helm
+ if [ ! -f "${helmFile}" ]; then
+	  cd $Project_Dir/helm
+	  cp helm /usr/local/bin/helm
+	  chmod +x /usr/local/bin/helm
+	  helm repo add stable http://mirror.azure.cn/kubernetes/charts/
+	  helm repo add falcosecurity https://falcosecurity.github.io/charts
+	  helm repo update
+	  cd $Project_Dir/falco
+	  helm delete falco
+	  falcoLogAddr=$(readConfValue $Project_Dir/conf/app.conf falcoLogUploadAddr)
+	  swpConfValue $Project_Dir/falco/values.yaml 258 false true
+	  swpConfValue $Project_Dir/falco/values.yaml 259 127.0.0.1 $Local_Host
+	  helm install falco . -n default
+  else 
+	 echo "Falco has been installed, Skip!"
+  fi
   echo "--------------------End of Falco installation-----------------------------"
 }
 function readConfValue() {

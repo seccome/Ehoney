@@ -40,6 +40,34 @@ func UpdateAdminLoginStatus(username string, password string) {
 	}
 }
 
+func CheckAdminPassword(oldPassword string) bool {
+	o := orm.NewOrm()
+	var maps []orm.Params
+	_, err := o.Raw("select count(*) as count from e_admin where upass=? ", oldPassword).Values(&maps)
+
+	if err != nil {
+		logs.Error("[UpdateAdminLoginStatus] query e_admin upass error,%s", err)
+		return false
+	}
+
+	if len(maps) == 0 {
+		return false
+	}
+
+	return true
+}
+
+func UpdateAdminPassword(oldPassword, newPassword string) error {
+	o := orm.NewOrm()
+	var maps []orm.Params
+	_, err := o.Raw("update e_admin set upass=? where uname='admin' and upass=?", newPassword, oldPassword).Values(&maps)
+	if err != nil {
+		logs.Error("[UpdateAdminLoginStatus] update AdminLoginStatus policy error,%s", err)
+		return err
+	}
+	return nil
+}
+
 //func CheckAdminLogin(username string, password string) bool {
 //	result := false
 //	sqlCon, err1 := sql.Open("mysql", Dbuser+":"+Dbpassword+"@tcp("+Dbhost+":"+Dbport+")/"+Dbname+"?charset=utf8&loc=Asia%2FShanghai")
@@ -244,6 +272,34 @@ func SelectApplicationBaitsById(taskid string) []orm.Params {
 
 	}
 	return maps
+}
+
+func QueryServerByBaitOrSignTaskId(taskid string) string {
+	if taskid == "" {
+		return ""
+	}
+	o := orm.NewOrm()
+	var maps []orm.Params
+	_, err := o.Raw("SELECT s.* FROM server_bait sb LEFT JOIN servers s on sb.agentid = s.agentid  WHERE sb.taskid = ? union SELECT s.* FROM server_sign ss LEFT JOIN servers s on ss.agentid = s.agentid  WHERE ss.taskid = ?", taskid, taskid).Values(&maps)
+	if err != nil {
+		logs.Error("[QueryServerByBaitTaskId] select server error,%s", err)
+
+	}
+	return maps[0]["sys"].(string)
+}
+
+func QueryServerByAgentId(agentId string) string {
+	if agentId == "" {
+		return ""
+	}
+	o := orm.NewOrm()
+	var maps []orm.Params
+	_, err := o.Raw("SELECT * FROM servers WHERE agentid = ?", agentId).Values(&maps)
+	if err != nil {
+		logs.Error("[QueryServerByAgentId] select server error,%s", err)
+
+	}
+	return maps[0]["sys"].(string)
 }
 
 func SelectSigns(signname string, signid string, signtype string, creator string, starttime string, endtime string, pageSize int, pageNum int) map[string]interface{} {
@@ -1539,12 +1595,12 @@ func InsertApplication(ecsname string, ecsip string, ecsid string, status int, v
 	return data, msg, comm.SuccessCode
 }
 
-func ServerHeartBeatAct(agentid string, status int, ips string, servername string, timenow int64) (map[string]interface{}, string, int) {
+func ServerHeartBeatAct(agentid, sys string, status int, ips string, servername string, timenow int64) (map[string]interface{}, string, int) {
 	msg := "成功"
 	var data map[string]interface{}
 	o := orm.NewOrm()
 	var maps []orm.Params
-	_, err := o.Raw("insert into servers (servername,serverip,status,agentid,regtime,heartbeattime) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE serverip=?, status=?, heartbeattime=?", servername, ips, status, agentid, timenow, timenow, ips, status, timenow).Values(&maps)
+	_, err := o.Raw("insert into servers (servername,serverip,sys, status,agentid,regtime,heartbeattime) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE serverip=?, status=?, heartbeattime=?", servername, ips, sys, status, agentid, timenow, timenow, ips, status, timenow).Values(&maps)
 	if err != nil {
 		logs.Error("[ServerHeartBeatAct]  ServerHeartBeatAct error,%s", err)
 		msg = "数据插入更新失败"

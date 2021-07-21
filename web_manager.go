@@ -13,6 +13,7 @@ import (
 	"decept-defense/models/util/comm"
 	"decept-defense/models/util/honeytoken"
 	"decept-defense/models/util/k3s"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -64,6 +65,41 @@ var sessionCookieName = "ehoney-session"
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	comhttp.SendJSONResponse(w, comm.Response{Code: 0, Data: "success", Message: "心跳正常"})
 	return
+}
+
+func AdminUpdatePassword(w http.ResponseWriter, r *http.Request) {
+
+	var pass struct {
+		OldPwd    string `json:"oldPwd"`
+		NewPwd    string `json:"newPwd"`
+		RepeatPwd string `json:"repeatPwd"`
+	}
+
+	body := comhttp.GetPostBody(w, r)
+	if body == "" {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyNullMsg})
+		return
+	}
+	if err := json.Unmarshal([]byte(body), &pass); err != nil {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyUnmarshalEorrMsg})
+		return
+	}
+
+	if pass.RepeatPwd != pass.NewPwd {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "密码不一致"})
+		return
+	}
+
+	if honeycluster.CheckAdminPassword(pass.OldPwd) {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "原密码错误"})
+	}
+
+	err := honeycluster.UpdateAdminPassword(pass.OldPwd, pass.NewPwd)
+	if err == nil {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.SuccessCode, Data: 1, Message: "更新成功"})
+	} else {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "更新失败"})
+	}
 }
 
 func AdminLogin(w http.ResponseWriter, r *http.Request) {
@@ -239,7 +275,8 @@ func DeleteApplicationBaitPolicyHandler(w http.ResponseWriter, r *http.Request) 
 	baitfilepath = baitfilepath + "/" + baitfilename
 
 	baitname := datas[0]["baitname"].(string) + "-uninstall"
-	util.ModifyUninstallFile(baitfilepath, baitname)
+	sys := honeycluster.QueryServerByBaitOrSignTaskId(bait.TaskId)
+	util.ModifyUninstallFile(sys, baitfilepath, baitname)
 	baituploadpath := "upload/" + baitname
 	currentpath := util.GetCurrentPathString()
 	util.FileTarZip(baituploadpath, baituploadpath+".tar.gz")
@@ -326,7 +363,8 @@ func CreateApplicationBaitPolicyHandler(w http.ResponseWriter, r *http.Request) 
 	if bait.Type == "file" {
 		datas := honeycluster.SelectBaitsById(bait.BaitId)
 		baitfilepath := "upload/" + datas[0]["baitname"].(string)
-		util.ModifyFile(baitfilepath, bait.Address, datas[0]["baitname"].(string), datas[0]["baitinfo"].(string))
+		sys := honeycluster.QueryServerByAgentId(bait.AgentId)
+		util.ModifyFile(sys, baitfilepath, bait.Address, datas[0]["baitname"].(string), datas[0]["baitinfo"].(string))
 		currentpath := util.GetCurrentPathString()
 		util.FileTarZip(baitfilepath, baitfilepath+".tar.gz")
 		filemd5 := util.GetFileMd5(currentpath + "/" + baitfilepath + ".tar.gz")
@@ -570,7 +608,8 @@ func CreateApplicationSignPolicyHandler(w http.ResponseWriter, r *http.Request) 
 				}
 			}
 		}
-		util.ModifyFile(signfilepath, sign.Address, datas[0]["signname"].(string), datas[0]["signinfo"].(string))
+		sys := honeycluster.QueryServerByAgentId(sign.AgentId)
+		util.ModifyFile(sys, signfilepath, sign.Address, datas[0]["signname"].(string), datas[0]["signinfo"].(string))
 		currentpath := util.GetCurrentPathString()
 		util.FileTarZip(signfilepath, signfilepath+".tar.gz")
 
@@ -638,8 +677,8 @@ func DeleteApplicationSignPolicyHandler(w http.ResponseWriter, r *http.Request) 
 	datas := honeycluster.SelectApplicationSignsById(signs.TaskId)
 	signfilepath := datas[0]["signinfo"].(string)
 	signname := datas[0]["signname"].(string) + "-uninstall"
-
-	util.ModifySignUninstallFile(signfilepath, signname)
+	sys := honeycluster.QueryServerByBaitOrSignTaskId(signs.TaskId)
+	util.ModifySignUninstallFile(sys, signfilepath, signname)
 	signuploadpath := "upload/honeysign/" + signname
 	currentpath := util.GetCurrentPathString()
 	util.FileTarZip(signuploadpath, signuploadpath+".tar.gz")
@@ -673,13 +712,13 @@ func ApplicationSignMsgHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	datas := honeycluster.ApplicationSelectSignMsg(fileList.Tracecode, fileList.Map, fileList.StartTime, fileList.EndTime, fileList.PageSize, fileList.PageNum)
-	for _, data := range datas["list"].([]interface{}){
+	for _, data := range datas["list"].([]interface{}) {
 		ip := data.(map[string]interface{})["openip"].(string)
-		if util.IsLocalIP(ip){
+		if util.IsLocalIP(ip) {
 			data.(map[string]interface{})["ipcountry"] = "局域网"
 			data.(map[string]interface{})["ipcity"] = "局域网"
-		}else{
-			result,_ := util.GetLocationByIP(ip)
+		} else {
+			result, _ := util.GetLocationByIP(ip)
 			data.(map[string]interface{})["ipcountry"] = result.Country_long
 			data.(map[string]interface{})["ipcity"] = result.City
 		}
@@ -1480,7 +1519,7 @@ func CreateProtocolType(w http.ResponseWriter, r *http.Request) {
 	createTime := time.Now().Unix()
 	data, msg, msgCode := honeycluster.InsertProtocol(protocolName, typeid, softPath, createTime)
 
-	util.ModifyFile("upload/protocol/"+protocolName, "/home/sys_admin/", protocolName, protocolFileName)
+	util.ModifyFile("", "upload/protocol/"+protocolName, "/home/sys_admin/", protocolName, protocolFileName)
 	currentpath := util.GetCurrentPathString()
 	protocolPath := "upload/protocol/" + protocolName
 	util.FileTarZip(protocolPath, protocolPath+".tar.gz")
@@ -1544,7 +1583,7 @@ func DeleteProtocolType(w http.ResponseWriter, r *http.Request) {
 	protocolFilePath := honeycluster.SelectHoneypotTypeByID(protocoltype.TypeId)[0]["softpath"].(string)
 	protocolName := protocolFilePath[strings.LastIndex(protocolFilePath, "/")+1:]
 	protocolName = protocolName + "-uninstall"
-	util.ModifyUninstallFile(protocolFilePath, protocolName)
+	util.ModifyUninstallFile("", protocolFilePath, protocolName)
 	protocolUploadPath := "upload/protocol/" + protocolName
 	currentpath := util.GetCurrentPathString()
 	util.FileTarZip(protocolUploadPath, protocolUploadPath+".tar.gz")
@@ -1800,6 +1839,12 @@ func GetTraceHostHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func GetAttackLogListByIp(responseWriter http.ResponseWriter, request *http.Request) {
+	ip := request.FormValue("ip")
+	attackerInfos := datavcenter.QueryAttackerInfoByIP(ip)
+	comhttp.SendJSONResponse(responseWriter, comm.Response{Code: 0, Data: attackerInfos, Message: "成功"})
+}
+
 // 接收欺骗防御的攻击日志
 func InsertAttackLogHandler(w http.ResponseWriter, r *http.Request) {
 	var attackLog struct {
@@ -1848,12 +1893,12 @@ func InsertAttackLogHandler(w http.ResponseWriter, r *http.Request) {
 	country := ""
 	province := ""
 
-	if util.IsLocalIP(attackLog.AttackHost){
+	if util.IsLocalIP(attackLog.AttackHost) {
 		country = "局域网"
 		province = "局域网"
-	}else{
+	} else {
 		result, err := util.GetLocationByIP(attackLog.AttackHost)
-		if err != nil{
+		if err != nil {
 			logs.Error("get location error: %v\n", err)
 			comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: fmt.Sprintf("get location error %v", err)})
 			return
@@ -1947,8 +1992,10 @@ func InsertAttackLogHandler(w http.ResponseWriter, r *http.Request) {
 			if honeyTypeId == "" {
 				honeyTypeId = honeytypeid.(string)
 			}
+			agentId := datavcenter.TryTransferIPToAgentIp(attackLog.AttackHost)
+			logs.Info("%s, transfer ip: %s", attackLog.AttackHost, agentId)
 			res, err3 := db1.Exec("INSERT INTO attacklog(srchost,srcport,serverid,honeypotid,honeypotport,attackip,attackport,attacktime,eventdetail,proxytype,sourcetype,logdata,honeytypeid,country,province) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				srchost, attackLog.SrcPort, serverid, honeypotid, honeyportport, attackLog.AttackHost, attackLog.AttackPort, attacktime, eventDetail, attackLog.LogType, attackLog.SourceType, logdatas, honeyTypeId, country, province)
+				srchost, attackLog.SrcPort, serverid, honeypotid, honeyportport, agentId, attackLog.AttackPort, attacktime, eventDetail, attackLog.LogType, attackLog.SourceType, logdatas, honeyTypeId, country, province)
 			if err3 != nil {
 				logs.Error("insert mysql fail: ", err3)
 				comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: fmt.Sprintf("[InsertAttackLogHandler] insert mysql fail: %v", err3)})
@@ -1973,6 +2020,45 @@ func InsertAttackLogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func InsertAttackInfo(w http.ResponseWriter, r *http.Request) {
+	var attackInfo struct {
+		SourceSite string `json:"sourceSite"`
+		Account    string `json:"account"`
+		Ip         string `json:"ip"`
+		City       string `json:"city"`
+	}
+
+	var attackBody struct {
+		Sid string `json:"sid"`
+	}
+	body := comhttp.GetPostBody(w, r)
+	if body == "" {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyNullMsg})
+		return
+	}
+
+	if err := json.Unmarshal([]byte(body), &attackBody); err != nil {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyUnmarshalEorrMsg})
+		return
+	}
+
+	attackInfoBody, err := base64.StdEncoding.DecodeString(attackBody.Sid)
+	if err != nil {
+		logs.Error("decode error:", err)
+		return
+	}
+
+	if err := json.Unmarshal(attackInfoBody, &attackInfo); err != nil {
+		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyUnmarshalEorrMsg})
+		return
+	}
+
+	datas, msg, msgcode := datavcenter.InsertAttackerInfo(attackInfo.SourceSite, attackInfo.Account, attackInfo.Ip, attackInfo.City)
+	comhttp.SendJSONResponse(w, comm.Response{Code: msgcode, Data: datas, Message: msg})
+	return
+
+}
+
 func InsertSSHKeyHandler(w http.ResponseWriter, r *http.Request) {
 	var sshkey struct {
 		SSHKey  string `json:"ssh_key"`
@@ -1991,7 +2077,6 @@ func InsertSSHKeyHandler(w http.ResponseWriter, r *http.Request) {
 	datas, msg, msgcode := honeycluster.InsertSSHInfo(sshkey.SSHKey, sshkey.AgentID)
 	comhttp.SendJSONResponse(w, comm.Response{Code: msgcode, Data: datas, Message: msg})
 	return
-
 }
 
 // 创建容器pod
@@ -2514,7 +2599,7 @@ func CreateSignHandler(w http.ResponseWriter, r *http.Request) {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: "上传失败", Message: "上传类型只支持docx,pptx,xlsx,pdf"})
 		return
 	}
-	if len(honeycluster.SelectSignByName(signname)) != 0{
+	if len(honeycluster.SelectSignByName(signname)) != 0 {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: "密签文件名称重复", Message: "密签文件名称重复"})
 		return
 	}
@@ -2818,7 +2903,7 @@ func CreateHoneyBaitPolicyHandler(w http.ResponseWriter, r *http.Request) {
 		baitname = datas[0]["baitname"].(string)
 		baitfilepath = "upload/" + datas[0]["baitname"].(string)
 		baitdespath = honeybait.Address + "/" + datas[0]["baitinfo"].(string)
-		util.ModifyFile(baitfilepath, honeybait.Address, datas[0]["baitname"].(string), datas[0]["baitinfo"].(string))
+		util.ModifyFile("", baitfilepath, honeybait.Address, datas[0]["baitname"].(string), datas[0]["baitinfo"].(string))
 
 		util.FileTarZip(baitfilepath, baitfilepath+".tar.gz")
 		apphost := beego.AppConfig.String("apphost")
@@ -2929,7 +3014,7 @@ func DeleteHoneyBaitPolicyHandler(w http.ResponseWriter, r *http.Request) {
 		baitfilename := datas[0]["baitfilename"].(string)
 		baitfilepath = baitfilepath + "/" + baitfilename
 		baitname := datas[0]["baitname"].(string) + "-uninstall"
-		util.ModifyUninstallFile(baitfilepath, baitname)
+		util.ModifyUninstallFile("", baitfilepath, baitname)
 		baituploadpath := "upload/" + baitname
 		util.FileTarZip(baituploadpath, baituploadpath+".tar.gz")
 		sysproto := ""
@@ -3101,7 +3186,7 @@ func CreateHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			signdespath = honeysign.Address + "/" + datas[0]["signinfo"].(string)
-			util.ModifyFile(signfilepath, honeysign.Address, datas[0]["signname"].(string), datas[0]["signinfo"].(string))
+			util.ModifyFile("", signfilepath, honeysign.Address, datas[0]["signname"].(string), datas[0]["signinfo"].(string))
 			util.FileTarZip(signfilepath, signfilepath+".tar.gz")
 			apphost := beego.AppConfig.String("apphost")
 			appport := beego.AppConfig.String("appport")
@@ -3252,7 +3337,7 @@ func DeleteHoneySignPolicyHandler(w http.ResponseWriter, r *http.Request) {
 		signfilename := datas[0]["signfilename"].(string)
 		signfilepath = signfilepath + "/" + signfilename
 		signname := datas[0]["signname"].(string) + "-uninstall"
-		util.ModifyUninstallFile(signfilepath, signname)
+		util.ModifyUninstallFile("", signfilepath, signname)
 		signuploadpath := "upload/" + signname
 		util.FileTarZip(signuploadpath, signuploadpath+".tar.gz")
 		sysproto := ""
@@ -3381,13 +3466,13 @@ func HoneySignMsgHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	datas := honeycluster.HoneySelectSignMsg(fileList.Tracecode, fileList.Map, fileList.StartTime, fileList.EndTime, fileList.PageSize, fileList.PageNum)
-	for _, data := range datas["list"].([]interface{}){
+	for _, data := range datas["list"].([]interface{}) {
 		ip := data.(map[string]interface{})["openip"].(string)
-		if util.IsLocalIP(ip){
+		if util.IsLocalIP(ip) {
 			data.(map[string]interface{})["ipcountry"] = "局域网"
 			data.(map[string]interface{})["ipcity"] = "局域网"
-		}else{
-			result,_ := util.GetLocationByIP(ip)
+		} else {
+			result, _ := util.GetLocationByIP(ip)
 			data.(map[string]interface{})["ipcountry"] = result.Country_long
 			data.(map[string]interface{})["ipcity"] = result.City
 		}
@@ -3773,7 +3858,7 @@ func SignFileUpload(r *http.Request, signname string) (string, error, bool) {
 	}
 	defer file.Close()
 	filename := handler.Filename
-	if  path.Ext(filename) == ".docx" || path.Ext(filename) == ".pdf" || path.Ext(filename) == ".pptx" || path.Ext(filename) == ".xlsx" {
+	if path.Ext(filename) == ".docx" || path.Ext(filename) == ".pdf" || path.Ext(filename) == ".pptx" || path.Ext(filename) == ".xlsx" {
 		err = os.MkdirAll("upload/honeytoken/", os.ModePerm)
 		if err != nil {
 			isfalse = true
@@ -3882,6 +3967,25 @@ func Download(rw http.ResponseWriter, r *http.Request) {
 	file.Read(fileHeader)
 	fileStat, _ := file.Stat()
 	rw.Header().Set("Content-Disposition", "attachment; filename=decept-agent.tar.gz")
+	rw.Header().Set("Content-Type", http.DetectContentType(fileHeader))
+	rw.Header().Set("Content-Length", strconv.FormatInt(fileStat.Size(), 10))
+	file.Seek(0, 0)
+	io.Copy(rw, file)
+	return
+}
+
+func DownloadWindowsAgent(rw http.ResponseWriter, r *http.Request) {
+	filePath := util.GetCurrentPathString() + "/agent/decept-agent-win.tar.gz"
+	file, err := os.Open(filePath)
+	if err != nil {
+		logs.Error("open decept-agent.tar.gz fail: %v , %s", err, filePath)
+		return
+	}
+	defer file.Close()
+	fileHeader := make([]byte, 1024)
+	file.Read(fileHeader)
+	fileStat, _ := file.Stat()
+	rw.Header().Set("Content-Disposition", "attachment; filename=decept-agent-win.tar.gz")
 	rw.Header().Set("Content-Type", http.DetectContentType(fileHeader))
 	rw.Header().Set("Content-Length", strconv.FormatInt(fileStat.Size(), 10))
 	file.Seek(0, 0)

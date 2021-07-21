@@ -287,11 +287,10 @@ function setupFalco(){
     cd $(dirname $0)
     pwd
   )
-  echo "start setup falco"
-  
-  exist=`helm list | grep falco`
-  if [ "${exist}" == "" ]; then
-	cd $Project_Dir/helm
+ echo "start setup falco"
+ helmFile=/usr/local/bin/helm
+ if [ ! -f "${helmFile}" ]; then
+	  cd $Project_Dir/helm
 	  cp helm /usr/local/bin/helm
 	  chmod +x /usr/local/bin/helm
 	  helm repo add stable http://mirror.azure.cn/kubernetes/charts/

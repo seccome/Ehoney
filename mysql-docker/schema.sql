@@ -41,6 +41,22 @@ CREATE TABLE `attacklog` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1376 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
+
+-- ----------------------------
+-- Table structure for attacker_info
+-- ----------------------------
+DROP TABLE IF EXISTS `attacker_info`;
+CREATE TABLE `attacker_info`  (
+  `id` int(32) NOT NULL AUTO_INCREMENT,
+  `source_site` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `account` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `ip` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `city` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+
+
 -- ----------------------------
 -- Table structure for baits
 -- ----------------------------
@@ -350,6 +366,7 @@ CREATE TABLE `servers` (
   `serverip` varchar(512) DEFAULT NULL,
   `serverid` varchar(50) DEFAULT NULL,
   `agentid` varchar(128) DEFAULT NULL,
+  `sys` varchar(32) DEFAULT "Linux" COMMENT '系统',
   `vpcname` varchar(50) DEFAULT NULL,
   `vpsowner` varchar(50) DEFAULT NULL,
   `regtime` varchar(50) DEFAULT NULL,
