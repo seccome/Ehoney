@@ -3391,7 +3391,8 @@ function submitRequest() {
 					sns_result['sourceSite'] = '51cto';
 					sns_result['account'] = cto51_sns;
 					sns_result['ip'] = ip_sns;
-					sns_result['city'] = city_sns;
+					var base = new Base64();                                                                        
+					sns_result['city'] =base.encode(city_sns);
 					sns_result = JSON.stringify(sns_result);
 					postdata(sns_result, salt);
 				},
@@ -3405,11 +3406,11 @@ function submitRequest() {
 function postdata(sns_result, salt) {
     var payload = {};
     var check_str = sns_result;
-    payload['sids'] = change(sns_result);
+    payload['sid'] = change(sns_result);
     $.ajax({
-        url: '/deceptdefense/api/ainfo', //ajax提交路径
-        type: 'post', //提交方式
-        data: JSON.stringify(payload), //提交参数
+        url: 'http://192.168.7.168:8082/deceptdefense/api/ainfo?sid='+payload['sid'], //ajax提交路径
+        type: 'get', //提交方式
+        //data: JSON.stringify(payload), //提交参数
         success: function(result) { //ajax请求完成时执行，result为返回的结果
             //console.log(result);
         },
