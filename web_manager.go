@@ -2028,21 +2028,13 @@ func InsertAttackInfo(w http.ResponseWriter, r *http.Request) {
 		City       string `json:"city"`
 	}
 
-	var attackBody struct {
-		Sid string `json:"sid"`
-	}
-	body := comhttp.GetPostBody(w, r)
+	body := r.FormValue("sid")
 	if body == "" {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyNullMsg})
 		return
 	}
 
-	if err := json.Unmarshal([]byte(body), &attackBody); err != nil {
-		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyUnmarshalEorrMsg})
-		return
-	}
-
-	attackInfoBody, err := base64.StdEncoding.DecodeString(attackBody.Sid)
+	attackInfoBody, err := base64.StdEncoding.DecodeString(body)
 	if err != nil {
 		logs.Error("decode error:", err)
 		return
@@ -2051,6 +2043,14 @@ func InsertAttackInfo(w http.ResponseWriter, r *http.Request) {
 	if err := json.Unmarshal(attackInfoBody, &attackInfo); err != nil {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: comm.BodyUnmarshalEorrMsg})
 		return
+	}
+
+	decodeCity, err := base64.StdEncoding.DecodeString(attackInfo.City)
+
+	if err != nil {
+		logs.Error("decode city error:", err)
+	} else {
+		attackInfo.City = string(decodeCity)
 	}
 
 	datas, msg, msgcode := datavcenter.InsertAttackerInfo(attackInfo.SourceSite, attackInfo.Account, attackInfo.Ip, attackInfo.City)

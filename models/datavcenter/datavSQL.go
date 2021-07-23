@@ -22,7 +22,7 @@ var (
 func QueryAttackerInfoByIP(ip string) []orm.Params {
 	o := orm.NewOrm()
 	var maps []orm.Params
-	_, err := o.Raw("SELECT * from `attacker_info` WHERE ip=?", ip).Values(&maps)
+	_, err := o.Raw("SELECT * from `attacker_info` WHERE ip=? ORDER BY id desc LIMIT 1", ip).Values(&maps)
 	if err != nil {
 		logs.Error("[SelectApplicationByAgentID] select event list error,%s", err)
 	}
