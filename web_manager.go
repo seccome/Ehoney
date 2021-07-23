@@ -92,6 +92,7 @@ func AdminUpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	if honeycluster.CheckAdminPassword(pass.OldPwd) {
 		comhttp.SendJSONResponse(w, comm.Response{Code: comm.ErrorCode, Data: nil, Message: "原密码错误"})
+		return
 	}
 
 	err := honeycluster.UpdateAdminPassword(pass.OldPwd, pass.NewPwd)
