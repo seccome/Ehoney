@@ -1,0 +1,52 @@
+
+[app]
+  enablecors = true
+  protocoldeploypath = "/home/ehoney_proxy"
+  scriptpath = "scripts"
+  taskchannel = "task_to_agent_channel"
+  tokentraceaddress = "http://127.0.0.1:5000"
+  tokentraceapipath = "api/msgreceive"
+  uploadpath = "upload"
+  webhook = ""
+
+[database]
+  dbhost = "127.0.0.1"
+  dbname = "sec_ehoneypot"
+  dbpassword = "ehoney2021"
+  dbport = 3306
+  dbtype = "mysql"
+  dbuser = "root"
+
+[harbor]
+  apiversion = "2.0"
+  harborproject = "ehoney"
+  harborurl = "http://47.96.71.197:90"
+  password = "Timevale#123"
+  user = "admin"
+
+[log]
+  callerkey = "caller"
+  level = "debug"
+  levelkey = "level"
+  logformatconsole = "console"
+  logformatjson = "json"
+  maxage = 7
+  maxbackups = 20
+  maxsize = 1
+  messagekey = "msg"
+  namekey = "logger"
+  stacktracekey = "stacktrace"
+  timekey = "time"
+
+[redis]
+  redishost = "127.0.0.1"
+  redisidletimeout = 200
+  redismaxactive = 30
+  redismaxidle = 30
+  redispassword = "ehoney2021"
+  redisport = 6379
+
+[server]
+  apphost = "localhost"
+  httpport = 8082
+  runmode = "release"

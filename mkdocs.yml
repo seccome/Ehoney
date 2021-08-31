@@ -38,6 +38,7 @@ nav:
     - 蜜罐列表: Tutorials/HoneypotList.md
     - 协议转发: Tutorials/ProtocolForward.md
     - 透明转发: Tutorials/TransparentForward.md
+    - 诱捕管理: Tutorials/Support.md
     - 探针列表: Tutorials/ProbeList.md 
     - 攻击日志: Tutorials/AttackLog.md
     - 系统设置: Tutorials/Settings.md

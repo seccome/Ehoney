@@ -1,0 +1,3822 @@
+definitions:
+  bait_handler.BaitCreatePayload:
+    properties:
+      BaitData:
+        description: HISTORY诱饵数据
+        type: string
+      BaitName:
+        description: 诱饵名称
+        type: string
+      BaitType:
+        description: 诱饵类型
+        type: string
+    required:
+    - BaitName
+    - BaitType
+    type: object
+  comm.AttackStatistics:
+    properties:
+      Count:
+        description: 出现次数
+        type: integer
+      Data:
+        description: 攻击信息
+        type: string
+    type: object
+  comm.AttackTraceSelectPayload:
+    properties:
+      AttackIP:
+        description: 攻击IP
+        type: string
+      EndTime:
+        description: 结束时间
+        type: string
+      HoneypotIP:
+        description: 蜜罐IP
+        type: string
+      PageNumber:
+        description: 页number
+        type: integer
+      PageSize:
+        description: 页size
+        type: integer
+      Payload:
+        description: 查找payload
+        type: string
+      ProtocolType:
+        description: 协议类型
+        type: string
+      StartTime:
+        description: 开始时间
+        type: string
+      Type:
+        description: 攻击类型
+        type: string
+    required:
+    - PageNumber
+    - PageSize
+    type: object
+  comm.BaitSelectPayload:
+    properties:
+      BaitType:
+        description: 诱饵类型
+        type: string
+      PageNumber:
+        description: 页number
+        type: integer
+      PageSize:
+        description: 页size
+        type: integer
+      Payload:
+        description: 查找payload
+        type: string
+    required:
+    - PageNumber
+    - PageSize
+    type: object
+  comm.FalcoEventSelectPayload:
+    properties:
+      EndTime:
+        description: 结束时间
+        type: string
+      PageNumber:
+        description: 页number
+        type: integer
+      PageSize:
+        description: 页size
+        type: integer
+      Payload:
+        description: 查找payload
+        type: string
+      StartTime:
+        description: 开始时间
+        type: string
+    required:
+    - PageNumber
+    - PageSize
+    type: object
+  comm.FalcoSelectResultPayload:
+    properties:
+      DownloadPath:
+        description: 文件下载链接
+        type: string
+      Event:
+        description: falco事件
+        type: string
+      FileFlag:
+        description: 文件标记
+        type: boolean
+      HoneypotName:
+        description: 蜜罐名称
+        type: string
+      ID:
+        description: falco攻击日志ID
+        type: integer
+      Level:
+        description: 事件等级
+        type: string
+      Output:
+        description: 输出
+        type: string
+      Time:
+        description: 发生时间
+        type: string
+    type: object
+  comm.FileBaitSelectResultPayload:
+    properties:
+      BaitData:
+        description: HISTORY诱饵数据
+        type: string
+      BaitName:
+        description: 诱饵名称
+        type: string
+      BaitType:
+        description: 诱饵类型
+        type: string
+      CreateTime:
+        description: 创建时间
+        type: string
+      Creator:
+        description: 创建用户
+        type: string
+      FileName:
+        description: 文件名称
+        type: string
+      ID:
+        description: 文件诱饵ID
+        type: integer
+    type: object
+  comm.HoneypotSelectPayload:
+    properties:
+      PageNumber:
+        description: 页number
+        type: integer
+      PageSize:
+        description: 页size
+        type: integer
+      Payload:
+        description: 查找payload
+        type: string
+      ProtocolType:
+        description: 协议类型
+        type: string
+    required:
+    - PageNumber
+    - PageSize
+    type: object
+  comm.HoneypotSelectResultPayload:
+    properties:
+      CreateTime:
+        description: 创建时间
+        type: string
+      Creator:
+        description: 创建用户
+        type: string
+      HoneypotIP:
+        description: 蜜罐IP
+        type: string
+      HoneypotName:
+        description: 蜜罐名称
+        type: string
+      ID:
+        description: 蜜罐ID
+        type: integer
+      ServerIP:
+        description: 蜜网IP
+        type: string
+      ServerType:
+        description: 蜜罐类型
+        type: string
+      Status:
+        description: 蜜罐状态
+        type: integer
+    type: object
+  comm.ImageUpdatePayload:
+    properties:
+      imagePort:
+        description: 镜像端口
+        type: integer
+      imageType:
+        description: 协议类型
+        type: string
+    required:
+    - imagePort
+    - imageType
+    type: object
+  comm.ProbeSelectResultPayload:
+    properties:
+      CreateTime:
+        description: 注册时间
+        type: string
+      HeartbeatTime:
+        description: 心跳时间
+        type: string
+      HostName:
+        description: 探针名称
+        type: string
+      ID:
+        description: 探针ID
+        type: integer
+      ProbeIP:
+        description: 探针IP
+        type: string
+      Status:
+        description: 状态
+        type: integer
+      SystemType:
+        description: 系统类型
+        type: string
+    type: object
+  comm.ProtocolProxySelectResultPayload:
+    properties:
+      CreateTime:
+        description: 创建时间
+        type: string
+      Creator:
+        description: 创建用户
+        type: string
+      HoneypotIP:
+        description: 蜜罐IP
+        type: string
+      HoneypotName:
+        description: 蜜罐名称
+        type: string
+      ID:
+        description: 协议代理ID
+        type: integer
+      MaxPort:
+        description: 协议MaxPort
+        type: integer
+      MinPort:
+        description: 协议MinPort
+        type: integer
+      ProxyPort:
+        description: 代理端口
+        type: integer
+      ServerIP:
+        description: 蜜网IP
+        type: string
+      ServerPort:
+        description: 蜜罐端口
+        type: string
+      ServerType:
+        description: 蜜罐服务
+        type: string
+      Status:
+        description: 状态
+        type: integer
+    type: object
+  comm.ProtocolSelectResultPayload:
+    properties:
+      CreateTime:
+        description: 创建时间
+        type: string
+      Creator:
+        description: 创建用户
+        type: string
+      DefaultFlag:
+        description: 默认属性
+        type: boolean
+      DeployPath:
+        description: 部署路径
+        type: string
+      ID:
+        description: 协议ID
+        type: integer
+      MaxPort:
+        description: 端口high
+        type: integer
+      MinPort:
+        description: 端口low
+        type: integer
+      ProtocolType:
+        description: 协议类型
+        type: string
+      Status:
+        description: 状态
+        type: integer
+    type: object
+  comm.SelectPayload:
+    properties:
+      PageNumber:
+        description: 页number
+        type: integer
+      PageSize:
+        description: 页size
+        type: integer
+      Payload:
+        description: 查找payload
+        type: string
+    required:
+    - PageNumber
+    - PageSize
+    type: object
+  comm.SelectTransparentProxyPayload:
+    properties:
+      PageNumber:
+        description: 页number
+        type: integer
+      PageSize:
+        description: 页size
+        type: integer
+      Payload:
+        description: 查找payload
+        type: string
+      ProtocolProxyID:
+        description: 协议代理ID
+        type: integer
+    required:
+    - PageNumber
+    - PageSize
+    type: object
+  comm.ServerBaitSelectPayload:
+    properties:
+      PageNumber:
+        type: integer
+      PageSize:
+        type: integer
+      Payload:
+        type: string
+      ServerID:
+        type: integer
+    required:
+    - PageNumber
+    - PageSize
+    - ServerID
+    type: object
+  comm.ServerBaitSelectResultPayload:
+    properties:
+      BaitName:
+        type: string
+      BaitType:
+        type: string
+      CreateTime:
+        type: string
+      Creator:
+        type: string
+      DeployPath:
+        type: string
+      ID:
+        type: integer
+      Status:
+        type: integer
+    type: object
+  comm.ServerTokenSelectPayload:
+    properties:
+      PageNumber:
+        description: 页面number
+        type: integer
+      PageSize:
+        description: 页面size
+        type: integer
+      Payload:
+        description: 查找payload
+        type: string
+      ServerID:
+        description: 服务器ID
+        type: integer
+    required:
+    - PageNumber
+    - PageSize
+    - ServerID
+    type: object
+  comm.ServerTokenSelectResultPayload:
+    properties:
+      CreateTime:
+        description: 创建时间
+        type: string
+      Creator:
+        description: 创建用户
+        type: string
+      DeployPath:
+        description: 部署路径
+        type: string
+      ID:
+        description: 蜜罐密签ID
+        type: integer
+      Status:
+        description: 状态
+        type: integer
+      TokenName:
+        description: 密签名称
+        type: string
+      TokenType:
+        description: 密签类型
+        type: string
+    type: object
+  comm.TokenSelectResultPayload:
+    properties:
+      CreateTime:
+        description: 创建时间
+        type: string
+      Creator:
+        description: 创建用户
+        type: string
+      DefaultFlag:
+        description: 默认属性
+        type: boolean
+      FileName:
+        description: 文件名称
+        type: string
+      ID:
+        description: 密签ID
+        type: integer
+      TokenName:
+        description: 蜜签名称
+        type: string
+      TokenType:
+        description: 蜜签类型
+        type: string
+    type: object
+  comm.TokenTraceSelectPayload:
+    properties:
+      AttackIP:
+        description: 攻击IP
+        type: string
+      EndTime:
+        description: 结束时间
+        type: string
+      PageNumber:
+        description: 页number
+        type: integer
+      PageSize:
+        description: 页size
+        type: integer
+      Payload:
+        description: 查找payload
+        type: string
+      ServerType:
+        description: 服务类型 蜜罐（honeypot）or 探针（probe）
+        type: string
+      StartTime:
+        description: 开始时间
+        type: string
+    required:
+    - PageNumber
+    - PageSize
+    type: object
+  comm.TokenTraceSelectResultPayload:
+    properties:
+      ID:
+        description: 攻击日志ID
+        type: integer
+      Location:
+        description: 攻击位置
+        type: string
+      OpenIP:
+        description: 攻击IP
+        type: string
+      OpenTime:
+        description: 攻击时间
+        type: string
+      TokenName:
+        description: 密签名称
+        type: string
+      TokenType:
+        description: 密签类型
+        type: string
+      UserAgent:
+        description: 用户UA
+        type: string
+    type: object
+  comm.TraceSourceResultPayload:
+    properties:
+      AttackIP:
+        description: 攻击IP
+        type: string
+      Detail:
+        description: 详情
+        type: string
+      HoneypotIP:
+        description: 蜜罐IP
+        type: string
+      ID:
+        description: ID
+        type: integer
+      Log:
+        description: 日志
+        type: string
+      ProtocolType:
+        description: 协议类型
+        type: string
+      Time:
+        description: 攻击时间
+        type: string
+      Type:
+        description: 攻击类型
+        type: string
+    type: object
+  comm.TransparentProxySelectResultPayload:
+    properties:
+      CreateTime:
+        description: 创建时间
+        type: string
+      Creator:
+        description: 创建用户
+        type: string
+      ID:
+        description: 透明代理ID
+        type: integer
+      ProbeIP:
+        description: 探针IP
+        type: string
+      ProtocolPort:
+        description: 协议代理端口
+        type: integer
+      ProtocolType:
+        description: 协议类型
+        type: string
+      ProxyPort:
+        description: 代理端口
+        type: integer
+      Status:
+        description: 状态
+        type: integer
+    type: object
+  harbor_handler.HarborConfigPayload:
+    properties:
+      AuthenticatePass:
+        description: 密码
+        type: string
+      AuthenticateUser:
+        description: 用户名
+        type: string
+      HarborAPIVersion:
+        type: string
+      HarborProjectName:
+        description: 项目名称
+        type: string
+      HarborURL:
+        description: URL
+        type: string
+    required:
+    - AuthenticatePass
+    - AuthenticateUser
+    - HarborProjectName
+    - HarborURL
+    type: object
+  honeypot_bait_handler.HoneypotBaitCreatePayload:
+    properties:
+      baitID:
+        type: integer
+      deployPath:
+        type: string
+      honeypotID:
+        type: integer
+    required:
+    - baitID
+    - honeypotID
+    type: object
+  honeypot_token_handler.HoneypotTokenCreatePayload:
+    properties:
+      DeployPath:
+        description: 部署路径
+        type: string
+      HoneypotID:
+        description: 蜜罐ID
+        type: integer
+      TokenName:
+        description: 蜜罐密签名称
+        type: string
+    required:
+    - HoneypotID
+    - TokenName
+    type: object
+  models.Honeypot:
+    properties:
+      CreateTime:
+        type: string
+      Creator:
+        type: string
+      HoneypotIP:
+        type: string
+      HoneypotName:
+        description: 蜜罐名称
+        type: string
+      ImageAddress:
+        description: 镜像地址
+        type: string
+      PodName:
+        type: string
+      ServerPort:
+        type: integer
+      ServerType:
+        type: string
+      ServersID:
+        type: integer
+      Status:
+        type: integer
+      id:
+        type: integer
+      servers:
+        $ref: '#/definitions/models.HoneypotServers'
+    required:
+    - HoneypotName
+    - ImageAddress
+    type: object
+  models.HoneypotServers:
+    properties:
+      AgentID:
+        description: 代理ID
+        type: string
+      CreateTime:
+        description: 注册时间
+        type: string
+      HeartbeatTime:
+        description: 心跳时间
+        type: string
+      HostName:
+        description: 主机名称
+        type: string
+      ServerIP:
+        description: 蜜网IP
+        type: string
+      Status:
+        description: 状态
+        type: integer
+      id:
+        description: 蜜网ID
+        type: integer
+    type: object
+  models.Images:
+    properties:
+      DefaultFlag:
+        description: 默认属性
+        type: boolean
+      ImageAddress:
+        description: 镜像地址
+        type: string
+      ImageName:
+        description: 镜像名称
+        type: string
+      ImagePort:
+        description: 镜像端口
+        type: integer
+      ImageType:
+        description: 镜像服务
+        type: string
+      id:
+        description: 镜像ID
+        type: integer
+    type: object
+  models.OutputFields:
+    properties:
+      container.id:
+        description: 容器ID
+        type: string
+      container.image.repository:
+        description: 镜像仓库
+        type: string
+      container.name:
+        description: 容器名称
+        type: string
+      evt.time:
+        description: 事件时间
+        type: integer
+      fd.name:
+        description: 上传的文件名称
+        type: string
+      k8s.ns.name:
+        description: 命名空间
+        type: string
+      k8s.pod.name:
+        description: pod名称
+        type: string
+      proc.cmdline:
+        description: 命令行
+        type: string
+      proc.name:
+        description: 进程名称
+        type: string
+      proc.pname:
+        description: 父进程名称
+        type: string
+      proc.tty:
+        description: TTY
+        type: integer
+      user.loginuid:
+        description: 登录UID
+        type: integer
+      user.name:
+        description: 用户名
+        type: string
+    type: object
+  models.Protocols:
+    properties:
+      CreateTime:
+        description: 创建时间
+        type: string
+      Creator:
+        description: 创建用户
+        type: string
+      DefaultFlag:
+        description: 默认属性
+        type: boolean
+      DeployPath:
+        description: 部署路径
+        type: string
+      FileName:
+        description: 文件名称
+        type: string
+      LocalPath:
+        description: 本地路径
+        type: string
+      MaxPort:
+        type: integer
+      MinPort:
+        type: integer
+      ProtocolType:
+        description: 协议类型
+        type: string
+      Status:
+        description: 状态
+        type: integer
+      TaskID:
+        description: 任务ID
+        type: string
+      id:
+        description: 协议ID
+        type: integer
+    required:
+    - MaxPort
+    - MinPort
+    - ProtocolType
+    type: object
+  models.User:
+    properties:
+      id:
+        description: 用户ID
+        type: integer
+      password:
+        description: 用户密码
+        type: string
+      username:
+        description: 用户名称
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  probe_bait_handler.ProbeBaitCreatePayload:
+    properties:
+      BaitData:
+        type: string
+      DeployPath:
+        type: string
+      baitID:
+        type: integer
+      probeID:
+        type: integer
+    required:
+    - baitID
+    - probeID
+    type: object
+  probe_token_handler.ProbeTokenCreatePayload:
+    properties:
+      DeployPath:
+        description: 部署路径
+        type: string
+      ProbeID:
+        description: 探针ID
+        type: integer
+      TokenName:
+        description: 探针密签名称
+        type: string
+    required:
+    - ProbeID
+    - TokenName
+    type: object
+  protocol_proxy_handler.ProtocolProxyCreatePayload:
+    properties:
+      HoneypotID:
+        type: integer
+      ProxyPort:
+        type: integer
+    required:
+    - HoneypotID
+    - ProxyPort
+    type: object
+  token_handler.TokenCreatePayload:
+    properties:
+      TokenData:
+        type: string
+      TokenName:
+        type: string
+      TokenType:
+        type: string
+    required:
+    - TokenName
+    - TokenType
+    type: object
+  token_trace_handler.TraceHostConfigPayload:
+    properties:
+      TraceHost:
+        description: 密签跟踪设置
+        type: string
+    required:
+    - TraceHost
+    type: object
+  trans_proxy_handler.TransparentProxyCreatePayload:
+    properties:
+      ProbeID:
+        description: 探针ID
+        type: integer
+      ProtocolProxyID:
+        description: 协议代理ID
+        type: integer
+      ProxyPort:
+        description: 代理端口
+        type: integer
+    required:
+    - ProbeID
+    - ProtocolProxyID
+    - ProxyPort
+    type: object
+  user_handler.PasswordChangePayload:
+    properties:
+      NewPassword:
+        type: string
+      OldPassword:
+        type: string
+      RepeatPassword:
+        type: string
+    required:
+    - NewPassword
+    - OldPassword
+    - RepeatPassword
+    type: object
+  webhook_handler.WebHookConfigPayload:
+    properties:
+      WebHook:
+        description: 钉钉接口
+        type: string
+    required:
+    - WebHook
+    type: object
+host: 127.0.0.1:8082
+info:
+  contact:
+    email: chronoyq@163.com
+    name: akita.tian
+  license:
+    name: MIT
+  title: 欺骗防御接口文档
+  version: "2.0"
+paths:
+  /api/public/attack/falco:
+    post:
+      description: 创建falco异常事件
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: 创建falco异常事件
+      tags:
+      - 非前端接口
+  /api/public/attack/protocol:
+    post:
+      description: 创建协议代理攻击事件
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: 创建协议代理攻击事件
+      tags:
+      - 非前端接口
+  /api/public/heartbeat:
+    get:
+      consumes:
+      - application/json
+      description: 心跳接口
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+      summary: 心跳接口
+      tags:
+      - 心跳
+  /api/public/login:
+    post:
+      consumes:
+      - application/json
+      description: 登录
+      parameters:
+      - description: username
+        in: body
+        name: username
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      - description: password
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{"token":""}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "401":
+          description: '{"code":2001,"msg":"账号或是密码错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 登录
+      tags:
+      - 登录管理
+  /api/public/signup:
+    post:
+      consumes:
+      - application/json
+      description: 注册
+      parameters:
+      - description: username
+        in: body
+        name: username
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      - description: password
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{"token":""}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 注册
+      tags:
+      - 登录管理
+  /api/v1/agent/linux:
+    get:
+      consumes:
+      - application/json
+      description: 下载linux Agent
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+      summary: 下载linux Agent
+      tags:
+      - agent支持
+  /api/v1/agent/windows:
+    get:
+      consumes:
+      - application/json
+      description: 下载windows Agent
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+      summary: 下载windows Agent
+      tags:
+      - agent支持
+  /api/v1/attack/display/attackIP:
+    get:
+      description: 攻击IP统计
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.AttackStatistics'
+      summary: 攻击IP统计
+      tags:
+      - 大屏展示
+  /api/v1/attack/display/location:
+    get:
+      description: 攻击位置统计
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.AttackStatistics'
+      summary: 攻击位置统计
+      tags:
+      - 大屏展示
+  /api/v1/attack/display/probeIP:
+    get:
+      description: 攻击业务IP统计
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.AttackStatistics'
+      summary: 攻击业务IP统计
+      tags:
+      - 大屏展示
+  /api/v1/attack/display/protocol:
+    get:
+      description: 攻击服务类型统计
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.AttackStatistics'
+      summary: 攻击服务类型统计
+      tags:
+      - 大屏展示
+  /api/v1/attack/falco:
+    post:
+      description: falco攻击
+      parameters:
+      - description: StartTime
+        in: body
+        name: StartTime
+        schema:
+          $ref: '#/definitions/comm.FalcoEventSelectPayload'
+      - description: EndTime
+        in: body
+        name: EndTime
+        schema:
+          $ref: '#/definitions/comm.FalcoEventSelectPayload'
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.FalcoEventSelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.FalcoEventSelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.FalcoEventSelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.FalcoSelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: falco攻击
+      tags:
+      - 威胁感知
+  /api/v1/attack/falco/:id:
+    get:
+      description: falco攻击详情
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.OutputFields'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: falco攻击详情
+      tags:
+      - 威胁感知
+  /api/v1/attack/token:
+    post:
+      description: 密签跟踪日志
+      parameters:
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.TokenTraceSelectPayload'
+      - description: StartTime
+        in: body
+        name: StartTime
+        schema:
+          $ref: '#/definitions/comm.TokenTraceSelectPayload'
+      - description: EndTime
+        in: body
+        name: EndTime
+        schema:
+          $ref: '#/definitions/comm.TokenTraceSelectPayload'
+      - description: AttackIP
+        in: body
+        name: AttackIP
+        schema:
+          $ref: '#/definitions/comm.TokenTraceSelectPayload'
+      - description: ServerType
+        in: body
+        name: ServerType
+        schema:
+          $ref: '#/definitions/comm.TokenTraceSelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.TokenTraceSelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.TokenTraceSelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.TokenTraceSelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: 密签跟踪日志
+      tags:
+      - 威胁感知
+  /api/v1/attack/trace:
+    post:
+      description: 溯源
+      parameters:
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.AttackTraceSelectPayload'
+      - description: StartTime
+        in: body
+        name: StartTime
+        schema:
+          $ref: '#/definitions/comm.AttackTraceSelectPayload'
+      - description: EndTime
+        in: body
+        name: EndTime
+        schema:
+          $ref: '#/definitions/comm.AttackTraceSelectPayload'
+      - description: AttackIP
+        in: body
+        name: AttackIP
+        schema:
+          $ref: '#/definitions/comm.AttackTraceSelectPayload'
+      - description: HoneypotIP
+        in: body
+        name: HoneypotIP
+        schema:
+          $ref: '#/definitions/comm.AttackTraceSelectPayload'
+      - description: Type
+        in: body
+        name: Type
+        schema:
+          $ref: '#/definitions/comm.AttackTraceSelectPayload'
+      - description: ProtocolType
+        in: body
+        name: ProtocolType
+        schema:
+          $ref: '#/definitions/comm.AttackTraceSelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.AttackTraceSelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.AttackTraceSelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.TraceSourceResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: 溯源
+      tags:
+      - 威胁感知
+  /api/v1/bait:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 创建诱饵
+      parameters:
+      - description: BaitType
+        in: body
+        name: BaitType
+        required: true
+        schema:
+          $ref: '#/definitions/bait_handler.BaitCreatePayload'
+      - description: BaitName
+        in: body
+        name: BaitName
+        required: true
+        schema:
+          $ref: '#/definitions/bait_handler.BaitCreatePayload'
+      - description: BaitData
+        in: body
+        name: BaitData
+        schema:
+          $ref: '#/definitions/bait_handler.BaitCreatePayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "3009":
+          description: '{"code":3009,"msg":"诱饵名称重复","data":{}}'
+          schema:
+            type: string
+      summary: 创建诱饵
+      tags:
+      - 诱捕管理
+  /api/v1/bait/:id:
+    delete:
+      consumes:
+      - application/json
+      description: 删除诱饵
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 删除诱饵
+      tags:
+      - 诱捕管理
+    get:
+      consumes:
+      - application/json
+      description: 下载文件诱饵
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 下载文件诱饵
+      tags:
+      - 诱捕管理
+  /api/v1/bait/honeypot:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 创建蜜罐诱饵
+      parameters:
+      - description: BaitID
+        in: body
+        name: BaitID
+        required: true
+        schema:
+          $ref: '#/definitions/honeypot_bait_handler.HoneypotBaitCreatePayload'
+      - description: DeployPath
+        in: body
+        name: DeployPath
+        schema:
+          $ref: '#/definitions/honeypot_bait_handler.HoneypotBaitCreatePayload'
+      - description: HoneypotID
+        in: body
+        name: HoneypotID
+        required: true
+        schema:
+          $ref: '#/definitions/honeypot_bait_handler.HoneypotBaitCreatePayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "3005":
+          description: '{"code":3005,"msg":"蜜罐诱饵创建异常","data":{}}'
+          schema:
+            type: string
+        "3011":
+          description: '{"code":3011,"msg":"诱饵不存在","data":{}}'
+          schema:
+            type: string
+        "3012":
+          description: '{"code":3012,"msg":"K8S拷贝异常","data":{}}'
+          schema:
+            type: string
+        "3013":
+          description: '{"code":3013,"msg":"暂不支持下发history类型诱饵到蜜罐","data":{}}'
+          schema:
+            type: string
+        "5001":
+          description: '{"code":5001,"msg":"蜜罐服务器不存在、请检测蜜罐服务状态","data":{}}'
+          schema:
+            type: string
+      summary: 创建蜜罐诱饵
+      tags:
+      - 蜜罐管理
+  /api/v1/bait/honeypot/:id:
+    delete:
+      consumes:
+      - application/json
+      description: 删除蜜罐诱饵接口
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 删除蜜罐诱饵接口
+      tags:
+      - 蜜罐管理
+  /api/v1/bait/honeypot/set:
+    post:
+      consumes:
+      - application/json
+      description: 查找蜜罐诱饵
+      parameters:
+      - description: BaitType
+        in: body
+        name: BaitType
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: BaitName
+        in: body
+        name: BaitName
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: Status
+        in: body
+        name: Status
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: StartTimestamp
+        in: body
+        name: StartTimestamp
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: EndTimestamp
+        in: body
+        name: EndTimestamp
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.ServerBaitSelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 查找蜜罐诱饵
+      tags:
+      - 蜜罐管理
+  /api/v1/bait/probe:
+    post:
+      consumes:
+      - application/json
+      description: 创建探针诱饵
+      parameters:
+      - description: BaitID
+        in: body
+        name: BaitID
+        required: true
+        schema:
+          $ref: '#/definitions/probe_bait_handler.ProbeBaitCreatePayload'
+      - description: DeployPath
+        in: body
+        name: DeployPath
+        schema:
+          $ref: '#/definitions/probe_bait_handler.ProbeBaitCreatePayload'
+      - description: BaitData
+        in: body
+        name: BaitData
+        schema:
+          $ref: '#/definitions/probe_bait_handler.ProbeBaitCreatePayload'
+      - description: ProbeID
+        in: body
+        name: ProbeID
+        required: true
+        schema:
+          $ref: '#/definitions/probe_bait_handler.ProbeBaitCreatePayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "1007":
+          description: '{"code":1007,"msg":"Redis异常","data":{}}'
+          schema:
+            type: string
+        "3005":
+          description: '{"code":3005,"msg":"探针诱饵创建异常","data":{}}'
+          schema:
+            type: string
+        "3011":
+          description: '{"code":3011,"msg":"诱饵不存在","data":{}}'
+          schema:
+            type: string
+        "5007":
+          description: '{"code":5007,"msg":"探针服务器不存在","data":{}}'
+          schema:
+            type: string
+      summary: 创建探针诱饵
+      tags:
+      - 探针管理
+  /api/v1/bait/probe/:id:
+    delete:
+      consumes:
+      - application/json
+      description: 删除探针诱饵
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "1007":
+          description: '{"code":1007,"msg":"Redis异常","data":{}}'
+          schema:
+            type: string
+      summary: 删除探针诱饵
+      tags:
+      - 探针管理
+    get:
+      consumes:
+      - application/json
+      description: 下载蜜罐诱饵
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 下载蜜罐诱饵
+      tags:
+      - 蜜罐管理
+  /api/v1/bait/probe/set:
+    post:
+      consumes:
+      - application/json
+      description: 查找探针诱饵
+      parameters:
+      - description: BaitType
+        in: body
+        name: BaitType
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: BaitName
+        in: body
+        name: BaitName
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: Status
+        in: body
+        name: Status
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: StartTimestamp
+        in: body
+        name: StartTimestamp
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: EndTimestamp
+        in: body
+        name: EndTimestamp
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ServerBaitSelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.ServerBaitSelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 查找探针诱饵
+      tags:
+      - 探针管理
+  /api/v1/bait/set:
+    post:
+      consumes:
+      - application/json
+      description: 查找诱饵
+      parameters:
+      - description: Payload
+        in: body
+        name: Payload
+        required: true
+        schema:
+          $ref: '#/definitions/comm.BaitSelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.BaitSelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.BaitSelectPayload'
+      - description: BaitType
+        in: body
+        name: BaitType
+        schema:
+          $ref: '#/definitions/comm.BaitSelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.FileBaitSelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 查找诱饵
+      tags:
+      - 诱捕管理
+  /api/v1/bait/type:
+    get:
+      consumes:
+      - application/json
+      description: 查找支持诱饵类型
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{["FILE", "HISTORY"]}}'
+          schema:
+            type: string
+      summary: 查找支持诱饵类型
+      tags:
+      - 诱捕管理
+  /api/v1/harbor:
+    get:
+      consumes:
+      - application/json
+      description: 获取harbor镜像源
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: 获取harbor镜像源
+      tags:
+      - 系统设置
+    put:
+      consumes:
+      - application/json
+      description: 设置harbor镜像源
+      parameters:
+      - description: HarborURL
+        in: body
+        name: HarborURL
+        required: true
+        schema:
+          $ref: '#/definitions/harbor_handler.HarborConfigPayload'
+      - description: HarborProjectName
+        in: body
+        name: HarborProjectName
+        required: true
+        schema:
+          $ref: '#/definitions/harbor_handler.HarborConfigPayload'
+      - description: AuthenticateUser
+        in: body
+        name: AuthenticateUser
+        required: true
+        schema:
+          $ref: '#/definitions/harbor_handler.HarborConfigPayload'
+      - description: AuthenticatePass
+        in: body
+        name: AuthenticatePass
+        required: true
+        schema:
+          $ref: '#/definitions/harbor_handler.HarborConfigPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: 设置harbor镜像源
+      tags:
+      - 系统设置
+  /api/v1/harbor/health:
+    get:
+      consumes:
+      - application/json
+      description: 测试harbor连接
+      parameters:
+      - description: HarborURL
+        in: body
+        name: HarborURL
+        required: true
+        schema:
+          $ref: '#/definitions/harbor_handler.HarborConfigPayload'
+      - description: HarborProjectName
+        in: body
+        name: HarborProjectName
+        required: true
+        schema:
+          $ref: '#/definitions/harbor_handler.HarborConfigPayload'
+      - description: AuthenticateUser
+        in: body
+        name: AuthenticateUser
+        required: true
+        schema:
+          $ref: '#/definitions/harbor_handler.HarborConfigPayload'
+      - description: AuthenticatePass
+        in: body
+        name: AuthenticatePass
+        required: true
+        schema:
+          $ref: '#/definitions/harbor_handler.HarborConfigPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Images'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: 测试harbor连接
+      tags:
+      - 系统设置
+  /api/v1/honeypot:
+    post:
+      consumes:
+      - application/json
+      description: 创建蜜罐
+      parameters:
+      - description: HoneypotName
+        in: body
+        name: HoneypotName
+        required: true
+        schema:
+          $ref: '#/definitions/models.Honeypot'
+      - description: ImageAddress
+        in: body
+        name: ImageAddress
+        required: true
+        schema:
+          $ref: '#/definitions/models.Honeypot'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "5001":
+          description: '{"code":5001,"msg":"蜜罐服务器不存在、请检测蜜罐服务状态","data":{}}'
+          schema:
+            type: string
+        "5002":
+          description: '{"code":5002,"msg":"K8S创建镜像失败","data":{}}'
+          schema:
+            type: string
+        "5006":
+          description: '{"code":5006,"msg":"蜜罐名称存在","data":{}}'
+          schema:
+            type: string
+        "7001":
+          description: '{"code":7001,"msg":"镜像端口或是服务未配置、请先进行配置","data":{}}'
+          schema:
+            type: string
+      summary: 创建蜜罐
+      tags:
+      - 蜜罐管理
+  /api/v1/honeypot/:id:
+    delete:
+      consumes:
+      - application/json
+      description: 删除蜜罐接口
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "5005":
+          description: '{"code":5005,"msg":"K8S删除蜜罐错误","data":{}}'
+          schema:
+            type: string
+      summary: 删除蜜罐接口
+      tags:
+      - 蜜罐管理
+    get:
+      consumes:
+      - application/json
+      description: 获得蜜罐详细信息
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "5005":
+          description: '{"code":5005,"msg":"K8S删除蜜罐错误","data":{}}'
+          schema:
+            type: string
+      summary: 获得蜜罐详细信息
+      tags:
+      - 蜜罐管理
+  /api/v1/honeypot/protocol:
+    get:
+      consumes:
+      - application/json
+      description: 查看已经进行协议转发的蜜罐
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"请求参数错误","data":["honeypot-10.42.0.41"]}'
+          schema:
+            type: string
+      summary: 查看已经进行协议转发的蜜罐
+      tags:
+      - 蜜罐管理
+  /api/v1/honeypot/set:
+    post:
+      consumes:
+      - application/json
+      description: 查找蜜罐接口
+      parameters:
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.HoneypotSelectPayload'
+      - description: ProtocolType
+        in: body
+        name: ProtocolType
+        schema:
+          $ref: '#/definitions/comm.HoneypotSelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.HoneypotSelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.HoneypotSelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.HoneypotSelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 查找蜜罐接口
+      tags:
+      - 蜜罐管理
+  /api/v1/images/:id:
+    put:
+      consumes:
+      - application/json
+      description: 更新镜像信息
+      parameters:
+      - description: ImagePort
+        in: body
+        name: ImagePort
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ImageUpdatePayload'
+      - description: ImagePort
+        in: body
+        name: ImageType
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ImageUpdatePayload'
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 更新镜像信息
+      tags:
+      - 镜像管理
+  /api/v1/images/pod:
+    get:
+      consumes:
+      - application/json
+      description: 获得POD镜像列表
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":[]}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 获得POD镜像列表
+      tags:
+      - 蜜罐管理
+  /api/v1/images/set:
+    post:
+      consumes:
+      - application/json
+      description: 获得镜像列表
+      parameters:
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Images'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 获得镜像列表
+      tags:
+      - 镜像管理
+  /api/v1/probe/set:
+    post:
+      consumes:
+      - application/json
+      description: 探针列表
+      parameters:
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.ProbeSelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 探针列表
+      tags:
+      - 探针管理
+  /api/v1/protocol:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 创建协议接口
+      parameters:
+      - description: ProtocolType
+        in: body
+        name: ProtocolType
+        required: true
+        schema:
+          $ref: '#/definitions/models.Protocols'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "5001":
+          description: '{"code":5001,"msg":"蜜罐服务器不存在、请检测蜜罐服务状态","data":{}}'
+          schema:
+            type: string
+        "6001":
+          description: '{"code":6001,"msg":"协议创建失败","data":{}}'
+          schema:
+            type: string
+        "6004":
+          description: '{"code":6004,"msg":"协议名称重复","data":{}}'
+          schema:
+            type: string
+      summary: 创建协议服务
+      tags:
+      - 影子代理
+  /api/v1/protocol/:id:
+    delete:
+      consumes:
+      - application/json
+      description: 删除协议服务
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "6003":
+          description: '{"code":6003,"msg":"协议删除失败","data":{}}'
+          schema:
+            type: string
+      summary: 删除协议服务
+      tags:
+      - 影子代理
+  /api/v1/protocol/port/:id:
+    put:
+      consumes:
+      - application/json
+      description: 更新协议端口范围
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "6003":
+          description: '{"code":6003,"msg":"协议删除失败","data":{}}'
+          schema:
+            type: string
+      summary: 更新协议端口范围
+      tags:
+      - 影子代理
+  /api/v1/protocol/set:
+    post:
+      consumes:
+      - application/json
+      description: 查找协议
+      parameters:
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.ProtocolSelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "6002":
+          description: '{"code":6002,"msg":"协议获取失败","data":{}}'
+          schema:
+            type: string
+      summary: 查找协议
+      tags:
+      - 影子代理
+  /api/v1/protocol/type:
+    get:
+      consumes:
+      - application/json
+      description: 用户查看自定义协议类型接口
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"OK","data":[""]}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 用户查看自定义协议类型接口
+      tags:
+      - 影子代理
+  /api/v1/proxy/protocol:
+    post:
+      consumes:
+      - application/json
+      description: 创建协议代理
+      parameters:
+      - description: ProxyPort
+        in: body
+        name: ProxyPort
+        required: true
+        schema:
+          $ref: '#/definitions/protocol_proxy_handler.ProtocolProxyCreatePayload'
+      - description: HoneypotID
+        in: body
+        name: HoneypotID
+        required: true
+        schema:
+          $ref: '#/definitions/protocol_proxy_handler.ProtocolProxyCreatePayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "1007":
+          description: '{"code":1007,"msg":"Redis异常","data":{}}'
+          schema:
+            type: string
+        "6001":
+          description: '{"code":6001,"msg":"协议代理创建失败","data":{}}'
+          schema:
+            type: string
+        "6006":
+          description: '{"code":6006,"msg":"代理端口重复","data":{}}'
+          schema:
+            type: string
+      summary: 创建协议代理
+      tags:
+      - 影子代理
+  /api/v1/proxy/protocol/:id:
+    delete:
+      consumes:
+      - application/json
+      description: 删除协议代理
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 删除协议代理
+      tags:
+      - 影子代理
+  /api/v1/proxy/protocol/offline/:id:
+    post:
+      consumes:
+      - application/json
+      description: 下线协议代理
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 下线协议代理
+      tags:
+      - 影子代理
+  /api/v1/proxy/protocol/online/:id:
+    post:
+      consumes:
+      - application/json
+      description: 上线协议代理
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 上线协议代理
+      tags:
+      - 影子代理
+  /api/v1/proxy/protocol/set:
+    post:
+      consumes:
+      - application/json
+      description: 查找协议代理
+      parameters:
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.ProtocolProxySelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 查找协议代理
+      tags:
+      - 影子代理
+  /api/v1/proxy/protocol/test/:id:
+    get:
+      consumes:
+      - application/json
+      description: 测试协议代理
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 测试协议代理
+      tags:
+      - 影子代理
+  /api/v1/proxy/transparent:
+    post:
+      consumes:
+      - application/json
+      description: 创建透明代理
+      parameters:
+      - description: ProxyPort
+        in: body
+        name: ProxyPort
+        required: true
+        schema:
+          $ref: '#/definitions/trans_proxy_handler.TransparentProxyCreatePayload'
+      - description: ProtocolProxyID
+        in: body
+        name: ProtocolProxyID
+        required: true
+        schema:
+          $ref: '#/definitions/trans_proxy_handler.TransparentProxyCreatePayload'
+      - description: ProbeID
+        in: body
+        name: ProbeID
+        required: true
+        schema:
+          $ref: '#/definitions/trans_proxy_handler.TransparentProxyCreatePayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 创建透明代理
+      tags:
+      - 影子代理
+  /api/v1/proxy/transparent/:id:
+    delete:
+      consumes:
+      - application/json
+      description: 删除透明代理
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 删除透明代理
+      tags:
+      - 影子代理
+  /api/v1/proxy/transparent/offline/:id:
+    post:
+      consumes:
+      - application/json
+      description: 下线透明代理
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 下线透明代理
+      tags:
+      - 影子代理
+  /api/v1/proxy/transparent/online/:id:
+    post:
+      consumes:
+      - application/json
+      description: 上线透明代理
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 上线透明代理
+      tags:
+      - 影子代理
+  /api/v1/proxy/transparent/set:
+    post:
+      consumes:
+      - application/json
+      description: 查找透明代理
+      parameters:
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.SelectTransparentProxyPayload'
+      - description: ProtocolProxyID
+        in: body
+        name: ProtocolProxyID
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectTransparentProxyPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectTransparentProxyPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectTransparentProxyPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.TransparentProxySelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 查找透明代理
+      tags:
+      - 影子代理
+  /api/v1/proxy/transparent/test/:id:
+    get:
+      consumes:
+      - application/json
+      description: 测试透明代理
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 测试透明代理
+      tags:
+      - 影子代理
+  /api/v1/token:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 创建密签
+      parameters:
+      - description: TokenType
+        in: body
+        name: TokenType
+        required: true
+        schema:
+          $ref: '#/definitions/token_handler.TokenCreatePayload'
+      - description: TokenName
+        in: body
+        name: TokenName
+        required: true
+        schema:
+          $ref: '#/definitions/token_handler.TokenCreatePayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "1006":
+          description: '{"code":1006,"msg":"数据库异常","data":{}}'
+          schema:
+            type: string
+        "3010":
+          description: '{"code":3010,"msg":"密签名称重复","data":{}}'
+          schema:
+            type: string
+      summary: 创建密签
+      tags:
+      - 诱捕管理
+  /api/v1/token/honeypot:
+    post:
+      consumes:
+      - application/json
+      description: 创建蜜罐密签
+      parameters:
+      - description: TokenName
+        in: body
+        name: TokenName
+        required: true
+        schema:
+          $ref: '#/definitions/honeypot_token_handler.HoneypotTokenCreatePayload'
+      - description: DeployPath
+        in: body
+        name: DeployPath
+        schema:
+          $ref: '#/definitions/honeypot_token_handler.HoneypotTokenCreatePayload'
+      - description: HoneypotID
+        in: body
+        name: HoneypotID
+        required: true
+        schema:
+          $ref: '#/definitions/honeypot_token_handler.HoneypotTokenCreatePayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "3005":
+          description: '{"code":3005,"msg":"蜜罐诱饵创建异常","data":{}}'
+          schema:
+            type: string
+        "3012":
+          description: '{"code":3012,"msg":"K8S拷贝异常","data":{}}'
+          schema:
+            type: string
+        "3015":
+          description: '{"code":3015,"msg":"密签不存在","data":{}}'
+          schema:
+            type: string
+        "5001":
+          description: '{"code":5001,"msg":"蜜罐服务器不存在、请检测蜜罐服务状态","data":{}}'
+          schema:
+            type: string
+      summary: 创建蜜罐密签
+      tags:
+      - 蜜罐管理
+  /api/v1/token/honeypot/:id:
+    delete:
+      consumes:
+      - application/json
+      description: 删除蜜罐密签
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 删除蜜罐密签
+      tags:
+      - 蜜罐管理
+    get:
+      consumes:
+      - application/json
+      description: 下载蜜罐密签接口
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 下载蜜罐密签接口
+      tags:
+      - 蜜罐管理
+  /api/v1/token/honeypot/set:
+    post:
+      consumes:
+      - application/json
+      description: 用户查看自定义蜜罐密签接口
+      parameters:
+      - description: ServerID
+        in: body
+        name: ServerID
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ServerTokenSelectPayload'
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.ServerTokenSelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ServerTokenSelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ServerTokenSelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.ServerTokenSelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 用户查看自定义蜜罐密签接口
+      tags:
+      - 蜜罐管理
+  /api/v1/token/id:
+    delete:
+      consumes:
+      - application/json
+      description: 删除密签
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 删除密签
+      tags:
+      - 诱捕管理
+    get:
+      consumes:
+      - application/json
+      description: 下载蜜罐诱饵接口
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 下载蜜罐诱饵接口
+      tags:
+      - 蜜罐管理
+  /api/v1/token/name/set:
+    get:
+      consumes:
+      - application/json
+      description: 查看密签名称列表
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}'
+          schema:
+            type: string
+      summary: 查看密签名称列表
+      tags:
+      - 蜜罐管理
+  /api/v1/token/probe:
+    post:
+      consumes:
+      - application/json
+      description: 创建探针密签
+      parameters:
+      - description: TokenName
+        in: body
+        name: TokenName
+        required: true
+        schema:
+          $ref: '#/definitions/probe_token_handler.ProbeTokenCreatePayload'
+      - description: DeployPath
+        in: body
+        name: DeployPath
+        required: true
+        schema:
+          $ref: '#/definitions/probe_token_handler.ProbeTokenCreatePayload'
+      - description: ProbeID
+        in: body
+        name: ProbeID
+        required: true
+        schema:
+          $ref: '#/definitions/probe_token_handler.ProbeTokenCreatePayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+        "1007":
+          description: '{"code":1007,"msg":"Redis异常","data":{}}'
+          schema:
+            type: string
+        "3005":
+          description: '{"code":3005,"msg":"探针诱饵创建异常","data":{}}'
+          schema:
+            type: string
+        "3015":
+          description: '{"code":3015,"msg":"密签不存在","data":{}}'
+          schema:
+            type: string
+        "5007":
+          description: '{"code":5007,"msg":"探针服务器不存在","data":{}}'
+          schema:
+            type: string
+      summary: 创建探针密签
+      tags:
+      - 探针管理
+  /api/v1/token/probe/:id:
+    delete:
+      consumes:
+      - application/json
+      description: 删除探针密签
+      parameters:
+      - description: int valid
+        in: query
+        minimum: 1
+        name: int
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 删除探针密签
+      tags:
+      - 探针管理
+  /api/v1/token/probe/set:
+    post:
+      consumes:
+      - application/json
+      description: 查看探针密签
+      parameters:
+      - description: ServerID
+        in: body
+        name: ServerID
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ServerTokenSelectPayload'
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.ServerTokenSelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ServerTokenSelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.ServerTokenSelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.ServerTokenSelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 查看探针密签
+      tags:
+      - 探针管理
+  /api/v1/token/set:
+    post:
+      consumes:
+      - application/json
+      description: 查找密签
+      parameters:
+      - description: Payload
+        in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - description: PageNumber
+        in: body
+        name: PageNumber
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - description: PageSize
+        in: body
+        name: PageSize
+        required: true
+        schema:
+          $ref: '#/definitions/comm.SelectPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comm.TokenSelectResultPayload'
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 查找密签
+      tags:
+      - 诱捕管理
+  /api/v1/token/trace:
+    get:
+      consumes:
+      - application/json
+      description: 获得密签跟踪URL
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: 获得密签跟踪URL
+      tags:
+      - 系统设置
+    put:
+      consumes:
+      - application/json
+      description: 设置密签跟踪URL
+      parameters:
+      - description: TraceHost
+        in: body
+        name: TraceHost
+        required: true
+        schema:
+          $ref: '#/definitions/token_trace_handler.TraceHostConfigPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: 设置密签跟踪URL
+      tags:
+      - 系统设置
+  /api/v1/token/type:
+    get:
+      consumes:
+      - application/json
+      description: 查看支持密签类型
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{["FILE", "HISTORY"]}}'
+          schema:
+            type: string
+      summary: 查看支持密签类型
+      tags:
+      - 诱捕管理
+  /api/v1/user/password:
+    put:
+      consumes:
+      - application/json
+      description: 修改密码
+      parameters:
+      - description: NewPassword
+        in: body
+        name: NewPassword
+        required: true
+        schema:
+          $ref: '#/definitions/user_handler.PasswordChangePayload'
+      - description: RepeatPassword
+        in: body
+        name: RepeatPassword
+        required: true
+        schema:
+          $ref: '#/definitions/user_handler.PasswordChangePayload'
+      - description: OldPassword
+        in: body
+        name: OldPassword
+        required: true
+        schema:
+          $ref: '#/definitions/user_handler.PasswordChangePayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "500":
+          description: '{"code":500,"msg":"内部异常","data":{}}'
+          schema:
+            type: string
+      summary: 修改密码
+      tags:
+      - 登录管理
+  /api/v1/webhook:
+    get:
+      consumes:
+      - application/json
+      description: 获取钉钉webhook
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: 获取钉钉webhook
+      tags:
+      - 系统设置
+    put:
+      consumes:
+      - application/json
+      description: 设置钉钉webhook
+      parameters:
+      - description: WebHook
+        in: body
+        name: WebHook
+        required: true
+        schema:
+          $ref: '#/definitions/webhook_handler.WebHookConfigPayload'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"msg":"ok","data":{}}'
+          schema:
+            type: string
+        "400":
+          description: '{"code":400,"msg":"请求参数错误","data":{}}'
+          schema:
+            type: string
+      summary: 设置钉钉webhook
+      tags:
+      - 系统设置
+swagger: "2.0"

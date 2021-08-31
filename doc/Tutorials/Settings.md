@@ -1,30 +1,33 @@
 ## 系统设置
 
-> 系统设置可进行镜像源配置、查看镜像列表、进行协议配以及密签跟踪服务器设置
+> 系统设置可进行密签跟踪服务器设置、Harbor源配置以及钉钉webghook设置
+
+![系统设置](../img/系统设置.png)
 
 
 
-**镜像源采用harbor为镜像源、版本为2.0、指定harbor的URL、用户名、密码以及项目名**
+- 密签跟踪设置
 
-![系统配置-镜像源设置](../img/系统配置-镜像源设置.png)
-注意：如果设置自定义harbor 需要修改 /usr/lib/systemd/system/docker.service 文件 
-设置 ExecStart=/usr/bin/dockerd --insecure-registry=47.96.71.197:90" 中的 --insecure-registry的值为harbor地址。
-并执行 1、sudo systemctl daemon-reload  2、sudo systemctl restart docker
-
-**镜像列表展示当前可用来创建蜜罐的镜像列表**
-
-!!! 注意： 这里可以对镜像的端口进行设置、当前端口是确定的、除非你明确修改的意义、否则请不要随意修改
-
-![系统设置-镜像列表](../img/系统设置-镜像列表.png)
+> 设置密签跟踪服务器地址、一键脚本安装的默认地址为http://IP:5000
 
 
 
-**进行协议转发的服务**
+- Harbor源配置
 
-![系统设置-协议配置](../img/系统设置-协议配置.png)
+> 提取镜像信息的API版本为2.0、设置可以指定harbor的URL、用户名、密码以及项目名
 
 
 
-**密签跟踪服务器设置**
+**！！！ 注意：如果设置自定义harbor 需要修改 /usr/lib/systemd/system/docker.service 文件** 
+**设置 ExecStart=/usr/bin/dockerd --insecure-registry=47.96.71.197:90" 中的 --insecure-registry的值为harbor地址。**
+**并执行 1、sudo systemctl daemon-reload  2、sudo systemctl restart docker**
 
-![系统设置-跟踪服务器](../img/系统设置-跟踪服务器.png)
+
+
+- webhook配置
+
+> 用来设置钉钉的webhook参数、可以进行自定义告警、系统默认会对透明转发以及协议转发进行告警、展示攻击的具体信息进行实时告警。
+
+
+
+

