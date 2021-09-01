@@ -20,7 +20,7 @@ func (user *User) CreateUserRecord() error {
 }
 
 func (user *User) CreateDefaultUser() error {
-	user.HashPassword("ehoney2021")
+	user.HashPassword("123456")
 	var DefaultUsers = []User{
 		{Username: "admin", Password: user.Password},
 	}
