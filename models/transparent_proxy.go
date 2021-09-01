@@ -95,7 +95,7 @@ func (proxy *TransparentProxy) DeleteTransparentProxyByID(id int64) error {
 
 func (proxy *TransparentProxy) GetTransparentProxyByProxyPort(port int32, probeID int64) (*TransparentProxy, error) {
 	var ret TransparentProxy
-	if err := db.Take(&ret, "proxy_port = ? and server_id", port, probeID).Error; err != nil {
+	if err := db.Take(&ret, "proxy_port = ? and server_id = ?", port, probeID).Error; err != nil {
 		return nil, err
 	}
 	return &ret, nil
