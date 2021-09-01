@@ -9,6 +9,7 @@ import (
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -145,19 +146,25 @@ func DeleteHoneypot(c *gin.Context) {
 	}
 	data, err := honeypot.GetHoneypotByID(id)
 	if err != nil{
-		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
 		return
 	}
-	err = cluster.DeleteDeployment(data.HoneypotName)
-	if err != nil{
-		appG.Response(http.StatusOK, app.ErrorHoneypotDelete, nil)
+	if err = honeypot.DeleteHoneypotByID(id); err != nil{
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
 		return
 	}
 
-	if err = honeypot.DeleteHoneypotByID(id); err != nil{
-		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
+	err = cluster.DeleteDeployment(data.HoneypotName)
+	if err != nil{
+		data.CreateHoneypot()
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.ErrorHoneypotDelete, err.Error())
 		return
 	}
+
+
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
 }
 
