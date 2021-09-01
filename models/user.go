@@ -19,6 +19,24 @@ func (user *User) CreateUserRecord() error {
 	return nil
 }
 
+func (user *User) CreateDefaultUser() error {
+	user.HashPassword("ehoney2021")
+	var DefaultUsers = []User{
+		{Username: "admin", Password: user.Password},
+	}
+	for _, d := range DefaultUsers{
+		p, _ :=  user.GetUserByName(d.Username)
+		if p != nil{
+			continue
+		}
+		err := d.CreateUserRecord()
+		if err != nil{
+			continue
+		}
+	}
+	return nil
+}
+
 func (user *User) GetUserByName(name string) (*User, error) {
 	var ret User
 	if err := db.Where("username = ?", name).Take(&ret).Error; err != nil {

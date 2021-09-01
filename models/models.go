@@ -38,6 +38,7 @@ func SetUp() {
 	if err = db.AutoMigrate(&User{}); err != nil{
 		zap.L().Panic("AutoMigrate error:" + err.Error())
 	}
+	(&User{}).CreateDefaultUser()
 	if err = db.AutoMigrate(&Token{}); err != nil{
 		zap.L().Panic("AutoMigrate error:" + err.Error())
 	}
