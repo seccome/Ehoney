@@ -1,0 +1,20 @@
+#!/bin/rc -e
+# Copyright 2012 The Go Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+rfork e
+
+if(! test -f ../bin/go){
+	echo 'run.rc must be run from $GOROOT/src after installing cmd/go' >[1=2]
+	exit wrongdir
+}
+
+eval `{../bin/go env}
+
+GOPATH=/nonexist-gopath
+GOBIN=() # Issue 14340
+GOFLAGS=()
+GO111MODULE=()
+
+exec ../bin/go tool dist test -rebuild $*
