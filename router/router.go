@@ -206,6 +206,8 @@ func MakeRoute() *gin.Engine {
 			//test transparent proxy
 			private.GET("/proxy/transparent/test/:id", trans_proxy_handler.TestTransparentProxy)
 
+			private.PUT("/proxy/transparent/test/:id", trans_proxy_handler.UpdateTransparentProxyStatus)
+
 			//get image list
 			private.POST("/images/set", images_handler.GetImages)
 			//change image list

@@ -7,11 +7,11 @@ import (
 )
 
 type TransparentProxy struct {
-	ID              int64         `gorm:"primary_key;AUTO_INCREMENT;not null;unique;column:id" json:"id"`       //透明代理ID
-	CreateTime      string        `gorm:"not null"`                                                             //创建时间
-	Creator         string        `gorm:"not null;size:256"`                                                    //创建用户
-	ProxyPort       int32         `gorm:"not null;unique" json:"ProxyPort" form:"ProxyPort" binding:"required"` //代理端口
-	ProtocolProxyID int64         `binding:"required" json:"ProtocolProxyID"`                                   //协议代理ID
+	ID              int64         `gorm:"primary_key;AUTO_INCREMENT;not null;unique;column:id" json:"id"` //透明代理ID
+	CreateTime      string        `gorm:"not null"`                                                       //创建时间
+	Creator         string        `gorm:"not null;size:256"`                                              //创建用户
+	ProxyPort       int32         `gorm:"not null;" json:"ProxyPort" form:"ProxyPort" binding:"required"` //代理端口
+	ProtocolProxyID int64         `binding:"required" json:"ProtocolProxyID"`                             //协议代理ID
 	ProtocolProxy   ProtocolProxy `gorm:"ForeignKey:ProtocolProxyID;constraint:OnDelete:CASCADE"`
 	ServerID        int64         `binding:"required" json:"ProbeID"` //服务ID
 	Servers         Probes        `gorm:"ForeignKey:ServerID;constraint:OnDelete:CASCADE"`
@@ -61,9 +61,9 @@ func (proxy *TransparentProxy) GetTransparentProxy(payload *comm.SelectTranspare
 	var count int64
 	var p = "%" + payload.Payload + "%"
 	var sql = ""
-	if payload.ProtocolProxyID != 0{
-		sql = fmt.Sprintf("select h.id, h.proxy_port, h2.server_ip as ProbeIP, h.create_time, h.creator, h.status, h3.proxy_port as ProtocolPort, h4.protocol_type  from transparent_proxies h, probes h2, protocol_proxies h3, protocols h4 where h3.id = %d AND  protocol_proxy_id = %d AND h4.id = h3.protocol_id AND h.server_id = h2.id AND CONCAT(h.id, h.proxy_port, h2.server_ip, h.create_time, h.creator) LIKE '%s' order by h.create_time DESC", payload.ProtocolProxyID, payload.ProtocolProxyID,  p)
-	}else{
+	if payload.ProtocolProxyID != 0 {
+		sql = fmt.Sprintf("select h.id, h.proxy_port, h2.server_ip as ProbeIP, h.create_time, h.creator, h.status, h3.proxy_port as ProtocolPort, h4.protocol_type  from transparent_proxies h, probes h2, protocol_proxies h3, protocols h4 where h3.id = %d AND  protocol_proxy_id = %d AND h4.id = h3.protocol_id AND h.server_id = h2.id AND CONCAT(h.id, h.proxy_port, h2.server_ip, h.create_time, h.creator) LIKE '%s' order by h.create_time DESC", payload.ProtocolProxyID, payload.ProtocolProxyID, p)
+	} else {
 		sql = fmt.Sprintf("select h.id, h.proxy_port, h2.server_ip as ProbeIP, h.create_time, h.creator, h.status, h3.proxy_port as ProtocolPort, h4.protocol_type  from transparent_proxies h, probes h2, protocol_proxies h3, protocols h4 where h.server_id = h2.id  AND h3.id = h.protocol_proxy_id AND h4.id = h3.protocol_id AND CONCAT(h.id, h.proxy_port, h2.server_ip, h.create_time, h.creator) LIKE '%s' order by h.create_time DESC", p)
 	}
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
@@ -116,7 +116,14 @@ func (proxy *TransparentProxy) UpdateTransparentProxyStatusByTaskID(status comm.
 	return nil
 }
 
-func (proxy *TransparentProxy) GetTransparentProxies() (*[]TransparentProxy, error){
+func (proxy *TransparentProxy) UpdateTransparentProxyStatusByID(status int64, ID int64) error {
+	if err := db.Model(proxy).Where("id = ?", ID).Update("status", status).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (proxy *TransparentProxy) GetTransparentProxies() (*[]TransparentProxy, error) {
 	var ret []TransparentProxy
 	if err := db.Find(&ret).Error; err != nil {
 		return nil, err
