@@ -113,11 +113,13 @@ func UpdateIPConfig(ipConfig string){
 			viper.Set("redis.redishost", p[1])
 			viper.Set("database.dbhost", p[1])
 			viper.Set("server.apphost", p[1])
+			viper.Set("app.extranet", p[1])
 			viper.Set("app.tokentraceaddress", traceAddress)
 			setting.Redis.RedisHost = p[1]
 			setting.Database.DBHost = p[1]
 			setting.Server.AppHost = p[1]
 			setting.App.TokenTraceAddress = traceAddress
+			setting.App.Extranet = p[1]
 			err := viper.WriteConfig()
 			if err != nil{
 				zap.L().Error("write config err " + err.Error())
