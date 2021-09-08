@@ -1,6 +1,7 @@
 
 [app]
   enablecors = true
+  extranet = "http://178.6.4.5:8080"
   protocoldeploypath = "/home/ehoney_proxy"
   scriptpath = "scripts"
   taskchannel = "task_to_agent_channel"
