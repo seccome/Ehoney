@@ -66,6 +66,7 @@ type AppSetting struct {
 	TokenTraceApiPath     string
 	WebHook               string
 	TraceHost             string
+	Extranet              string
 }
 
 type HarborSetting struct {
