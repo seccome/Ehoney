@@ -158,7 +158,8 @@ func ChangePassword(c *gin.Context)  {
 		return
 	}
 
-	user.UpdatePassword(u, payload.NewPassword)
+	user.HashPassword(payload.NewPassword)
+	user.UpdatePassword(u, user.Password)
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
 }
 

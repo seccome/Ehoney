@@ -4,6 +4,7 @@ import (
 	"decept-defense/controllers/agent_handler"
 	"decept-defense/controllers/attack_handler"
 	"decept-defense/controllers/bait_handler"
+	"decept-defense/controllers/extranet_handler"
 	"decept-defense/controllers/harbor_handler"
 	"decept-defense/controllers/heartbeat_handler"
 	"decept-defense/controllers/honeypot_bait_handler"
@@ -228,6 +229,8 @@ func MakeRoute() *gin.Engine {
 			private.GET("/webhook", webhook_handler.GetWebHookConfig)
 			private.GET("/token/trace", token_trace_handler.GetTraceHostConfig)
 			private.PUT("/token/trace", token_trace_handler.UpdateTraceHostConfig)
+			private.PUT("/extranet", extranet_handler.UpdateExtranetConfig)
+			private.GET("/extranet", extranet_handler.GetExtranetConfig)
 		}
 	}
 	return r
