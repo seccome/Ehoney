@@ -49,7 +49,7 @@
   condition: (evt.num>=0)
 
 # In some cases, such as dropped system call events, information about
-# the process name may be missing. For some rulwreating files in contaies that really depend
+# the process name may be missing. For some rules that really depend
 # on the identity of the process performing an action such as opening
 # a file, etc., we require that the process name be known.
 - macro: proc_name_exists
@@ -449,6 +449,7 @@
   desc: Detect any listen
   condition: >
     ((evt.type in (listen) and evt.dir=<)) 
+    and fd.type!="<NA>"
     and (fd.typechar = 4 or fd.typechar = 6)
     and fd.name!=""
     and container
@@ -464,6 +465,7 @@
   desc: Detect any accept
   condition: >
     ((evt.type in (accept) and evt.dir=<))
+    and fd.type!="<NA>"
     and (fd.typechar = 4 or fd.typechar = 6)
     and fd.name!=""
     and not fd.sport in (allowed_connect_ports)
@@ -478,9 +480,10 @@
   desc: Detect any outbound connect
   condition: >
     ((evt.type in (connect) and evt.dir=<))
+    and fd.type!="<NA>"
     and (fd.typechar = 4 or fd.typechar = 6)
     and fd.name!=""
-    and fd.sport!=65535
+    and not fd.port in (53,0,65535)
     and container
     and not container.image.repository in (all_k8s_image)
     and not container.image.repository startswith "rancher/"
@@ -2452,7 +2455,6 @@
     and (evt.type = creat or ((evt.type = open or evt.type = openat) and evt.arg.flags contains O_CREAT))
     and user.name!="<NA>"
     and container.name!="decept-defense-web"
-    and not fd.name startswith /app/mysql/
     and container 
     and not container.image.repository in (all_k8s_image)
     and proc_name_exists
