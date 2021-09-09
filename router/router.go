@@ -213,7 +213,7 @@ func MakeRoute() *gin.Engine {
 
 			//get image list
 			private.POST("/images/set", images_handler.GetImages)
-			//change image listextranet
+			//change image list
 			private.PUT("/images/:id", images_handler.UpdateImage)
 			//get pod image
 			private.GET("/images/pod", images_handler.GetPodImages)
