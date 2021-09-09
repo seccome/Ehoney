@@ -134,10 +134,10 @@ func DeleteDeployment(deploymentName string) error {
 	return nil
 }
 
-func DeploymentIsExist(deploymentName string) bool {
+func DeploymentIsExist(deploymentName string) (bool, error) {
 	pods, err := client.CoreV1().Pods(apiV1.NamespaceDefault).List(context.TODO(), metaV1.ListOptions{})
 	if err != nil {
-		return false
+		return false, err
 	}
 	for _, d := range pods.Items {
 		data := strings.Split(d.Name, "-")
@@ -145,10 +145,10 @@ func DeploymentIsExist(deploymentName string) bool {
 			continue
 		}
 		if data[0] == deploymentName {
-			return true
+			return true, nil
 		}
 	}
-	return false
+	return false, nil
 }
 
 func GetPod(podName string) (*apiV1.Pod, error) {

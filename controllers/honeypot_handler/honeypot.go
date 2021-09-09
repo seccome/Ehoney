@@ -63,7 +63,12 @@ func CreateHoneypot(c *gin.Context) {
 		appG.Response(http.StatusOK, app.ErrorHoneypotNameExist, nil)
 		return
 	}
-	if cluster.DeploymentIsExist(honeypot.HoneypotName){
+	flag, err :=  cluster.DeploymentIsExist(honeypot.HoneypotName)
+	if err != nil{
+		appG.Response(http.StatusOK, app.INTERNAlERROR, err)
+		return
+	}
+	if flag{
 		appG.Response(http.StatusOK, app.ErrorHoneypotPodExist, nil)
 		return
 	}
@@ -137,6 +142,7 @@ func GetHoneypots(c *gin.Context) {
 func DeleteHoneypot(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var honeypot models.Honeypot
+	var protocolProxy models.ProtocolProxy
 	valid := validation.Validation{}
 	id := com.StrTo(c.Param("id")).MustInt64()
 	valid.Min(id, 1, "id").Message("ID必须大于0")
@@ -144,6 +150,12 @@ func DeleteHoneypot(c *gin.Context) {
 		appG.Response(http.StatusOK, app.InvalidParams, nil)
 		return
 	}
+	_, err := protocolProxy.GetProtocolProxyByHoneypotID(id)
+	if err == nil{
+		appG.Response(http.StatusOK, app.ErrorHoneypotProtocolProxyExist, nil)
+		return
+	}
+
 	data, err := honeypot.GetHoneypotByID(id)
 	if err != nil{
 		zap.L().Error(err.Error())
@@ -155,7 +167,17 @@ func DeleteHoneypot(c *gin.Context) {
 		appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
 		return
 	}
-
+	flag, err := cluster.DeploymentIsExist(data.HoneypotName)
+	if err != nil{
+		data.CreateHoneypot()
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.ErrorHoneypotDelete, err.Error())
+		return
+	}
+	if !flag{
+		appG.Response(http.StatusOK, app.SUCCESS, nil)
+		return
+	}
 	err = cluster.DeleteDeployment(data.HoneypotName)
 	if err != nil{
 		data.CreateHoneypot()

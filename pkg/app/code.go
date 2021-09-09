@@ -56,6 +56,7 @@ const (
 	ErrorHoneypotPodExist         = 5008
 	ErrorHoneypotNotExist         = 5009
 	ErrorProbeServerNotExist      = 5010
+	ErrorHoneypotProtocolProxyExist   = 5011
 
 	ErrorProtocolCreate           = 6001
 	ErrorProtocolGet              = 6002

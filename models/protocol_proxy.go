@@ -103,6 +103,14 @@ func (proxy *ProtocolProxy) GetProtocolProxyByTaskID(taskID string) (*ProtocolPr
 	return &ret, nil
 }
 
+func (proxy *ProtocolProxy) GetProtocolProxyByHoneypotID(honeypotID int64) (*ProtocolProxy, error) {
+	var ret ProtocolProxy
+	if err := db.Take(&ret, "honeypot_id = ?", honeypotID).Error; err != nil {
+		return nil, err
+	}
+	return &ret, nil
+}
+
 func (proxy *ProtocolProxy) UpdateProtocolProxyStatusByTaskID(status comm.TaskStatus, taskID string) error {
 	if err := db.Model(proxy).Where("task_id = ?", taskID).Update("status", status).Error; err != nil {
 		return err

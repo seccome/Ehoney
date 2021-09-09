@@ -58,6 +58,7 @@ var MsgFlags = map[int]string{
 	ErrorHoneypotPodExist:           "容器名称存在请先删除容器或是修改容器名字",
 	ErrorHoneypotNotExist:           "蜜罐不存在",
 	ErrorProbeServerNotExist:        "探针服务器异常、请检测探针服务器状态",
+	ErrorHoneypotProtocolProxyExist: "存在关联此蜜罐的协议代理、请先删除协议代理",
 
 	ErrorProtocolCreate:             "协议创建失败",
 	ErrorProtocolGet:                "协议获取失败",
