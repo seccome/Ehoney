@@ -71,6 +71,8 @@ func MakeRoute() *gin.Engine {
 			//insert ssh key
 			public.POST("/protocol/key", protocol_handler.CreateSSHKey)
 			public.GET("/topology/map", topology_handler.TopologyMapHandle)
+
+			public.GET("/extranet", extranet_handler.GetExtranetConfig)
 		}
 		private := api.Group("/v1/")
 		private.Use(jwt.JWT())
@@ -211,7 +213,7 @@ func MakeRoute() *gin.Engine {
 
 			//get image list
 			private.POST("/images/set", images_handler.GetImages)
-			//change image list
+			//change image listextranet
 			private.PUT("/images/:id", images_handler.UpdateImage)
 			//get pod image
 			private.GET("/images/pod", images_handler.GetPodImages)

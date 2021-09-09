@@ -504,7 +504,7 @@ function setupDeceptDefence() {
   # 覆盖项目中的k3s 配置
   yes | cp -rf /etc/rancher/k3s/k3s.yaml ${Project_Dir}/configs/.kube/config
   docker build -t decept-defense .
-  docker run -d -v $Project_Dir/configs/.kube/:/go/src/configs/.kube/ -v $Project_Dir/upload/:/go/src/upload/ --network host -e TZ=Asia/Shanghai --name decept-defense-web -e CONFIGS="host:${Local_Host};" decept-defense:latest
+  docker run -d -v $Project_Dir/configs/:/go/src/configs/ -v $Project_Dir/upload/:/go/src/upload/ --network host -e TZ=Asia/Shanghai --name decept-defense-web -e CONFIGS="host:${Local_Host};" decept-defense:latest
   echo "--------------------End of DeceptDefence installation-------------------------"
   check_decept_defense_service
 }
@@ -605,11 +605,11 @@ function setUpIp() {
     exit 1
   fi
   echo "The IP used by this machine is set to: ${Local_Host}"
-
-  if [ ! -f "/home/ehoney_ip.txt" ]; then
-    touch /home/ehoney_ip.txt
-  fi
-  echo ${Local_Host} >/home/ehoney_ip.txt
+  #
+  #  if [ ! -f "/home/ehoney_ip.txt" ]; then
+  #    touch /home/ehoney_ip.txt
+  #  fi
+  #  echo ${Local_Host} >/home/ehoney_ip.txt
 }
 
 main

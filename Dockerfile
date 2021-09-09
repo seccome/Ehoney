@@ -2,15 +2,15 @@ FROM centos:7
 RUN  sed -i -e '/mirrors.cloud.aliyuncs.com/d' -e '/mirrors.aliyuncs.com/d' /etc/yum.repos.d/CentOS-Base.repo
 
 RUN yum -y install gcc gcc-c++ kernel-devel
-COPY tool/go /usr/local/go
-RUN chmod -R 755 /usr/local/go
-RUN export PATH=$PATH:/usr/local/go/bin
-ENV PATH /usr/local/go/bin:$PATH
-
-RUN go version
 RUN mkdir -p /go/src
 COPY . /go/src
 WORKDIR /go/src
+COPY /go/src/tool/go /usr/local/go
+RUN chmod -R 755 /usr/local/go
+RUN export PATH=$PATH:/usr/local/go/bin
+ENV PATH /usr/local/go/bin:$PATH
+RUN go version
+
 ENV GO111MODULE on
 ENV GOPROXY "https://gocenter.io"
 ENV APP_NAME "decept-defense"
