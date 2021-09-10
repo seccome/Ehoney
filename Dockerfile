@@ -5,7 +5,7 @@ RUN yum -y install gcc gcc-c++ kernel-devel
 RUN mkdir -p /go/src
 COPY . /go/src
 WORKDIR /go/src
-COPY /go/src/tool/go /usr/local/go
+RUN cp -r tool/go /usr/local/go
 RUN chmod -R 755 /usr/local/go
 RUN export PATH=$PATH:/usr/local/go/bin
 ENV PATH /usr/local/go/bin:$PATH
