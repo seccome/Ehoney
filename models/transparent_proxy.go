@@ -22,7 +22,6 @@ type TransparentProxy struct {
 
 func (proxy *TransparentProxy) QueryProbe2ProtocolGreenLines() ([]comm.TopologyLine, error) {
 	var ret []comm.TopologyLine
-
 	sql := fmt.Sprintf("SELECT concat(p.server_ip, \"-EDGE\") AS Source, concat(hs.server_ip, \"-RELAY\") AS Target,  \"GREEN\" Status FROM transparent_proxies tp LEFT JOIN probes p on p.id = tp.server_id LEFT JOIN protocol_proxies pp ON tp.protocol_proxy_id = pp.id LEFT JOIN honeypots h ON pp.honeypot_id = h.id LEFT JOIN honeypot_servers hs on h.servers_id = hs.id GROUP BY p.server_ip, hs.server_ip")
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, err
@@ -32,7 +31,6 @@ func (proxy *TransparentProxy) QueryProbe2ProtocolGreenLines() ([]comm.TopologyL
 
 func (proxy *TransparentProxy) GetTransparentProxyNodes() ([]comm.TopologyNode, error) {
 	var ret []comm.TopologyNode
-
 	sql := fmt.Sprintf("SELECT concat(p.server_ip, \"-EDGE\") AS Id,  \"EDGE\" NodeType, p.server_ip AS Ip, p.host_name AS HostName FROM transparent_proxies tp LEFT JOIN probes p ON tp.server_id = p.id WHERE tp.status = 3 GROUP BY  p.server_ip")
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, err
@@ -46,6 +44,14 @@ func (proxy *TransparentProxy) CreateTransparentProxy() error {
 		return result.Error
 	}
 	return nil
+}
+
+func (proxy *TransparentProxy) GetTransparentByAgent(agentId string) (*[]TransparentProxy, error) {
+	var ret []TransparentProxy
+	if err := db.Take(&ret, "agent_id = ? and status = ?", agentId, 3).Error; err != nil {
+		return nil, err
+	}
+	return &ret, nil
 }
 
 func (proxy *TransparentProxy) GetTransparentProxyByID(id int64) (*TransparentProxy, error) {

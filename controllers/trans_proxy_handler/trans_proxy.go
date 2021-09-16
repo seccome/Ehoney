@@ -161,6 +161,33 @@ func CreateTransparentProxy(c *gin.Context) {
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
 }
 
+// GetTransparentByAgent 查找Agent激活状态的透明代理
+// @Summary 查找Agent激活状态的透明代理
+// @Description 查找Agent激活状态的透明代理
+// @Tags 影子代理
+// @Produce application/json
+// @Accept application/json
+// @Param Payload body comm.SelectTransparentProxyPayload false "Payload"
+// @Param ProtocolProxyID body comm.SelectTransparentProxyPayload true "ProtocolProxyID"
+// @Param PageNumber body comm.SelectTransparentProxyPayload true "PageNumber"
+// @Param PageSize body comm.SelectTransparentProxyPayload true "PageSize"
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success 200 {object} comm.TransparentProxySelectResultPayload
+// @Failure 400 {string} json "{"code":400,"msg":"请求参数错误","data":{}}"
+// @Failure 500 {string} json "{"code":500,"msg":"内部异常","data":{}}"
+// @Router /api/v1/proxy/transparent/set [post]
+func GetTransparentByAgent(c *gin.Context) {
+	appG := app.Gin{C: c}
+	agentId := c.Query("agentId")
+	var record models.TransparentProxy
+	data, err := record.GetTransparentByAgent(agentId)
+	if err != nil {
+		appG.Response(http.StatusOK, app.SUCCESS, nil)
+		return
+	}
+	appG.Response(http.StatusOK, app.SUCCESS, data)
+}
+
 // GetTransparentProxy 查找透明代理
 // @Summary 查找透明代理
 // @Description 查找透明代理

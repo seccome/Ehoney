@@ -73,6 +73,8 @@ func MakeRoute() *gin.Engine {
 			public.GET("/topology/map", topology_handler.TopologyMapHandle)
 
 			public.GET("/extranet", extranet_handler.GetExtranetConfig)
+
+			public.GET("/transparentList", trans_proxy_handler.GetTransparentByAgent)
 		}
 		private := api.Group("/v1/")
 		private.Use(jwt.JWT())

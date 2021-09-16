@@ -521,8 +521,8 @@ function setupFileTrace() {
   dbUser=$(readConfValue $Project_Dir/conf/app.conf dbuser)
   dbDatabase=$(readConfValue $Project_Dir/conf/app.conf dbname)
   dbPassword=$(readConfValue $Project_Dir/conf/app.conf dbpassword)
-  chmod +x $Project_Dir/filetrace/filetracemsg
-  cd $Project_Dir/filetrace
+  chmod +x $Project_Dir/tool/filetrace/filetracemsg
+  cd $Project_Dir/tool/filetrace
   echo "filetrace param: -dbuser ${dbUser} -dbpassword ${dbPassword} -dbhost ${dbUrl} -dbname ${dbDatabase} -dbport ${dbPort} "
   nohup ./filetracemsg -dbuser ${dbUser} -dbpassword ${dbPassword} -dbhost ${dbUrl} -dbname ${dbDatabase} -dbport ${dbPort} >/dev/null &
   check_file_trace_service
@@ -536,7 +536,6 @@ function setupFileTrace() {
 #  check_file_trace_service
 #  echo "--------------------End of FileTrace installation---------------------------"
 #}
-
 
 function yumRepoUpdate() {
   wget http://mirrors.163.com/.help/CentOS7-Base-163.repo
