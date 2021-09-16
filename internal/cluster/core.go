@@ -161,7 +161,7 @@ func GetPod(podName string) (*apiV1.Pod, error) {
 		if len(data) == 0 {
 			continue
 		}
-		if data[0] == podName {
+		if strings.HasPrefix(d.Name, podName) && strings.Contains(d.Name, podName){
 			pod, err := client.CoreV1().Pods(apiV1.NamespaceDefault).Get(context.TODO(), d.Name, metaV1.GetOptions{})
 			if err != nil {
 				return nil, err
@@ -181,28 +181,18 @@ func isPodRunning(podName, namespace string) wait.ConditionFunc {
 			if len(data) == 0 {
 				continue
 			}
-			if data[0] == podName {
+			if strings.HasPrefix(d.Name, podName) && strings.Contains(d.Name, podName){
 				containerName = d.Name
 				break
-			} else if i == len(pods.Items)-1 {
+			}else if i == len(pods.Items)-1 {
 				return false, nil
-			} else {
+			}else{
 				continue
 			}
 		}
 		if containerName != "" {
 			return true, nil
 		}
-		//pod, err := client.CoreV1().Pods(namespace).Get(context.TODO(), containerName, metaV1.GetOptions{})
-		//if err != nil || pod == nil || pod.Status.ContainerStatuses == nil {
-		//	return false, nil
-		//}
-		//switch pod.Status.ContainerStatuses[0].Ready {
-		//case true:
-		//	return true, nil
-		//default:
-		//	return false, nil
-		//}
 		return false, nil
 	}
 }
