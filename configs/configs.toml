@@ -11,7 +11,7 @@
   webhook = ""
 
 [database]
-  dbhost = "192.168.240.159"
+  dbhost = "127.0.0.1"
   dbname = "sec_ehoneypot"
   dbpassword = "ehoney2021"
   dbport = 3306
@@ -40,7 +40,7 @@
   timekey = "time"
 
 [redis]
-  redishost = "192.168.240.159"
+  redishost = "127.0.0.1"
   redisidletimeout = 200
   redismaxactive = 30
   redismaxidle = 30
