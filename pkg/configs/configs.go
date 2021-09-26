@@ -11,7 +11,7 @@ import (
 
 var setting Config
 
-type Config struct{
+type Config struct {
 	Log      LogSetting
 	Server   ServerSetting
 	Database DatabaseSetting
@@ -21,24 +21,24 @@ type Config struct{
 }
 
 type LogSetting struct {
-	Level                 string
-	LogFormatJson         string
-	LogFormatConsole      string
-	TimeKey               string
-	LevelKey              string
-	NameKey               string
-	CallerKey             string
-	StackTraceKey         string
-	MessageKey            string
-	MaxSize               int
-	MaxBackups            int
-	MaxAge                int
+	Level            string
+	LogFormatJson    string
+	LogFormatConsole string
+	TimeKey          string
+	LevelKey         string
+	NameKey          string
+	CallerKey        string
+	StackTraceKey    string
+	MessageKey       string
+	MaxSize          int
+	MaxBackups       int
+	MaxAge           int
 }
 
 type ServerSetting struct {
-	RunMode               string
-	HttpPort              int
-	AppHost               string
+	RunMode  string
+	HttpPort int
+	AppHost  string
 }
 
 type DatabaseSetting struct {
@@ -51,33 +51,33 @@ type DatabaseSetting struct {
 }
 
 type RedisSetting struct {
-	RedisHost             string
-	RedisPort             int
-	RedisPassword         string
+	RedisHost     string
+	RedisPort     int
+	RedisPassword string
 }
 
 type AppSetting struct {
-	EnableCors            bool
-	ProtocolDeployPath    string
-	TaskChannel           string
-	ScriptPath            string
-	UploadPath            string
-	TokenTraceAddress     string
-	TokenTraceApiPath     string
-	WebHook               string
-	TraceHost             string
-	Extranet              string
+	EnableCors         bool
+	ProtocolDeployPath string
+	TaskChannel        string
+	ScriptPath         string
+	UploadPath         string
+	TokenTraceAddress  string
+	TokenTraceApiPath  string
+	WebHook            string
+	TraceHost          string
+	Extranet           string
 }
 
 type HarborSetting struct {
-	HarborURL             string
-	HarborProject         string
-	User                  string
-	Password              string
-	APIVersion            string
+	HarborURL     string
+	HarborProject string
+	User          string
+	Password      string
+	APIVersion    string
 }
 
-func SetUp(){
+func SetUp() {
 	viper.BindEnv("WorkingDir")
 	viper.AddConfigPath("configs")
 	viper.SetConfigType("toml")
@@ -92,21 +92,21 @@ func SetUp(){
 	})
 }
 
-func UpdateIPConfig(ipConfig string){
-	data :=  strings.Split(ipConfig, ";")
+func UpdateIPConfig(ipConfig string) {
+	data := strings.Split(ipConfig, ";")
 	fmt.Println("update ip config IP value : " + ipConfig)
 	zap.L().Debug("update ip config IP value : " + ipConfig)
-	for _, d := range data{
-		if d == ""{
+	for _, d := range data {
+		if d == "" {
 			continue
 		}
 		p := strings.Split(d, ":")
-		if p[0] == "host"{
+		if p[0] == "host" {
 			fmt.Println("start config IP value, current value: " + setting.Server.AppHost)
 			zap.L().Debug("start config IP value, current value: " + setting.Server.AppHost)
-			data,_ :=  url.Parse(setting.App.TokenTraceAddress)
+			data, _ := url.Parse(setting.App.TokenTraceAddress)
 			traceAddress := setting.App.TokenTraceAddress
-			if data != nil{
+			if data != nil {
 				traceAddress = data.Scheme + "://" + p[1] + ":" + data.Port()
 			}
 
@@ -121,7 +121,7 @@ func UpdateIPConfig(ipConfig string){
 			setting.App.TokenTraceAddress = traceAddress
 			setting.App.Extranet = p[1]
 			err := viper.WriteConfig()
-			if err != nil{
+			if err != nil {
 				zap.L().Error("write config err " + err.Error())
 				fmt.Println("write config err " + err.Error())
 				fmt.Println("try again")
@@ -136,7 +136,7 @@ func UpdateIPConfig(ipConfig string){
 	}
 }
 
-func GetSetting() *Config{
+func GetSetting() *Config {
 	return &setting
 }
 
@@ -147,4 +147,3 @@ func ProjectName() string {
 func ProjectLogFile() string {
 	return fmt.Sprintf("./logs/%s_.log", ProjectName())
 }
-

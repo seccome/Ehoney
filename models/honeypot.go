@@ -39,10 +39,8 @@ func (honeypot *Honeypot) CreateHoneypot() error {
 }
 
 func (honeypot *Honeypot) DeleteHoneypotByID(id int64) error {
-	if err := db.Delete(&Honeypot{}, id).Error; err != nil {
-		return err
-	}
-	return nil
+	sql := fmt.Sprintf("DELETE FROM honeypots WHERE `id` = %d", id)
+	return db.Exec(sql).Error
 }
 
 func (honeypot *Honeypot) GetHoneypot(payload *comm.HoneypotSelectPayload) (*[]comm.HoneypotSelectResultPayload, int64, error) {
@@ -131,11 +129,10 @@ func (honeypot *Honeypot) GetProtocolProxyHoneypot() (*[]comm.ProtocolHoneypotSe
 	return &ret, nil
 }
 
-func (honeypot *Honeypot) GetHoneypots() (*[]Honeypot, error){
+func (honeypot *Honeypot) GetHoneypots() (*[]Honeypot, error) {
 	var ret []Honeypot
 	if err := db.Find(&ret).Error; err != nil {
 		return nil, err
 	}
 	return &ret, nil
 }
-

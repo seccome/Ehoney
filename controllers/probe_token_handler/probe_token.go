@@ -42,6 +42,150 @@ type ProbeTokenCreatePayload struct {
 // @Failure 3005 {string} json "{"code":3005,"msg":"探针诱饵创建异常","data":{}}"
 // @Failure 3015 {string} json "{"code":3015,"msg":"密签不存在","data":{}}"
 // @Router /api/v1/token/probe [post]
+func CreateProbeTokenNew(c *gin.Context) {
+	appG := app.Gin{C: c}
+	var probeToken models.ProbeToken
+	var token models.Token
+	var server models.Probes
+	var payload ProbeTokenCreatePayload
+	err := c.ShouldBindJSON(&payload)
+	if err != nil {
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.InvalidParams, err.Error())
+		return
+	}
+	currentUser, exist := c.Get("currentUser")
+	if !exist {
+		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
+		return
+	}
+	//TODO .() will panic, best to use value, ok to accept
+	probeToken.Creator = *(currentUser.(*string))
+	probeToken.CreateTime = util.GetCurrentTime()
+
+	r, err := token.GetTokenByName(payload.TokenName)
+	if err != nil {
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.ErrorBaitNotExist, err.Error())
+		return
+	}
+	s, err := server.GetServerStatusByID(payload.ProbeID)
+	if err != nil {
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.ErrorProbeNotExist, err.Error())
+		return
+	}
+	code, err := util.GetUniqueID()
+	if err != nil {
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
+		return
+	}
+	traceCode := code
+	probeToken.TraceCode = traceCode
+	id, err := util.GetUniqueID()
+	if err != nil {
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.ErrorUUID, err.Error())
+		return
+	}
+
+	tokenFileCreateBody := util.TokenFileCreateBody{
+		SourceFile: r.UploadPath,
+		DestFile:   path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "probe_token", traceCode, path.Base(r.UploadPath)),
+		TraceCode:  traceCode,
+		TraceUrl:   strings.Join([]string{configs.GetSetting().App.TokenTraceAddress, configs.GetSetting().App.TokenTraceApiPath}, "/") + "?tracecode=" + traceCode,
+	}
+
+	if r.TokenType == "BrowserPDF" {
+		tokenFileCreateBody.Content = r.TokenData
+		fileName := probeToken.TokenName + ".pdf"
+		tokenFileCreateBody.DestFile = path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "probe_token", traceCode, fileName)
+	}
+
+	if err := util.CreateTokenFile(tokenFileCreateBody); err != nil {
+		zap.L().Error("文件加签异常: " + err.Error())
+		appG.Response(http.StatusOK, app.ErrorDoFileTokenTrace, err.Error())
+		return
+	}
+
+	var taskPayload comm.TokenFileTaskPayload
+
+	tokenUploadFileBasePath := path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "probe_token", traceCode)
+	tarPath := path.Join(tokenUploadFileBasePath, strings.Join([]string{r.TokenName, ".tar.gz"}, ""))
+	tokenScriptPath := path.Join(util.WorkingPath(), configs.GetSetting().App.ScriptPath)
+	if s.SystemType == "Linux" {
+		tokenScriptPath = path.Join(tokenScriptPath, "linux", "token", "deploy.sh")
+	} else {
+		tokenScriptPath = path.Join(tokenScriptPath, "windows", "token", "deploy.bat")
+	}
+	err = util.CompressTarGz(tarPath, tokenScriptPath, r.UploadPath)
+	if err != nil {
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
+		return
+	}
+	probeToken.DeployPath = payload.DeployPath
+	probeToken.LocalPath = tokenFileCreateBody.DestFile
+	probeToken.TraceCode = traceCode
+	{
+		taskPayload.TaskID = id
+		taskPayload.URL = util.Base64Encode("http:" + "//" + configs.GetSetting().Server.AppHost + ":" + strconv.Itoa(configs.GetSetting().Server.HttpPort) + "/" + configs.GetSetting().App.UploadPath + "/probe_token/" + traceCode + "/" + strings.Join([]string{r.TokenName, ".tar.gz"}, ""))
+		md5, err := util.GetFileMD5(tarPath)
+		if err != nil {
+			zap.L().Error(err.Error())
+			appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
+			return
+		}
+		taskPayload.FileMD5 = md5
+		taskPayload.AgentID = s.AgentID
+		taskPayload.TaskType = comm.TOKEN
+		taskPayload.OperatorType = comm.DEPLOY
+		taskPayload.TokenType = r.TokenType
+		taskPayload.ScriptName = path.Base(tokenScriptPath)
+		taskPayload.CommandParameters = map[string]string{"-d": payload.DeployPath, "-s": r.FileName}
+		jsonByte, _ := json.Marshal(taskPayload)
+		taskPayload.Status = comm.RUNNING
+		err = message_client.PublishMessage(configs.GetSetting().App.TaskChannel, string(jsonByte))
+		if err != nil {
+			zap.L().Error(err.Error())
+			appG.Response(http.StatusOK, app.ErrorRedis, err.Error())
+			return
+		}
+	}
+	probeToken.ServerID = payload.ProbeID
+	probeToken.TokenName = r.TokenName
+	probeToken.TokenType = r.TokenType
+	probeToken.TaskID = id
+	probeToken.Status = comm.RUNNING
+
+	if err := probeToken.CreateProbeToken(); err != nil {
+		//TODO if exception you should rollback
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.ErrorProbeBaitCreate, err.Error())
+		return
+	}
+	appG.Response(http.StatusOK, app.SUCCESS, nil)
+}
+
+// CreateProbeToken 创建探针密签
+// @Summary 创建探针密签
+// @Description 创建探针密签
+// @Tags 探针管理
+// @Produce application/json
+// @Accept application/json
+// @Param TokenName body ProbeTokenCreatePayload true "TokenName"
+// @Param DeployPath body ProbeTokenCreatePayload true "DeployPath"
+// @Param ProbeID body ProbeTokenCreatePayload true "ProbeID"
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success 200 {string} json "{"code":200,"msg":"ok","data":{}}"
+// @Failure 400 {string} json "{"code":400,"msg":"请求参数错误","data":{}}"
+// @Failure 500 {string} json "{"code":500,"msg":"内部异常","data":{}}"
+// @Failure 1007 {string} json "{"code":1007,"msg":"Redis异常","data":{}}"
+// @Failure 5007 {string} json "{"code":5007,"msg":"探针服务器不存在","data":{}}"
+// @Failure 3005 {string} json "{"code":3005,"msg":"探针诱饵创建异常","data":{}}"
+// @Failure 3015 {string} json "{"code":3015,"msg":"密签不存在","data":{}}"
+// @Router /api/v1/token/probe [post]
 func CreateProbeToken(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var probeToken models.ProbeToken
@@ -98,14 +242,14 @@ func CreateProbeToken(c *gin.Context) {
 		sourceDir := r.UploadPath
 		destDir := path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "probe_token", traceCode, path.Base(r.UploadPath))
 		traceUrl := strings.Join([]string{configs.GetSetting().App.TokenTraceAddress, configs.GetSetting().App.TokenTraceApiPath}, "/") + "?tracecode=" + traceCode
-		if r.TokenType == "FILE"{
+		if r.TokenType == "FILE" {
 			if err := util.DoFileTokenTrace(sourceDir, destDir, traceUrl); err != nil {
 				zap.L().Error("文件加签异常: " + err.Error())
 				appG.Response(http.StatusOK, app.ErrorDoFileTokenTrace, err.Error())
 				return
 			}
-		}else if r.TokenType == "EXE"{
-			if err := util.DoEXEToken(sourceDir, destDir, traceUrl);  err != nil{
+		} else if r.TokenType == "EXE" {
+			if err := util.DoEXEToken(sourceDir, destDir, traceUrl); err != nil {
 				zap.L().Error("EXE加签异常: " + err.Error())
 				appG.Response(http.StatusOK, app.ErrorDoFileTokenTrace, err.Error())
 				return
@@ -153,7 +297,7 @@ func CreateProbeToken(c *gin.Context) {
 				return
 			}
 		}
-	}else if  r.TokenType == "BrowserPDF"{
+	} else if r.TokenType == "BrowserPDF" {
 		if payload.DeployPath == "" {
 			appG.Response(http.StatusOK, app.InvalidParams, nil)
 			return
@@ -162,7 +306,7 @@ func CreateProbeToken(c *gin.Context) {
 		fileName := probeToken.TokenName + ".pdf"
 		destDir := path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "honeypot_token", traceCode, fileName)
 		traceUrl := strings.Join([]string{configs.GetSetting().App.TokenTraceAddress, configs.GetSetting().App.TokenTraceApiPath}, "/") + "?tracecode=" + traceCode
-		if err := util.DoBrowserPDFToken(r.TokenData, destDir, traceUrl);  err != nil{
+		if err := util.DoBrowserPDFToken(r.TokenData, destDir, traceUrl); err != nil {
 			zap.L().Error("浏览器PDF密签创建异常: " + err.Error())
 			appG.Response(http.StatusOK, app.ErrorDoFileTokenTrace, err.Error())
 			return

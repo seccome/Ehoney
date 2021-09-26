@@ -19,10 +19,131 @@ import (
 	"strings"
 )
 
-type  HoneypotTokenCreatePayload struct {
-	TokenName  string  `form:"TokenName"  json:"TokenName" binding:"required"`   //蜜罐密签名称
-	DeployPath string  `form:"DeployPath" json:"DeployPath"`                     //部署路径
-	HoneypotID int64   `form:"HoneypotID" json:"HoneypotID" binding:"required"`  //蜜罐ID
+type HoneypotTokenCreatePayload struct {
+	TokenName  string `form:"TokenName"  json:"TokenName" binding:"required"`  //蜜罐密签名称
+	DeployPath string `form:"DeployPath" json:"DeployPath"`                    //部署路径
+	HoneypotID int64  `form:"HoneypotID" json:"HoneypotID" binding:"required"` //蜜罐ID
+}
+
+/*var TokenInjectCmdPattenMap = map[string][]string{
+"exe": {"-t", "-b"},
+"file": {"-t", "-b"}}*/
+
+// CreateHoneypotToken 创建蜜罐密签
+// @Summary 创建蜜罐密签
+// @Description 创建蜜罐密签
+// @Tags 蜜罐管理
+// @Produce application/json
+// @Accept application/json
+// @Param TokenName body HoneypotTokenCreatePayload true "TokenName"
+// @Param DeployPath body HoneypotTokenCreatePayload false "DeployPath"
+// @Param HoneypotID body HoneypotTokenCreatePayload true "HoneypotID"
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success 200 {string} json "{"code":200,"msg":"ok","data":{}}"
+// @Failure 400 {string} json "{"code":400,"msg":"请求参数错误","data":{}}"
+// @Failure 500 {string} json "{"code":500,"msg":"内部异常","data":{}}"
+// @Failure 5001 {string} json "{"code":5001,"msg":"蜜罐服务器不存在、请检测蜜罐服务状态","data":{}}"
+// @Failure 3005 {string} json "{"code":3005,"msg":"蜜罐诱饵创建异常","data":{}}"
+// @Failure 3015 {string} json "{"code":3015,"msg":"密签不存在","data":{}}"
+// @Failure 3012 {string} json "{"code":3012,"msg":"K8S拷贝异常","data":{}}"
+// @Router /api/v1/token/honeypot [post]
+func CreateHoneypotTokenNew(c *gin.Context) {
+	appG := app.Gin{C: c}
+	var honeypotToken models.HoneypotToken
+	var token models.Token
+	var honeypot models.Honeypot
+	var payload HoneypotTokenCreatePayload
+	err := c.ShouldBindJSON(&payload)
+	if err != nil {
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.InvalidParams, err.Error())
+		return
+	}
+	currentUser, exist := c.Get("currentUser")
+	if !exist {
+		zap.L().Error("当前用户获取错误")
+		appG.Response(http.StatusOK, app.INTERNAlERROR, "当前用户获取错误")
+		return
+	}
+	value, ok := currentUser.(*string)
+	if !ok {
+		zap.L().Error("当前用户解析错误")
+		appG.Response(http.StatusOK, app.INTERNAlERROR, "当前用户解析错误")
+		return
+	}
+	if payload.DeployPath == "" {
+		zap.L().Error("请求参数错误")
+		appG.Response(http.StatusOK, app.InvalidParams, nil)
+		return
+	}
+	honeypotToken.Creator = *(value)
+	honeypotToken.CreateTime = util.GetCurrentTime()
+
+	code, err := util.GetUniqueID()
+	if err != nil {
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
+		return
+	}
+	traceCode := code
+	honeypotToken.TraceCode = traceCode
+
+	r, err := token.GetTokenByName(payload.TokenName)
+	if err != nil {
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.ErrorTokenNotExist, err.Error())
+		return
+	}
+	s, err := honeypot.GetHoneypotByID(payload.HoneypotID)
+	if err != nil {
+		zap.L().Error(err.Error())
+		appG.Response(http.StatusOK, app.ErrorHoneypotNotExist, err.Error())
+		return
+	}
+
+	tokenFileCreateBody := util.TokenFileCreateBody{
+		TokenType:  r.TokenType,
+		SourceFile: r.UploadPath,
+		DestFile:   path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "honeypot_token", traceCode, path.Base(r.UploadPath)),
+		TraceCode:  traceCode,
+		TraceUrl:   strings.Join([]string{configs.GetSetting().App.TokenTraceAddress, configs.GetSetting().App.TokenTraceApiPath}, "/") + "?tracecode=" + traceCode,
+	}
+
+	if r.TokenType == "BrowserPDF" {
+		tokenFileCreateBody.Content = r.TokenData
+		fileName := r.TokenName + ".pdf"
+		tokenFileCreateBody.DestFile = path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "honeypot_token", traceCode, fileName)
+	}
+
+	honeypotToken.TokenName = r.TokenName
+	honeypotToken.TokenType = r.TokenType
+	honeypotToken.HoneypotID = payload.HoneypotID
+	honeypotToken.TraceCode = traceCode
+	honeypotToken.LocalPath = tokenFileCreateBody.DestFile
+	honeypotToken.DeployPath = payload.DeployPath
+
+	if err := util.CreateTokenFile(tokenFileCreateBody); err != nil {
+		zap.L().Error("文件加签异常: " + err.Error())
+		appG.Response(http.StatusOK, app.ErrorDoFileTokenTrace, err.Error())
+		return
+	}
+
+	if err = cluster.CopyToPod(s.PodName, s.HoneypotName, tokenFileCreateBody.DestFile, payload.DeployPath); err != nil {
+		zap.L().Error("k3s拷贝文件异常: " + err.Error())
+		appG.Response(http.StatusOK, app.ErrorHoneypotK8SCP, err)
+		return
+	}
+
+	honeypotToken.Status = comm.SUCCESS
+	// 数据处理 save honey pod token record
+
+	if err := honeypotToken.CreateHoneypotToken(); err != nil {
+		cluster.RemoveFromPod(s.PodName, s.HoneypotName, path.Join(payload.DeployPath, path.Base(honeypotToken.LocalPath)))
+		zap.L().Error("创建密签记录、数据库异常")
+		appG.Response(http.StatusOK, app.ErrorDatabase, nil)
+		return
+	}
+	appG.Response(http.StatusOK, app.SUCCESS, nil)
 }
 
 // CreateHoneypotToken 创建蜜罐密签
@@ -49,20 +170,20 @@ func CreateHoneypotToken(c *gin.Context) {
 	var token models.Token
 	var honeypot models.Honeypot
 	var payload HoneypotTokenCreatePayload
-	err :=  c.ShouldBindJSON(&payload)
+	err := c.ShouldBindJSON(&payload)
 	if err != nil {
 		zap.L().Error(err.Error())
 		appG.Response(http.StatusOK, app.InvalidParams, err.Error())
 		return
 	}
 	currentUser, exist := c.Get("currentUser")
-	if !exist{
+	if !exist {
 		zap.L().Error("当前用户获取错误")
 		appG.Response(http.StatusOK, app.INTERNAlERROR, "当前用户获取错误")
 		return
 	}
 	value, ok := currentUser.(*string)
-	if !ok{
+	if !ok {
 		zap.L().Error("当前用户解析错误")
 		appG.Response(http.StatusOK, app.INTERNAlERROR, "当前用户解析错误")
 		return
@@ -71,7 +192,7 @@ func CreateHoneypotToken(c *gin.Context) {
 	honeypotToken.CreateTime = util.GetCurrentTime()
 
 	code, err := util.GetUniqueID()
-	if err != nil{
+	if err != nil {
 		zap.L().Error(err.Error())
 		appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
 		return
@@ -79,20 +200,20 @@ func CreateHoneypotToken(c *gin.Context) {
 	traceCode := code
 	honeypotToken.TraceCode = traceCode
 
-	r, err :=  token.GetTokenByName(payload.TokenName)
-	if err != nil{
+	r, err := token.GetTokenByName(payload.TokenName)
+	if err != nil {
 		zap.L().Error(err.Error())
 		appG.Response(http.StatusOK, app.ErrorTokenNotExist, err.Error())
 		return
 	}
-	s, err :=  honeypot.GetHoneypotByID(payload.HoneypotID)
-	if err != nil{
+	s, err := honeypot.GetHoneypotByID(payload.HoneypotID)
+	if err != nil {
 		zap.L().Error(err.Error())
 		appG.Response(http.StatusOK, app.ErrorHoneypotNotExist, err.Error())
 		return
 	}
-	if r.TokenType == "FILE" || r.TokenType == "EXE"{
-		if payload.DeployPath == ""{
+	if r.TokenType == "FILE" || r.TokenType == "EXE" {
+		if payload.DeployPath == "" {
 			zap.L().Error("请求参数错误")
 			appG.Response(http.StatusOK, app.InvalidParams, nil)
 			return
@@ -100,14 +221,14 @@ func CreateHoneypotToken(c *gin.Context) {
 		sourceDir := r.UploadPath
 		destDir := path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "honeypot_token", traceCode, path.Base(r.UploadPath))
 		traceUrl := strings.Join([]string{configs.GetSetting().App.TokenTraceAddress, configs.GetSetting().App.TokenTraceApiPath}, "/") + "?tracecode=" + traceCode
-		if r.TokenType == "FILE"{
-			if err := util.DoFileTokenTrace(sourceDir, destDir, traceUrl);  err != nil{
+		if r.TokenType == "FILE" {
+			if err := util.DoFileTokenTrace(sourceDir, destDir, traceUrl); err != nil {
 				zap.L().Error("文件加签异常: " + err.Error())
 				appG.Response(http.StatusOK, app.ErrorDoFileTokenTrace, err.Error())
 				return
 			}
-		}else if r.TokenType == "EXE"{
-			if err := util.DoEXEToken(sourceDir, destDir, traceUrl);  err != nil{
+		} else if r.TokenType == "EXE" {
+			if err := util.DoEXEToken(sourceDir, destDir, traceUrl); err != nil {
 				zap.L().Error("文件加签异常: " + err.Error())
 				appG.Response(http.StatusOK, app.ErrorDoFileTokenTrace, err.Error())
 				return
@@ -122,13 +243,13 @@ func CreateHoneypotToken(c *gin.Context) {
 		honeypotToken.LocalPath = destDir
 		honeypotToken.DeployPath = payload.DeployPath
 
-		if err =  cluster.CopyToPod(s.PodName, s.HoneypotName, tokenPath, payload.DeployPath); err != nil{
+		if err = cluster.CopyToPod(s.PodName, s.HoneypotName, tokenPath, payload.DeployPath); err != nil {
 			zap.L().Error("k3s拷贝文件异常: " + err.Error())
 			appG.Response(http.StatusOK, app.ErrorHoneypotK8SCP, err)
 			return
 		}
 		honeypotToken.Status = comm.SUCCESS
-	}else if r.TokenType == "BrowserPDF"{
+	} else if r.TokenType == "BrowserPDF" {
 		honeypotToken.TokenName = r.TokenName
 		honeypotToken.TokenType = r.TokenType
 		honeypotToken.HoneypotID = payload.HoneypotID
@@ -136,7 +257,7 @@ func CreateHoneypotToken(c *gin.Context) {
 		fileName := honeypotToken.TokenName + ".pdf"
 		destDir := path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "honeypot_token", traceCode, fileName)
 		traceUrl := strings.Join([]string{configs.GetSetting().App.TokenTraceAddress, configs.GetSetting().App.TokenTraceApiPath}, "/") + "?tracecode=" + traceCode
-		if err := util.DoBrowserPDFToken(r.TokenData, destDir, traceUrl);  err != nil{
+		if err := util.DoBrowserPDFToken(r.TokenData, destDir, traceUrl); err != nil {
 			zap.L().Error("浏览器PDF密签创建异常: " + err.Error())
 			appG.Response(http.StatusOK, app.ErrorDoBrowserPDFTokenTrace, err.Error())
 			return
@@ -144,19 +265,19 @@ func CreateHoneypotToken(c *gin.Context) {
 		honeypotToken.LocalPath = destDir
 		honeypotToken.DeployPath = payload.DeployPath
 		tokenPath := destDir
-		if err =  cluster.CopyToPod(s.PodName, s.HoneypotName, tokenPath, payload.DeployPath); err != nil{
+		if err = cluster.CopyToPod(s.PodName, s.HoneypotName, tokenPath, payload.DeployPath); err != nil {
 			zap.L().Error("k3s拷贝文件异常: " + err.Error())
 			appG.Response(http.StatusOK, app.ErrorHoneypotK8SCP, err)
 			return
 		}
 		honeypotToken.Status = comm.SUCCESS
-	} else{
+	} else {
 		zap.L().Error("不支持的密签类型")
 		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
 		return
 	}
-	if err := honeypotToken.CreateHoneypotToken(); err != nil{
-		if r.TokenType == "FILE" || r.TokenType == "EXE"{
+	if err := honeypotToken.CreateHoneypotToken(); err != nil {
+		if r.TokenType == "FILE" || r.TokenType == "EXE" {
 			cluster.RemoveFromPod(s.PodName, s.HoneypotName, path.Join(payload.DeployPath, path.Base(honeypotToken.LocalPath)))
 		}
 		zap.L().Error("创建密签记录、数据库异常")
@@ -186,12 +307,12 @@ func GetHoneypotToken(c *gin.Context) {
 	var payload comm.ServerTokenSelectPayload
 	var honeypotToken models.HoneypotToken
 	err := c.ShouldBindJSON(&payload)
-	if err != nil{
+	if err != nil {
 		appG.Response(http.StatusOK, app.InvalidParams, nil)
 		return
 	}
 	data, count, err := honeypotToken.GetHoneypotToken(&payload)
-	if err != nil{
+	if err != nil {
 		appG.Response(http.StatusOK, app.ErrorDatabase, nil)
 		return
 	}
@@ -222,30 +343,30 @@ func DeleteHoneypotTokenByID(c *gin.Context) {
 		return
 	}
 	r, err := honeypotToken.GetHoneypotTokenByID(id)
-	if err != nil{
+	if err != nil {
 		zap.L().Error(err.Error())
 		appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
 		return
 	}
-	s, err :=  honeypot.GetHoneypotByID(r.HoneypotID)
-	if err != nil{
+	s, err := honeypot.GetHoneypotByID(r.HoneypotID)
+	if err != nil {
 		zap.L().Error(err.Error())
 		appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
 		return
 	}
-	if r.TokenType == "FILE" || r.TokenType == "EXE"{
+	if r.TokenType == "FILE" || r.TokenType == "EXE" {
 		err = cluster.RemoveFromPod(s.PodName, s.HoneypotName, path.Join(r.DeployPath, path.Base(r.LocalPath)))
-		if err != nil{
+		if err != nil {
 			zap.L().Error(err.Error())
 			appG.Response(http.StatusOK, app.ErrorHoneypotBaitWithdraw, err.Error())
 			return
 		}
 		os.RemoveAll(filepath.Dir(filepath.Dir(r.LocalPath)))
-	}else{
+	} else {
 		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
 		return
 	}
-	if err := honeypotToken.DeleteHoneypotTokenByID(id); err != nil{
+	if err := honeypotToken.DeleteHoneypotTokenByID(id); err != nil {
 		appG.Response(http.StatusOK, app.ErrorHoneypotBaitDelete, nil)
 		return
 	}
@@ -275,13 +396,17 @@ func DownloadHoneypotTokenByID(c *gin.Context) {
 		return
 	}
 	r, err := token.GetHoneypotTokenByID(id)
-	if err != nil{
+	if err != nil {
 		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
 		return
 	}
+	var URL string
+	if configs.GetSetting().App.Extranet != "" {
+		URL = "http:" + "//" + configs.GetSetting().App.Extranet + ":" + strconv.Itoa(configs.GetSetting().Server.HttpPort) + "/" + configs.GetSetting().App.UploadPath + "/honeypot_token/" + r.TraceCode + "/" + path.Base(r.LocalPath)
 
-	var URL string = "http:" + "//" + configs.GetSetting().Server.AppHost + ":" + strconv.Itoa(configs.GetSetting().Server.HttpPort) + "/" + configs.GetSetting().App.UploadPath  + "/honeypot_token/" + r.TraceCode + "/" + path.Base(r.LocalPath)
+	} else {
+		URL = "http:" + "//" + configs.GetSetting().Server.AppHost + ":" + strconv.Itoa(configs.GetSetting().Server.HttpPort) + "/" + configs.GetSetting().App.UploadPath + "/honeypot_token/" + r.TraceCode + "/" + path.Base(r.LocalPath)
+	}
 
 	appG.Response(http.StatusOK, app.SUCCESS, URL)
 }
-

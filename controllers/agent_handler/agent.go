@@ -34,6 +34,15 @@ func DownloadLinuxAgent(c *gin.Context) {
 // @Router /api/v1/agent/windows [get]
 func DownloadWindowsAgent(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var URL = "http:" + "//" + configs.GetSetting().Server.AppHost + ":" + strconv.Itoa(configs.GetSetting().Server.HttpPort) + "/" + "agent/decept-agent-win.tar.gz"
+
+	var URL string
+
+	if configs.GetSetting().App.Extranet != "" {
+		URL = "http:" + "//" + configs.GetSetting().App.Extranet + ":" + strconv.Itoa(configs.GetSetting().Server.HttpPort) + "/" + "agent/decept-agent-win.tar.gz"
+
+	} else {
+		URL = "http:" + "//" + configs.GetSetting().Server.AppHost + ":" + strconv.Itoa(configs.GetSetting().Server.HttpPort) + "/" + "agent/decept-agent-win.tar.gz"
+	}
+
 	appG.Response(http.StatusOK, app.SUCCESS, URL)
 }

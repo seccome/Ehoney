@@ -138,32 +138,32 @@ func GetAttackSource(c *gin.Context) {
 		appG.Response(http.StatusOK, app.InvalidParams, nil)
 		return
 	}
-	d1, err :=  falcoEvent.GetFalcoEventForTraceSource(payload)
-	d2, err :=  attackEvent.GetAttackEventForSource(payload)
+	d1, err := falcoEvent.GetFalcoEventForTraceSource(payload)
+	d2, err := attackEvent.GetAttackEventForSource(payload)
 
-	if payload.Type == "Falco事件"{
-		if d1 != nil{
-			for _, i := range *d1{
+	if payload.Type == "Falco事件" {
+		if d1 != nil {
+			for _, i := range *d1 {
 				i.Type = "Falco事件"
 				ret = append(ret, i)
 			}
 		}
-	}else if payload.Type == "攻击事件"{
-		if d2 != nil{
-			for _, i := range *d2{
+	} else if payload.Type == "攻击事件" {
+		if d2 != nil {
+			for _, i := range *d2 {
 				i.Type = "攻击事件"
 				ret = append(ret, i)
 			}
 		}
-	}else{
-		if d1 != nil{
-			for _, i := range *d1{
+	} else {
+		if d1 != nil {
+			for _, i := range *d1 {
 				i.Type = "Falco事件"
 				ret = append(ret, i)
 			}
 		}
-		if d2 != nil{
-			for _, i := range *d2{
+		if d2 != nil {
+			for _, i := range *d2 {
 				i.Type = "攻击事件"
 				ret = append(ret, i)
 			}
@@ -172,11 +172,11 @@ func GetAttackSource(c *gin.Context) {
 
 	var count int64 = int64(len(ret))
 	var start int = payload.PageSize * (payload.PageNumber - 1)
-	var end   int = payload.PageSize * (payload.PageNumber - 1) + payload.PageSize
-	if payload.PageSize * (payload.PageNumber - 1) > len(ret){
+	var end int = payload.PageSize*(payload.PageNumber-1) + payload.PageSize
+	if payload.PageSize*(payload.PageNumber-1) > len(ret) {
 		start = len(ret)
 	}
-	if payload.PageSize * (payload.PageNumber - 1) + payload.PageSize > len(ret){
+	if payload.PageSize*(payload.PageNumber-1)+payload.PageSize > len(ret) {
 		end = len(ret)
 	}
 	ret = ret[start:end]
@@ -249,11 +249,11 @@ func GetAttackList(c *gin.Context) {
 	var count = int64(len(*ret))
 
 	var start int = payload.PageSize * (payload.PageNumber - 1)
-	var end   int = payload.PageSize * (payload.PageNumber - 1) + payload.PageSize
-	if payload.PageSize * (payload.PageNumber - 1) > len(*ret){
+	var end int = payload.PageSize*(payload.PageNumber-1) + payload.PageSize
+	if payload.PageSize*(payload.PageNumber-1) > len(*ret) {
 		start = len(*ret)
 	}
-	if payload.PageSize * (payload.PageNumber - 1) + payload.PageSize > len(*ret){
+	if payload.PageSize*(payload.PageNumber-1)+payload.PageSize > len(*ret) {
 		end = len(*ret)
 	}
 	*ret = (*ret)[start:end]
@@ -278,7 +278,7 @@ func CreateProtocolAttackEvent(c *gin.Context) {
 		appG.Response(http.StatusOK, app.InvalidParams, nil)
 		return
 	}
-	if util.IsLocalIP(attackEvent.AttackIP){
+	if util.IsLocalIP(attackEvent.AttackIP) {
 		appG.Response(http.StatusOK, app.SUCCESS, nil)
 		return
 	}
@@ -286,7 +286,7 @@ func CreateProtocolAttackEvent(c *gin.Context) {
 		appG.Response(http.StatusOK, app.ErrorDatabase, nil)
 		return
 	}
-	waning := `攻击类型: `+ attackEvent.AttackType + `\n\n > AgentID:  `+ attackEvent.AgentID +`\n\n > 攻击IP:  `+ attackEvent.AttackIP +`\n\n > 攻击端口:  `+ strconv.Itoa(int(attackEvent.AttackPort)) +`\n\n > 代理IP:  `+ attackEvent.ProxyIP +`\n\n > 代理端口:  `+ strconv.Itoa(int(attackEvent.ProxyPort)) +`\n\n > 蜜罐IP:  `+ attackEvent.DestIP +`\n\n > 蜜罐端口:  `+ strconv.Itoa(int(attackEvent.DestPort)) +`\n\n > 协议类型:  `+ attackEvent.ProtocolType +`\n\n > 创建时间:  `+ attackEvent.EventTime +``
+	waning := `攻击类型: ` + attackEvent.AttackType + `\n\n > AgentID:  ` + attackEvent.AgentID + `\n\n > 攻击IP:  ` + attackEvent.AttackIP + `\n\n > 攻击端口:  ` + strconv.Itoa(int(attackEvent.AttackPort)) + `\n\n > 代理IP:  ` + attackEvent.ProxyIP + `\n\n > 代理端口:  ` + strconv.Itoa(int(attackEvent.ProxyPort)) + `\n\n > 蜜罐IP:  ` + attackEvent.DestIP + `\n\n > 蜜罐端口:  ` + strconv.Itoa(int(attackEvent.DestPort)) + `\n\n > 协议类型:  ` + attackEvent.ProtocolType + `\n\n > 创建时间:  ` + attackEvent.EventTime + ``
 	util.SendDingMsg("欺骗防御告警", "协议代理告警", waning)
 
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
@@ -310,21 +310,41 @@ func CreateFalcoAttackEvent(c *gin.Context) {
 		appG.Response(http.StatusOK, app.InvalidParams, err.Error())
 		return
 	}
-	if event.Rule == "Create files below container any dir"{
+	shouldAlarm := false
+	var honeypot models.Honeypot
+	data, _ := honeypot.GetHoneypotByPodName(event.OutputFields.PodName)
+	if event.Rule == "Create files below container any dir" {
 		event.FileFlag = true
-		var honeypot models.Honeypot
+
 		code, err := util.GetUniqueID()
-		if err != nil{
+		if err != nil {
 			zap.L().Error(err.Error())
 			appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
 			return
 		}
-		data, _ := honeypot.GetHoneypotByPodName(event.OutputFields.PodName)
+
 		dest := path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "falco", code)
 		cluster.CopyFromPod(event.OutputFields.PodName, data.HoneypotName, event.OutputFields.FilePath, dest)
 		event.DownloadPath = "http:" + "//" + configs.GetSetting().Server.AppHost + ":" + strconv.Itoa(configs.GetSetting().Server.HttpPort) + "/" + configs.GetSetting().App.UploadPath + "/falco/" + code + "/" + path.Base(event.OutputFields.FilePath)
+		shouldAlarm = true
+	} else if event.Rule == "Any listen" {
+		shouldAlarm = true
+	} else if event.Rule == "Any accept" {
+		shouldAlarm = true
+	} else if event.Rule == "Any outbound connect" {
+		shouldAlarm = true
+	} else if event.Priority == "Error" || event.Priority == "ERROR" {
+		shouldAlarm = true
+	} else if event.Priority == "CRITICAL" || event.Priority == "Critical" {
+		shouldAlarm = true
 	}
-	event.Time = time.Unix(event.OutputFields.EventTime / int64(math.Pow10(9)), 0).In(time.FixedZone("CST", 8 * 3600)).Format("2006-01-02 15:04:05")
+
+	if shouldAlarm && data != nil {
+		waning := `攻击类型: ` + event.Rule + "(falco)" + `\n\n > 蜜罐:  ` + data.HoneypotIP + `\n\n > 等级:  ` + event.Priority + "(" + data.HoneypotName + ")" + `\n\n > 攻击IP:  ` + event.OutputFields.Connection + `\n\n > 路径:  ` + event.OutputFields.FilePath + `\n\n > 用户:  ` + event.OutputFields.UserName + `\n\n > CMD:  ` + event.OutputFields.Cmdline + `\n\n > 进程/父进程:  ` + event.OutputFields.ProcessName + "/" + event.OutputFields.ProcessPName + `\n\n > 蜜罐名称:  ` + event.OutputFields.ContainerName + ``
+		util.SendDingMsg("欺骗防御告警", "Falco日志告警", waning)
+	}
+
+	event.Time = time.Unix(event.OutputFields.EventTime/int64(math.Pow10(9)), 0).In(time.FixedZone("CST", 8*3600)).Format("2006-01-02 15:04:05")
 	if err := event.CreateFalcoEvent(); err != nil {
 		zap.L().Error(err.Error())
 		appG.Response(http.StatusOK, app.ErrorDatabase, err.Error())
@@ -421,21 +441,21 @@ func GetAttackLocationStatistics(c *gin.Context) {
 	appG.Response(http.StatusOK, app.SUCCESS, data)
 }
 
-func CreateCountEvent(c *gin.Context){
+func CreateCountEvent(c *gin.Context) {
 	appG := app.Gin{C: c}
 
 	var event models.CounterEvent
 
-	counterInfo :=  c.Query("sid")
+	counterInfo := c.Query("sid")
 	ret := util.Base64Decode(counterInfo)
 
-	ip            := gjson.Get(ret, "ip").String()
-	protocolType  := gjson.Get(ret, "type").String()
-	token         := gjson.Get(ret, "token").String()
-	info          := gjson.Get(ret, "info").String()
+	ip := gjson.Get(ret, "ip").String()
+	protocolType := gjson.Get(ret, "type").String()
+	token := gjson.Get(ret, "token").String()
+	info := gjson.Get(ret, "info").String()
 
 	data, _ := event.GetCounterEvent(info, protocolType, ip, token)
-	if data == nil{
+	if data == nil {
 		event.IP = ip
 		event.Type = protocolType
 		event.Info = info

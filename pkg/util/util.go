@@ -29,13 +29,13 @@ import (
 	"time"
 )
 
-func GetCurrentTime() string{
+func GetCurrentTime() string {
 	return time_parse.CSTLayoutString()
 }
 
 func ExecPath() string {
 	path, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 	return path
@@ -58,9 +58,9 @@ func GetLocationByIP(ip string) (*ip2location.IP2Locationrecord, error) {
 
 func WorkingPath() string {
 	path := os.Getenv("WorkingDir")
-	if len(path) == 0{
+	if len(path) == 0 {
 		cwd, err := os.Getwd()
-		if err != nil{
+		if err != nil {
 			return cwd
 		}
 		path = cwd
@@ -68,14 +68,14 @@ func WorkingPath() string {
 	return path
 }
 
-func CheckPathIsExist(path string) bool{
+func CheckPathIsExist(path string) bool {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return false
 	}
 	return true
 }
 
-func CreateDir(path string) error{
+func CreateDir(path string) error {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return os.MkdirAll(path, os.ModePerm)
 	}
@@ -133,7 +133,7 @@ func Find(slice []string, val string) bool {
 
 func GetUniqueID() (string, error) {
 	u, err := uuid.NewV4()
-	if err != nil{
+	if err != nil {
 		return "", err
 	}
 	return u.String(), nil
@@ -224,7 +224,7 @@ func createFlatZip(w io.Writer, files []string) error {
 	return z.Close()
 }
 
-func CompressZIP(destPath string,  srcPath ...string) error{
+func CompressZIP(destPath string, srcPath ...string) error {
 	a, err := os.Create(destPath)
 	if err != nil {
 		return err
@@ -260,7 +260,7 @@ func createFlatTarGz(tw *tar.Writer, path string) error {
 	return nil
 }
 
-func CompressTarGz(destPath string,  srcPath ...string) error{
+func CompressTarGz(destPath string, srcPath ...string) error {
 	file, err := os.Create(destPath)
 	if err != nil {
 		zap.L().Error(err.Error())
@@ -304,7 +304,7 @@ func Copy(src, dst string) (int64, error) {
 	return nBytes, err
 }
 
-func GetFileMD5(path string) (string,error) {
+func GetFileMD5(path string) (string, error) {
 	path, err := filepath.Abs(path)
 	if err != nil {
 		return "", err
@@ -320,26 +320,6 @@ func GetFileMD5(path string) (string,error) {
 		return "", err
 	}
 	return hex.EncodeToString(h.Sum(nil)), nil
-}
-
-func DoBrowserPDFToken(data string, destFile string, traceUrl string) error{
-	var toolPath = path.Join(WorkingPath(), "tool", "file_token_trace", runtime.GOOS, "TraceBrowserPDF")
-	if !CheckPathIsExist(toolPath){
-		zap.L().Error("BrowserPDF密签工具不存在")
-		return errors.New("BrowserPDF密签工具不存在")
-	}
-	CreateDir(path.Dir(destFile))
-	cmd := exec.Command(toolPath, "-w", data, "-o", destFile, "-u", traceUrl)
-	cmd.Dir = path.Dir(toolPath)
-	_, err := cmd.CombinedOutput()
-	if err != nil {
-		zap.L().Error("BrowserPDF密签生成失败")
-		zap.L().Error(err.Error())
-		fmt.Println("BrowserPDF密签生成失败:" + err.Error())
-		os.RemoveAll(path.Dir(destFile))
-		return err
-	}
-	return nil
 }
 
 func CopyFile(dstName, srcName string) (writeen int64, err error) {
@@ -360,7 +340,7 @@ func CopyFile(dstName, srcName string) (writeen int64, err error) {
 	return io.Copy(dst, src)
 }
 
-func DoEXEToken(sourceFile string, destFile string, traceUrl string) error{
+func DoEXEToken(sourceFile string, destFile string, traceUrl string) error {
 
 	//TODO  local path and docker path is hard code FIXME
 	dockerSourceFile := path.Join("/mnt/infile", path.Base(sourceFile))
@@ -380,20 +360,88 @@ func DoEXEToken(sourceFile string, destFile string, traceUrl string) error{
 	return nil
 }
 
-func DoFileTokenTrace(sourceFile string, destFile string, traceUrl string) error{
-	if !CheckPathIsExist(sourceFile){
+type TokenFileCreateBody struct {
+	SourceFile string
+	DestFile   string
+	TokenType  string
+	TraceUrl   string
+
+	Content         string
+	ZipName         string // 设置压缩包的名字和路径
+	ChildFolderName string // 压缩包里文件夹的名字
+	ContainerPath   string // 压缩指定文件夹目录下的所有文件到压缩包里。(该文件夹下没有文件也可以,主要是为了可以添加一些其他诱饵文件)
+	Host            string
+	HostPort        string
+	TraceCode       string
+}
+
+func CreateTokenFile(tokenFileCreateBody TokenFileCreateBody) error {
+	zap.L().Info(fmt.Sprintf("开始注入文件[%s] 类型[%s]蜜签", tokenFileCreateBody.TokenType, tokenFileCreateBody.SourceFile))
+	if tokenFileCreateBody.TokenType != "BrowserPDF" && !CheckPathIsExist(tokenFileCreateBody.SourceFile) {
 		zap.L().Error("待加签文件不存在")
 		return errors.New("source file is not exist")
 	}
-	var toolPath string = path.Join(WorkingPath(), "tool", "file_token_trace", runtime.GOOS, "TraceFile")
-	if !CheckPathIsExist(toolPath){
+	var toolPath = path.Join(WorkingPath(), "tool", "file_token_trace", "linux", "TraceFile")
+
+	if !CheckPathIsExist(toolPath) {
+		zap.L().Error("加签工具不存在")
+		return errors.New("trace file is not exist")
+	}
+	CreateDir(path.Dir(tokenFileCreateBody.DestFile))
+
+	var cmd *exec.Cmd
+
+	// 命令组装
+	switch tokenFileCreateBody.TokenType {
+
+	case "WPS":
+		cmd = exec.Command(toolPath, "-u", tokenFileCreateBody.TraceUrl, "-o", tokenFileCreateBody.DestFile, "-w", tokenFileCreateBody.Content, "-t", "wps")
+	case "BrowserPDF":
+		cmd = exec.Command(toolPath, "-u", tokenFileCreateBody.TraceUrl, "-o", tokenFileCreateBody.DestFile, "-w", tokenFileCreateBody.Content, "-t", "chromepdf")
+	case "FILE":
+		cmd = exec.Command(toolPath, "-u", tokenFileCreateBody.TraceUrl, "-o", tokenFileCreateBody.DestFile, "-i", tokenFileCreateBody.SourceFile, "-t", "office")
+	case "EXE":
+		cmd = exec.Command(toolPath, "-u", tokenFileCreateBody.TraceUrl, "-o", tokenFileCreateBody.DestFile, "-i", tokenFileCreateBody.SourceFile, "-t", "exe")
+	//case "WIN_FOLDER":
+	//	cmd = exec.Command(toolPath, "--zn", tokenFileCreateBody.zipName, "--fn", tokenFileCreateBody.childFolderName, "--dp", tokenFileCreateBody.containerPath, "--hn", tokenFileCreateBody.host, "--hp", tokenFileCreateBody.hostPort,
+	//		"--tc", tokenFileCreateBody.traceCode, "-t", "winfolder")
+	default:
+		zap.L().Error("无法处理的蜜签类型: " + tokenFileCreateBody.TokenType)
+		return errors.New("无法处理的蜜签类型: " + tokenFileCreateBody.TokenType)
+	}
+	cmd.Dir = path.Dir(toolPath)
+	zap.L().Info(tokenFileCreateBody.TraceUrl)
+	zap.L().Info(tokenFileCreateBody.DestFile)
+	zap.L().Info(tokenFileCreateBody.SourceFile)
+	zap.L().Info(tokenFileCreateBody.Content)
+
+	zap.L().Info("cmd : " + cmd.String())
+
+	_, err := cmd.CombinedOutput()
+	if err != nil {
+		zap.L().Error("文件密签加签失败")
+		zap.L().Error(err.Error())
+		fmt.Println("文件密签加签失败:" + err.Error())
+		os.RemoveAll(path.Dir(tokenFileCreateBody.DestFile))
+		return err
+	}
+	return nil
+}
+
+func DoFileTokenTrace(sourceFile string, destFile string, traceUrl string) error {
+	if !CheckPathIsExist(sourceFile) {
+		zap.L().Error("待加签文件不存在")
+		return errors.New("source file is not exist")
+	}
+	var toolPath = path.Join(WorkingPath(), "tool", "file_token_trace", runtime.GOOS, "TraceFile")
+	if !CheckPathIsExist(toolPath) {
 		zap.L().Error("加签工具不存在")
 		return errors.New("trace file is not exist")
 	}
 	CreateDir(path.Dir(destFile))
 
 	//TODO support mac version
-	cmd := exec.Command(toolPath, "-i", sourceFile, "-o", destFile, "-b", traceUrl)
+	cmd := exec.Command(toolPath, "-i", sourceFile, "-o", destFile, "-u", traceUrl, "-t", traceUrl)
 	cmd.Dir = path.Dir(toolPath)
 	_, err := cmd.CombinedOutput()
 	if err != nil {
@@ -406,30 +454,49 @@ func DoFileTokenTrace(sourceFile string, destFile string, traceUrl string) error
 	return nil
 }
 
-func SendGETRequest(header map[string]string, uri string)  ([]byte, error){
+func DoBrowserPDFToken(data string, destFile string, traceUrl string) error {
+	var toolPath = path.Join(WorkingPath(), "tool", "file_token_trace", runtime.GOOS, "TraceBrowserPDF")
+	if !CheckPathIsExist(toolPath) {
+		zap.L().Error("BrowserPDF密签工具不存在")
+		return errors.New("BrowserPDF密签工具不存在")
+	}
+	CreateDir(path.Dir(destFile))
+	cmd := exec.Command(toolPath, "-w", data, "-o", destFile, "-u", traceUrl)
+	cmd.Dir = path.Dir(toolPath)
+	_, err := cmd.CombinedOutput()
+	if err != nil {
+		zap.L().Error("BrowserPDF密签生成失败")
+		zap.L().Error(err.Error())
+		fmt.Println("BrowserPDF密签生成失败:" + err.Error())
+		os.RemoveAll(path.Dir(destFile))
+		return err
+	}
+	return nil
+}
+
+func SendGETRequest(header map[string]string, uri string) ([]byte, error) {
 
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", uri, nil)
 
 	//add header
-	for key, value := range header{
+	for key, value := range header {
 		request.Header.Add(key, value)
 	}
 	if err != nil {
 		return nil, err
 	}
 	response, err := client.Do(request)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	ret, err := ioutil.ReadAll(response.Body)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
 	return ret, nil
 }
-
 
 func TcpGather(ips []string, port string) bool {
 	for _, ip := range ips {
@@ -450,9 +517,9 @@ func TcpGather(ips []string, port string) bool {
 	return false
 }
 
-func SendDingMsg(title ,name, msg string) error{
+func SendDingMsg(title, name, msg string) error {
 	webHook := configs.GetSetting().App.WebHook
-	content := `{"msgtype": "markdown", "markdown":{"title":"`+ title +`","text": "### `+ name +`\n > `+ msg +`"}}`
+	content := `{"msgtype": "markdown", "markdown":{"title":"` + title + `","text": "### ` + name + `\n > ` + msg + `"}}`
 	req, err := http.NewRequest("POST", webHook, strings.NewReader(content))
 	if err != nil {
 		zap.L().Error("发送请求失败")
@@ -480,14 +547,3 @@ func IsLocalIP(ip string) bool {
 	}
 	return false
 }
-
-
-
-
-
-
-
-
-
-
-

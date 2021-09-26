@@ -161,7 +161,7 @@ func GetPod(podName string) (*apiV1.Pod, error) {
 		if len(data) == 0 {
 			continue
 		}
-		if strings.HasPrefix(d.Name, podName) && strings.Contains(d.Name, podName){
+		if strings.HasPrefix(d.Name, podName) && strings.Contains(d.Name, podName) {
 			pod, err := client.CoreV1().Pods(apiV1.NamespaceDefault).Get(context.TODO(), d.Name, metaV1.GetOptions{})
 			if err != nil {
 				return nil, err
@@ -181,12 +181,12 @@ func isPodRunning(podName, namespace string) wait.ConditionFunc {
 			if len(data) == 0 {
 				continue
 			}
-			if strings.HasPrefix(d.Name, podName) && strings.Contains(d.Name, podName){
+			if strings.HasPrefix(d.Name, podName) && strings.Contains(d.Name, podName) {
 				containerName = d.Name
 				break
-			}else if i == len(pods.Items)-1 {
+			} else if i == len(pods.Items)-1 {
 				return false, nil
-			}else{
+			} else {
 				continue
 			}
 		}
@@ -234,6 +234,9 @@ func RemoveFromPod(podName, containerName, srcPath string) error {
 }
 
 func CopyToPod(podName, containerName, srcPath, destPath string) error {
+
+	zap.L().Error(fmt.Sprintf("podName[%s] containerName[%s]  srcPath[%s] destPath[%s]", podName, containerName, srcPath, destPath))
+
 	reader, writer := io.Pipe()
 	if destPath != "/" && strings.HasSuffix(string(destPath[len(destPath)-1]), "/") {
 		destPath = destPath[:len(destPath)-1]

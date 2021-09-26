@@ -109,7 +109,7 @@ func MakeRoute() *gin.Engine {
 			private.GET("/token/name/set", token_handler.GetTokenNameList)
 
 			//create honeypot token
-			private.POST("/token/honeypot", honeypot_token_handler.CreateHoneypotToken)
+			private.POST("/token/honeypot", honeypot_token_handler.CreateHoneypotTokenNew)
 			//delete honeypot token
 			private.DELETE("/token/honeypot/:id", honeypot_token_handler.DeleteHoneypotTokenByID)
 			//get honeypot token
@@ -118,7 +118,7 @@ func MakeRoute() *gin.Engine {
 			private.GET("/token/honeypot/:id", honeypot_token_handler.DownloadHoneypotTokenByID)
 
 			//create probe token
-			private.POST("/token/probe", probe_token_handler.CreateProbeToken)
+			private.POST("/token/probe", probe_token_handler.CreateProbeTokenNew)
 			//delete probe token
 			private.DELETE("/token/probe/:id", probe_token_handler.DeleteProbeTokenByID)
 			//get probe token

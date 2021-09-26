@@ -32,6 +32,7 @@ type OutputFields struct {
 	ProcTTY       int    `gorm:"" json:"proc.tty"`                   // TTY
 	ProcessPName  string `gorm:"" json:"proc.pname"`                 // 父进程名称
 	ProcessName   string `gorm:"" json:"proc.name"`                  // 进程名称
+	Connection    string `gorm:"" json:"connection"`                 // 进程名称
 }
 
 func (event *FalcoAttackEvent) CreateFalcoEvent() error {
