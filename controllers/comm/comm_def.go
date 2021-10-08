@@ -63,13 +63,13 @@ type HistoryBaitSelectResultPayload struct {
 }
 
 type TokenSelectResultPayload struct {
-	ID          int64  `json:"ID"`         //密签ID
-	FileName    string `json:"FileName"`   //文件名称
-	TokenName   string `json:"TokenName"`  //蜜签名称
-	TokenType   string `json:"TokenType"`  //蜜签类型
-	Creator     string `json:"Creator"`    //创建用户
-	CreateTime  string `json:"CreateTime"` //创建时间
-	DefaultFlag bool   `json:"DefaultFlag"`  //默认属性
+	ID          int64  `json:"ID"`          //密签ID
+	FileName    string `json:"FileName"`    //文件名称
+	TokenName   string `json:"TokenName"`   //蜜签名称
+	TokenType   string `json:"TokenType"`   //蜜签类型
+	Creator     string `json:"Creator"`     //创建用户
+	CreateTime  string `json:"CreateTime"`  //创建时间
+	DefaultFlag bool   `json:"DefaultFlag"` //默认属性
 }
 
 type ProtocolProxySelectResultPayload struct {
@@ -88,14 +88,14 @@ type ProtocolProxySelectResultPayload struct {
 }
 
 type TransparentProxySelectResultPayload struct {
-	ID           int64  `json:"ID"`            //透明代理ID
-	ProbeIP      string `json:"ProbeIP"`       //探针IP
-	ProxyPort    int32  `json:"ProxyPort"`     //代理端口
-	Creator      string `json:"Creator"`       //创建用户
-	CreateTime   string `json:"CreateTime"`    //创建时间
-	ProtocolPort int32  `json:"ProtocolPort"`  //协议代理端口
-	ProtocolType string `json:"ProtocolType"`  //协议类型
-	Status       int    `json:"Status"`        //状态
+	ID           int64  `json:"ID"`           //透明代理ID
+	ProbeIP      string `json:"ProbeIP"`      //探针IP
+	ProxyPort    int32  `json:"ProxyPort"`    //代理端口
+	Creator      string `json:"Creator"`      //创建用户
+	CreateTime   string `json:"CreateTime"`   //创建时间
+	ProtocolPort int32  `json:"ProtocolPort"` //协议代理端口
+	ProtocolType string `json:"ProtocolType"` //协议类型
+	Status       int    `json:"Status"`       //状态
 }
 
 type ServerBaitSelectPayload struct {
@@ -123,36 +123,36 @@ type ServerBaitSelectResultPayload struct {
 }
 
 type ServerTokenSelectResultPayload struct {
-	ID         int64         `json:"ID"`         //蜜罐密签ID
-	TokenName  string        `json:"TokenName"`  //密签名称
-	TokenType  string        `json:"TokenType"`  //密签类型
-	Creator    string        `json:"Creator"`    //创建用户
-	CreateTime string        `json:"CreateTime"` //创建时间
-	DeployPath string        `json:"DeployPath"` //部署路径
-	Status     TaskStatus    `json:"Status"`     //状态
+	ID         int64      `json:"ID"`         //蜜罐密签ID
+	TokenName  string     `json:"TokenName"`  //密签名称
+	TokenType  string     `json:"TokenType"`  //密签类型
+	Creator    string     `json:"Creator"`    //创建用户
+	CreateTime string     `json:"CreateTime"` //创建时间
+	DeployPath string     `json:"DeployPath"` //部署路径
+	Status     TaskStatus `json:"Status"`     //状态
 }
 
 type AttackSelectResultPayload struct {
 	//ID             int64  `json:"ID"`             //攻击日志ID
-	AttackIP       string    `json:"AttackIP"`       //攻击IP
-	ProbeIP        string    `json:"ProbeIP"`        //探针IP
-	JumpIP         string    `json:"JumpIP"`         //跳转IP
-	HoneypotIP     string    `json:"HoneypotIP"`     //蜜罐IP
-	ProtocolType   string    `json:"ProtocolType"`   //协议类型
-	AttackTime     string    `json:"AttackTime"`     //攻击时间
-	AttackLocation string    `json:"AttackLocation"` //攻击位置
-	AttackDetail   string    `json:"AttackDetail"`   //攻击详情
-	CounterInfo    []string  `json:"CounterInfo"`    //反制详情
+	AttackIP       string            `json:"AttackIP"`       //攻击IP
+	ProbeIP        string            `json:"ProbeIP"`        //探针IP
+	JumpIP         string            `json:"JumpIP"`         //跳转IP
+	HoneypotIP     string            `json:"HoneypotIP"`     //蜜罐IP
+	ProtocolType   string            `json:"ProtocolType"`   //协议类型
+	AttackTime     string            `json:"AttackTime"`     //攻击时间
+	AttackLocation string            `json:"AttackLocation"` //攻击位置
+	AttackDetail   string            `json:"AttackDetail"`   //攻击详情
+	CounterInfo    map[string]string `json:"CounterInfo"`    //反制详情
 }
 
 type TokenTraceSelectResultPayload struct {
-	ID          int64  `json:"ID"`        //攻击日志ID
-	TokenType   string `json:"TokenType"` //密签类型
-	TokenName   string `json:"TokenName"` //密签名称
-	OpenTime    string `json:"OpenTime"`  //攻击时间
-	OpenIP      string `json:"OpenIP"`    //攻击IP
-	UserAgent   string `json:"UserAgent"` //用户UA
-	Location    string `json:"Location"`  //攻击位置
+	ID        int64  `json:"ID"`        //攻击日志ID
+	TokenType string `json:"TokenType"` //密签类型
+	TokenName string `json:"TokenName"` //密签名称
+	OpenTime  string `json:"OpenTime"`  //攻击时间
+	OpenIP    string `json:"OpenIP"`    //攻击IP
+	UserAgent string `json:"UserAgent"` //用户UA
+	Location  string `json:"Location"`  //攻击位置
 }
 
 type FalcoSelectResultPayload struct {
@@ -172,44 +172,44 @@ type ImageUpdatePayload struct {
 }
 
 type SelectPayload struct {
-	Payload        string  `json:"Payload"`                       //查找payload
-	PageNumber     int     `json:"PageNumber" binding:"required"` //页number
-	PageSize       int     `json:"PageSize" binding:"required"`   //页size
+	Payload    string `json:"Payload"`                       //查找payload
+	PageNumber int    `json:"PageNumber" binding:"required"` //页number
+	PageSize   int    `json:"PageSize" binding:"required"`   //页size
 }
 
-type AttackEventSelectPayload struct{
+type AttackEventSelectPayload struct {
 	SelectPayload
-	StartTime      string    `json:"StartTime"`                     //开始时间
-	EndTime        string    `json:"EndTime"`                       //结束时间
-	AttackIP       string    `json:"AttackIP"`                      //攻击IP
-	JumpIP         string    `json:"JumpIP"`                        //跳转IP
-	ProbeIP        string    `json:"ProbeIP"`                       //探针IP
-	HoneypotIP     string    `json:"HoneypotIP"`                    //蜜罐IP
-	ProtocolType   string    `json:"ProtocolType"`                  //协议类型
+	StartTime    string `json:"StartTime"`    //开始时间
+	EndTime      string `json:"EndTime"`      //结束时间
+	AttackIP     string `json:"AttackIP"`     //攻击IP
+	JumpIP       string `json:"JumpIP"`       //跳转IP
+	ProbeIP      string `json:"ProbeIP"`      //探针IP
+	HoneypotIP   string `json:"HoneypotIP"`   //蜜罐IP
+	ProtocolType string `json:"ProtocolType"` //协议类型
 }
 
-type FalcoEventSelectPayload struct{
+type FalcoEventSelectPayload struct {
 	SelectPayload
-	StartTime string    `json:"StartTime"` //开始时间
-	EndTime   string    `json:"EndTime"`   //结束时间
+	StartTime string `json:"StartTime"` //开始时间
+	EndTime   string `json:"EndTime"`   //结束时间
 }
 
 type TokenTraceSelectPayload struct {
 	SelectPayload
-	ServerType string    `json:"ServerType"` //服务类型 蜜罐（honeypot）or 探针（probe）
-	AttackIP   string    `json:"AttackIP"`   //攻击IP
-	StartTime  string    `json:"StartTime"`  //开始时间
-	EndTime    string    `json:"EndTime"`    //结束时间
+	ServerType string `json:"ServerType"` //服务类型 蜜罐（honeypot）or 探针（probe）
+	AttackIP   string `json:"AttackIP"`   //攻击IP
+	StartTime  string `json:"StartTime"`  //开始时间
+	EndTime    string `json:"EndTime"`    //结束时间
 }
 
 type AttackTraceSelectPayload struct {
 	SelectPayload
-	Type         string    `json:"Type"`         //攻击类型
-	AttackIP     string    `json:"AttackIP"`     //攻击IP
-	HoneypotIP   string    `json:"HoneypotIP"`   //蜜罐IP
-	ProtocolType string    `json:"ProtocolType"` //协议类型
-	StartTime    string    `json:"StartTime"`    //开始时间
-	EndTime      string    `json:"EndTime"`      //结束时间
+	Type         string `json:"Type"`         //攻击类型
+	AttackIP     string `json:"AttackIP"`     //攻击IP
+	HoneypotIP   string `json:"HoneypotIP"`   //蜜罐IP
+	ProtocolType string `json:"ProtocolType"` //协议类型
+	StartTime    string `json:"StartTime"`    //开始时间
+	EndTime      string `json:"EndTime"`      //结束时间
 }
 
 type BaitSelectPayload struct {
@@ -366,7 +366,7 @@ const (
 )
 
 var BaitType = []string{"FILE", "HISTORY"}
-var TokenType = []string{"FILE", "BrowserPDF"}
+var TokenType = []string{"FILE", "BrowserPDF", "EXE", "WPS"}
 
 type TopologyNode struct {
 	Id       string `json:"id"`
@@ -400,4 +400,3 @@ type TraceSourceResultPayload struct {
 	Log          string `json:"Log"`          //日志
 	Detail       string `json:"Detail"`       //详情
 }
-

@@ -140,6 +140,16 @@ function is_port_bind() {
   fi
 }
 
+function start_docker_container_if_exist() {
+  docker_container_name=$1
+  containerId=$(docker ps -a | grep $docker_container_name | awk '{print $1}')
+  echo "stop docker container if exist [$docker_container_name]..."
+
+  if [ "containerId" != "" ]; then
+    docker start containerId
+  fi
+}
+
 function stop_docker_container_if_exist() {
   docker_container_name=$1
   processor=$(docker ps -a | grep $docker_container_name)
@@ -677,11 +687,36 @@ echo -e "DB_Database: "$DB_Database
 echo -e "DB_Password: "$DB_Password
 echo -e "REDIS_Port: "$REDIS_Port
 echo -e "REDIS_Password: "$REDIS_Password
-if [ "${cmd}" == "install" ]; then
-  startupAll
-elif [ "${cmd}" == "uninstall" ]; then
+if [ "${cmd}" == "uninstall" ]; then
   uninstallAll
 elif [[ "${cmd}" == "restart" ]] || [[ "${cmd}" == "start" ]]; then
+  if [ "${options}" == "db" ]; then
+    stop_docker_container_if_exist ehoney-mysql
+    start_docker_container_if_exist ehoney-mysql
+  elif [ "${options}" == "web" ]; then
+    stop_docker_container_if_exist decept-defense-web
+    start_docker_container_if_exist decept-defense-web
+  elif [ "${options}" == "redis" ]; then
+    stop_docker_container_if_exist decept-redis
+    start_docker_container_if_exist decept-redis
+  elif [ "${options}" == "filetrace" ]; then
+    kill_if_process_exist2 filetracemsg
+    setupFileTrace
+  else
+    stop_docker_container_if_exist ehoney-mysql
+    start_docker_container_if_exist ehoney-mysql
+
+    stop_docker_container_if_exist decept-redis
+    start_docker_container_if_exist decept-redis
+
+    kill_if_process_exist2 filetracemsg
+    setupFileTrace
+
+    stop_docker_container_if_exist decept-defense-web
+    start_docker_container_if_exist ehoney-mysql
+
+  fi
+elif [[ "${cmd}" == "install" ]]; then
   if [ "${options}" == "db" ]; then
     stop_docker_container_if_exist ehoney-mysql
     setupMysqlDockerBak

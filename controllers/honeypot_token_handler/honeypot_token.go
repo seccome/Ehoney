@@ -115,6 +115,19 @@ func CreateHoneypotTokenNew(c *gin.Context) {
 		tokenFileCreateBody.DestFile = path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "honeypot_token", traceCode, fileName)
 	}
 
+	if r.TokenType == "WPS" {
+		tokenFileCreateBody.Content = r.TokenData
+		fileName := r.TokenName
+
+		if !strings.HasSuffix(fileName, ".doc") && !strings.HasSuffix(fileName, ".docs") && !strings.HasSuffix(fileName, ".xls") && !strings.HasSuffix(fileName, ".xlsx") && !strings.HasSuffix(fileName, ".ppt") && !strings.HasSuffix(fileName, ".pptx") {
+			errMsg := "WPS蜜签文件名称不符合规范: " + "[" + fileName + "]"
+			zap.L().Error(errMsg)
+			appG.Response(http.StatusOK, app.ErrorDoFileTokenTrace, errMsg)
+		}
+
+		tokenFileCreateBody.DestFile = path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "honeypot_token", traceCode, fileName)
+	}
+
 	honeypotToken.TokenName = r.TokenName
 	honeypotToken.TokenType = r.TokenType
 	honeypotToken.HoneypotID = payload.HoneypotID

@@ -50,6 +50,8 @@ func Setup() {
 }
 
 func CreateDeployment(podName, imageAddress string, containerPort int32) (*apiV1.Pod, error) {
+	zap.L().Info(fmt.Sprintf("podName: %s imageAddress: %s, containerPort: %d", podName, imageAddress, containerPort))
+
 	deployment := &appsV1.Deployment{
 		ObjectMeta: metaV1.ObjectMeta{
 			Name: podName,
@@ -77,30 +79,34 @@ func CreateDeployment(podName, imageAddress string, containerPort int32) (*apiV1
 									Name:          podName,
 									Protocol:      apiV1.ProtocolTCP,
 									ContainerPort: containerPort,
+									//HostPort:      hostPort,
 								},
 							},
-
-							//Env: []apiV1.EnvVar{
-							//	{
-							//		Name:  "TZ",
-							//		Value: "Asia/Shanghai",
-							//	},
-							//},
 						},
 					},
 				},
 			},
 		},
 	}
+
+	//if containerPort == 445 {
+	//	deployment.Spec.Template.Spec.Containers[0].Ports[0].HostPort = 445
+	//	zap.L().Info("set smb pod host port 445")
+	//	zap.L().Info(fmt.Sprintf("%v", deployment.Spec.Template.Spec.Containers[0].Ports[0]))
+	//}
 	zap.L().Info("Creating deployment...")
+
+	zap.L().Info(fmt.Sprintf("%v", deployment))
+
 	_, err := deploymentsClient.Create(context.TODO(), deployment, metaV1.CreateOptions{})
 	if err != nil {
-		zap.L().Info("Creating deployment error : " + err.Error())
+		zap.L().Error("Creating deployment error : " + err.Error())
 		return nil, err
 	}
 	//TODO remove wait logic
 	err = waitForPodStartBuild(apiV1.NamespaceDefault, podName, time.Minute)
 	if err != nil {
+		zap.L().Error("waitForPodStartBuild error : " + err.Error())
 		return nil, err
 	}
 	return GetPod(podName)
@@ -246,6 +252,7 @@ func CopyToPod(podName, containerName, srcPath, destPath string) error {
 	go func() {
 		defer writer.Close()
 		err := makeTar(srcPath, destPath, writer)
+		zap.L().Error(fmt.Sprintf("makeTar err: %v", err))
 		cmdUtil.CheckErr(err)
 	}()
 	var cmdArr []string
@@ -272,6 +279,7 @@ func CopyToPod(podName, containerName, srcPath, destPath string) error {
 
 	exec, err := remotecommand.NewSPDYExecutor(config, "POST", req.URL())
 	if err != nil {
+		zap.L().Error(fmt.Sprintf("CopyToPod NewSPDYExecutor err: %v", err))
 		return err
 	}
 	err = exec.Stream(remotecommand.StreamOptions{
@@ -281,6 +289,7 @@ func CopyToPod(podName, containerName, srcPath, destPath string) error {
 		Tty:    false,
 	})
 	if err != nil {
+		zap.L().Error(fmt.Sprintf("exec stream err: %v", err))
 		return err
 	}
 	return nil

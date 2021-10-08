@@ -18,7 +18,7 @@ type Protocols struct {
 	TaskID       string          `json:"TaskID" form:"TaskID" gorm:"not null"`                                                //任务ID
 	MinPort      int32           `json:"MinPort" form:"MinPort" gorm:"null, default:1" binding:"required"`
 	MaxPort      int32           `json:"MaxPort" form:"MaxPort" gorm:"null, default:65535" binding:"required"`
-	DefaultFlag  bool            `json:"DefaultFlag" form:"DefaultFlag" gorm:"null, default:false"`                           //默认属性
+	DefaultFlag  bool            `json:"DefaultFlag" form:"DefaultFlag" gorm:"null, default:false"` //默认属性
 }
 
 var DefaultProtocol = []Protocols{
@@ -27,8 +27,8 @@ var DefaultProtocol = []Protocols{
 	{ProtocolType: "redisproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "redisproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 16379, MaxPort: 16381},
 	{ProtocolType: "sshproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "sshproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10020, MaxPort: 10022},
 	{ProtocolType: "telnetproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "telnetproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10023, MaxPort: 10025},
+	{ProtocolType: "smbproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "smbproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10445, MaxPort: 10447},
 }
-
 
 func (protocol *Protocols) CreateProtocol() error {
 	result := db.Create(protocol)
@@ -39,13 +39,13 @@ func (protocol *Protocols) CreateProtocol() error {
 }
 
 func (protocol *Protocols) CreateDefaultProtocol() error {
-	for _, d := range DefaultProtocol{
-		p, _ :=  protocol.GetProtocolByType(d.ProtocolType)
-		if p != nil{
+	for _, d := range DefaultProtocol {
+		p, _ := protocol.GetProtocolByType(d.ProtocolType)
+		if p != nil {
 			continue
 		}
 		err := d.CreateProtocol()
-		if err != nil{
+		if err != nil {
 			continue
 		}
 	}
@@ -59,7 +59,6 @@ func (protocol *Protocols) GetProtocolByID(id int64) (*Protocols, error) {
 	}
 	return &ret, nil
 }
-
 
 func (protocol *Protocols) CheckProtocol(agentID string) *Protocols {
 	var ret Protocols

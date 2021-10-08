@@ -103,6 +103,19 @@ func CreateProbeTokenNew(c *gin.Context) {
 		tokenFileCreateBody.DestFile = path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "probe_token", traceCode, fileName)
 	}
 
+	if r.TokenType == "WPS" {
+		tokenFileCreateBody.Content = r.TokenData
+		fileName := r.TokenName
+
+		if !strings.HasSuffix(fileName, ".doc") && !strings.HasSuffix(fileName, ".docs") && !strings.HasSuffix(fileName, ".xls") && !strings.HasSuffix(fileName, ".xlsx") && !strings.HasSuffix(fileName, ".ppt") && !strings.HasSuffix(fileName, ".pptx") {
+			errMsg := "WPS蜜签文件名称不符合规范: " + "[" + fileName + "]"
+			zap.L().Error(errMsg)
+			appG.Response(http.StatusOK, app.ErrorDoFileTokenTrace, errMsg)
+		}
+
+		tokenFileCreateBody.DestFile = path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "honeypot_token", traceCode, fileName)
+	}
+
 	if err := util.CreateTokenFile(tokenFileCreateBody); err != nil {
 		zap.L().Error("文件加签异常: " + err.Error())
 		appG.Response(http.StatusOK, app.ErrorDoFileTokenTrace, err.Error())

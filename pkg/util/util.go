@@ -377,7 +377,7 @@ type TokenFileCreateBody struct {
 
 func CreateTokenFile(tokenFileCreateBody TokenFileCreateBody) error {
 	zap.L().Info(fmt.Sprintf("开始注入文件[%s] 类型[%s]蜜签", tokenFileCreateBody.TokenType, tokenFileCreateBody.SourceFile))
-	if tokenFileCreateBody.TokenType != "BrowserPDF" && !CheckPathIsExist(tokenFileCreateBody.SourceFile) {
+	if tokenFileCreateBody.TokenType != "BrowserPDF" && tokenFileCreateBody.TokenType != "WPS" && !CheckPathIsExist(tokenFileCreateBody.SourceFile) {
 		zap.L().Error("待加签文件不存在")
 		return errors.New("source file is not exist")
 	}

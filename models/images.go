@@ -15,18 +15,18 @@ type Images struct {
 	DefaultFlag  bool   `json:"DefaultFlag" form:"DefaultFlag" gorm:"null, default:false"` //默认属性
 }
 
-
 var DefaultImages = []Images{
 	{ImageAddress: "47.96.71.197:90/ehoney/tomcat:v1", ImageName: "ehoney/tomcat", ImagePort: 8080, ImageType: "httpproxy", DefaultFlag: true},
-	{ImageAddress: "47.96.71.197:90/ehoney/ssh:v1", ImageName:"ehoney/ssh", ImagePort: 22, ImageType: "sshproxy", DefaultFlag: true},
+	{ImageAddress: "47.96.71.197:90/ehoney/ssh:v1", ImageName: "ehoney/ssh", ImagePort: 22, ImageType: "sshproxy", DefaultFlag: true},
 	{ImageAddress: "47.96.71.197:90/ehoney/mysql:v1", ImageName: "ehoney/mysql", ImagePort: 3306, ImageType: "mysqlproxy", DefaultFlag: true},
 	{ImageAddress: "47.96.71.197:90/ehoney/redis:v1", ImageName: "ehoney/redis", ImagePort: 6379, ImageType: "redisproxy", DefaultFlag: true},
 	{ImageAddress: "47.96.71.197:90/ehoney/telnet:v1", ImageName: "ehoney/telnet", ImagePort: 23, ImageType: "telnetproxy", DefaultFlag: true},
+	{ImageAddress: "47.96.71.197:90/ehoney/smb:v1", ImageName: "ehoney/smb", ImagePort: 445, ImageType: "smbproxy", DefaultFlag: true}, // 由于smb client 必须连接 445 所以改4450 445 留给协议代理
 }
 
 func (image *Images) CreateImage() error {
 	ret, _ := image.GetImageByAddress(image.ImageAddress)
-	if ret == nil{
+	if ret == nil {
 		result := db.Create(image)
 		if result.Error != nil {
 			return result.Error
@@ -36,9 +36,9 @@ func (image *Images) CreateImage() error {
 }
 
 func (image *Images) CreateDefaultImage() error {
-	for _, d := range DefaultImages{
+	for _, d := range DefaultImages {
 		err := d.CreateImage()
-		if err != nil{
+		if err != nil {
 			continue
 		}
 	}
@@ -54,7 +54,7 @@ func (image *Images) GetImage(payload *comm.SelectPayload) (*[]Images, int64, er
 		return nil, 0, err
 	}
 	count = (int64)(len(ret))
-	t := fmt.Sprintf("limit %d offset %d", payload.PageSize, (payload.PageNumber-1) * payload.PageSize)
+	t := fmt.Sprintf("limit %d offset %d", payload.PageSize, (payload.PageNumber-1)*payload.PageSize)
 	sql = strings.Join([]string{sql, t}, " ")
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, 0, err

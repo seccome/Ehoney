@@ -480,7 +480,6 @@ function setupMysqlDocker() {
   dos2unix ${Project_Dir}/tool/mysql-docker/privileges.sql
   sed -i "3c update user set authentication_string = password('${DB_Password}') where user = 'root';" $Project_Dir/tool/mysql-docker/privileges.sql
   sed -i "5c GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '${DB_Password}' WITH GRANT OPTION;" $Project_Dir/tool/mysql-docker/privileges.sql
-  # docker pull 47.96.71.197:90/ehoney-images/ehoney-db@sha256:1bd0657bc8fdee06ed2ed4aab889bb9bdf2c2bd53cc20e465d3476e3730dc02d
   cd $Project_Dir/tool/mysql-docker
   docker build -t ehoney-mysql .
   db_data_dir=/var/lib/ehoney-db-data

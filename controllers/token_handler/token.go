@@ -97,9 +97,9 @@ func CreateToken(c *gin.Context) {
 			appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
 			return
 		}
-	}else if payload.TokenType == "BrowserPDF"{
+	} else if payload.TokenType == "BrowserPDF" || payload.TokenType == "WPS" {
 		token.TokenData = payload.TokenData
-	}else {
+	} else {
 		zap.L().Error("未支持的密签类型")
 		appG.Response(http.StatusOK, app.InvalidParams, nil)
 		return
