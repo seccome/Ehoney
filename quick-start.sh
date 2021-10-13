@@ -130,7 +130,7 @@ function resetAgentJson() {
 }
 
 function is_port_bind() {
-  processor=$(lsof -i:$1 | grep -v 'PID' | awk '{print $2}')
+  processor=$(netstat -lnpt | grep $1 | awk '{print $2}')
   if [ "$processor" != "" ]; then
     echo "true"
   else
@@ -342,7 +342,6 @@ function setupK3s() {
   yes | cp -rf /etc/rancher/k3s/k3s.yaml ${Project_Dir}/configs/.kube/config
   source /etc/profile
   sleep 1s
-  #exit_if_process_error docker
   echo "--------------------End of K3S installation-----------------------------"
   check_k3s_service
 }
@@ -368,11 +367,11 @@ function setupDocker() {
       echo "docker.service is configured, skip!"
     else
       echo "docker is unconfigured, restart install!"
+      sudo systemctl stop docker
       install_Docker
     fi
   fi
-  sudo systemctl daemon-reload
-  sudo systemctl restart docker
+
   sleep 1s
   check_docker_service
 }
@@ -384,7 +383,7 @@ function install_Docker() {
     device-mapper-persistent-data \
     lvm2
   # centos8 需要
-  yum install -y https://download.docker.com/linux/fedora/30/x86_64/stable/Packages/containerd.io-1.2.6-3.3.fc30.x86_64.rpm
+  # yum install -y https://download.docker.com/linux/fedora/30/x86_64/stable/Packages/containerd.io-1.2.6-3.3.fc30.x86_64.rpm
   # 添加源，使用了阿里云镜像
   sudo yum-config-manager \
     --add-repo \
@@ -396,6 +395,14 @@ function install_Docker() {
 
   # 配置docker文件
   sed -i "13c ExecStart=/usr/bin/dockerd --insecure-registry=47.96.71.197:90" /usr/lib/systemd/system/docker.service
+
+  #  sudo tee /etc/docker/daemon.json <<-'EOF'
+  #  {
+  #   "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"],
+  #   "fixed-cidr":"172.17.0.0/24"
+  #  }
+  #EOF
+
   # 启动docker引擎并设置开机启动
   sudo systemctl daemon-reload
   sudo systemctl start docker
@@ -405,13 +412,8 @@ function install_Docker() {
   sudo groupadd docker
   sudo gpasswd -a ${USER} docker
 
-  sudo tee /etc/docker/daemon.json <<-'EOF'
-  {
-   "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"],
-   "fixed-cidr":"172.17.0.0/24"
-  }
-EOF
-
+  #sudo systemctl daemon-reload
+  sudo systemctl restart docker
 }
 
 function setupRelayAgent() {
