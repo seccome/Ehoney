@@ -4,6 +4,7 @@ import (
 	"decept-defense/controllers/comm"
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -32,7 +33,6 @@ type OutputFields struct {
 	ProcTTY       int    `gorm:"" json:"proc.tty"`                   // TTY
 	ProcessPName  string `gorm:"" json:"proc.pname"`                 // 父进程名称
 	ProcessName   string `gorm:"" json:"proc.name"`                  // 进程名称
-	Connection    string `gorm:"" json:"connection"`                 // 进程名称
 }
 
 func (event *FalcoAttackEvent) CreateFalcoEvent() error {
@@ -46,6 +46,18 @@ func (event *FalcoAttackEvent) GetFalcoEvent(payload comm.FalcoEventSelectPayloa
 	var ret []comm.FalcoSelectResultPayload
 	var count int64
 	var p string = "%" + payload.Payload + "%"
+	// fix sql injection
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	if !complite.MatchString(payload.Payload) {
+		return nil, 0, nil
+	}
+	if !complite.MatchString(payload.StartTime) {
+		return nil, 0, nil
+	}
+	if !complite.MatchString(payload.EndTime) {
+		return nil, 0, nil
+	}
+
 	var sql = ""
 	if payload.StartTime == "" && payload.EndTime == "" {
 		sql = fmt.Sprintf("select h.id, h.pod_name as HoneypotName, rule as event, time, output, priority as level, file_flag, download_path from falco_attack_events h, honeypots h2  where h.pod_name = h2.pod_name AND TIMESTAMPDIFF(second, h2.create_time, h.time) > 60 AND CONCAT(h.pod_name, rule, output, priority) LIKE '%s' order by time DESC", p)
@@ -69,6 +81,18 @@ func (event *FalcoAttackEvent) GetFalcoEventForTraceSource(payload comm.AttackTr
 	var result []comm.TraceSourceResultPayload
 
 	selectPayload := "%" + payload.Payload + "%"
+
+	// fix sql injection
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	if !complite.MatchString(payload.Payload) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.StartTime) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.EndTime) {
+		return nil, nil
+	}
 
 	var sql = ""
 	if payload.StartTime != "" && payload.EndTime != "" {

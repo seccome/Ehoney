@@ -3,6 +3,7 @@ package models
 import (
 	"decept-defense/controllers/comm"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -39,14 +40,26 @@ func (honeypot *Honeypot) CreateHoneypot() error {
 }
 
 func (honeypot *Honeypot) DeleteHoneypotByID(id int64) error {
-	sql := fmt.Sprintf("DELETE FROM honeypots WHERE `id` = %d", id)
-	return db.Exec(sql).Error
+	if err := db.Delete(&Honeypot{}, id).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func (honeypot *Honeypot) GetHoneypot(payload *comm.HoneypotSelectPayload) (*[]comm.HoneypotSelectResultPayload, int64, error) {
 	var ret []comm.HoneypotSelectResultPayload
 	var count int64
 	var p = "%" + payload.Payload + "%"
+
+	// fix sql injection
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	if !complite.MatchString(payload.Payload) {
+		return nil, 0, nil
+	}
+	if !complite.MatchString(payload.ProtocolType) {
+		return nil, 0, nil
+	}
+
 	var sql string = ""
 	if payload.ProtocolType == "" {
 		sql = fmt.Sprintf("select h.id, h.server_type, h.honeypot_name, h.honeypot_ip, h2.server_ip, h.create_time, h.status, h.creator from honeypots h, honeypot_servers h2 where h.servers_id = h2.id AND CONCAT(h.server_type, h.honeypot_name, h.honeypot_ip, h2.server_ip, h.create_time, h.status, h.creator) LIKE '%s' order by h.create_time DESC", p)

@@ -4,6 +4,7 @@ import (
 	"decept-defense/controllers/comm"
 	"decept-defense/pkg/util"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -34,6 +35,13 @@ func (server *Probes) GetProbe(payload *comm.SelectPayload) (*[]comm.ProbeSelect
 	var ret []comm.ProbeSelectResultPayload
 	var count int64
 	var p string = "%" + payload.Payload + "%"
+
+	// fix sql injection
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	if !complite.MatchString(payload.Payload) {
+		return nil, 0, nil
+	}
+
 	sql := fmt.Sprintf("select id, server_ip as ProbeIP, host_name, create_time, heartbeat_time, status, system_type from probes where CONCAT(server_ip, host_name, create_time, heartbeat_time, system_type) LIKE '%s' order by create_time DESC", p)
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, 0, err
@@ -81,7 +89,7 @@ func (server *Probes) GetServerByID(ID int64) (*Probes, error) {
 
 func (server *Probes) RefreshServerStatus() error {
 
-	db.Model(server).Where("TIMESTAMPDIFF(second, heartbeat_time, ?) > ?", util.GetCurrentTime(),120).Updates(Probes{Status: comm.FAILED})
-	db.Model(server).Where("TIMESTAMPDIFF(second, heartbeat_time, ?) < ?", util.GetCurrentTime(),120).Updates(Probes{Status: comm.SUCCESS})
+	db.Model(server).Where("TIMESTAMPDIFF(second, heartbeat_time, ?) > ?", util.GetCurrentTime(), 120).Updates(Probes{Status: comm.FAILED})
+	db.Model(server).Where("TIMESTAMPDIFF(second, heartbeat_time, ?) < ?", util.GetCurrentTime(), 120).Updates(Probes{Status: comm.SUCCESS})
 	return nil
 }

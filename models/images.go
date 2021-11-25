@@ -3,6 +3,7 @@ package models
 import (
 	"decept-defense/controllers/comm"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -21,7 +22,6 @@ var DefaultImages = []Images{
 	{ImageAddress: "47.96.71.197:90/ehoney/mysql:v1", ImageName: "ehoney/mysql", ImagePort: 3306, ImageType: "mysqlproxy", DefaultFlag: true},
 	{ImageAddress: "47.96.71.197:90/ehoney/redis:v1", ImageName: "ehoney/redis", ImagePort: 6379, ImageType: "redisproxy", DefaultFlag: true},
 	{ImageAddress: "47.96.71.197:90/ehoney/telnet:v1", ImageName: "ehoney/telnet", ImagePort: 23, ImageType: "telnetproxy", DefaultFlag: true},
-	{ImageAddress: "47.96.71.197:90/ehoney/smb:v1", ImageName: "ehoney/smb", ImagePort: 445, ImageType: "smbproxy", DefaultFlag: true}, // 由于smb client 必须连接 445 所以改4450 445 留给协议代理
 }
 
 func (image *Images) CreateImage() error {
@@ -49,6 +49,13 @@ func (image *Images) GetImage(payload *comm.SelectPayload) (*[]Images, int64, er
 	var ret []Images
 	var count int64
 	var p = "%" + payload.Payload + "%"
+
+	// fix sql injection
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	if !complite.MatchString(payload.Payload) {
+		return nil, 0, nil
+	}
+
 	sql := fmt.Sprintf("select id, image_name, image_address, image_port, image_type, default_flag from images where CONCAT(image_name, image_address, image_port, image_type) LIKE '%s'", p)
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, 0, err

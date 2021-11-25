@@ -3,6 +3,7 @@ package models
 import (
 	"decept-defense/controllers/comm"
 	"fmt"
+	"regexp"
 )
 
 type ProtocolEvent struct {
@@ -31,6 +32,16 @@ func (event *ProtocolEvent) QueryProtocol2PodRedLines() ([]comm.TopologyLine, er
 
 func (event *ProtocolEvent) QueryAttack2ProbeLines(attackIpParams, probeIpParams string) ([]comm.TopologyLine, error) {
 	var ret []comm.TopologyLine
+
+	// fix sql injection
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	if !complite.MatchString(attackIpParams) {
+		return ret, nil
+	}
+	if !complite.MatchString(probeIpParams) {
+		return ret, nil
+	}
+
 	if attackIpParams == "" || probeIpParams == "" {
 		return ret, nil
 	}

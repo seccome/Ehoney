@@ -3,6 +3,7 @@ package models
 import (
 	"decept-defense/controllers/comm"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -66,6 +67,13 @@ func (proxy *TransparentProxy) GetTransparentProxy(payload *comm.SelectTranspare
 	var ret []comm.TransparentProxySelectResultPayload
 	var count int64
 	var p = "%" + payload.Payload + "%"
+
+	// fix sql injection
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	if !complite.MatchString(payload.Payload) {
+		return nil, 0, nil
+	}
+
 	var sql = ""
 	if payload.ProtocolProxyID != 0 {
 		sql = fmt.Sprintf("select h.id, h.proxy_port, h2.server_ip as ProbeIP, h.create_time, h.creator, h.status, h3.proxy_port as ProtocolPort, h4.protocol_type  from transparent_proxies h, probes h2, protocol_proxies h3, protocols h4 where h3.id = %d AND  protocol_proxy_id = %d AND h4.id = h3.protocol_id AND h.server_id = h2.id AND CONCAT(h.id, h.proxy_port, h2.server_ip, h.create_time, h.creator) LIKE '%s' order by h.create_time DESC", payload.ProtocolProxyID, payload.ProtocolProxyID, p)

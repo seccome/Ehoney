@@ -3,8 +3,8 @@ package models
 import (
 	"decept-defense/controllers/comm"
 	"decept-defense/pkg/util"
-	"encoding/json"
 	"fmt"
+	"regexp"
 )
 
 type AttackEvent struct {
@@ -44,6 +44,27 @@ func (event *AttackEvent) GetAttackEvent(payload comm.AttackEventSelectPayload) 
 	var probeIP = "%" + payload.ProbeIP + "%"
 	var honeypotIP = "%" + payload.HoneypotIP + "%"
 	var protocolType = "%" + payload.ProtocolType + "%"
+	// fix sql injection
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	if !complite.MatchString(payload.Payload) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.AttackIP) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.JumpIP) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.ProbeIP) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.HoneypotIP) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.ProtocolType) {
+		return nil, nil
+	}
+
 	sql := fmt.Sprintf("select h.attack_ip, h.proxy_ip as ProbeIP, h2.proxy_ip as JumpIP, h2.dest_ip as HoneypotIP, h2.protocol_type, h2.event_time as AttackTime, h2.attack_detail from transparent_events h, protocol_events h2 where LOCATE(h2.attack_ip, h.proxy_ip, 1) > 0 AND LOCATE(h.dest_ip, h2.proxy_ip, 1) > 0 AND h.transparent2_protocol_port = h2.attack_port AND CONCAT(h.attack_ip, h.proxy_ip, h2.proxy_ip, h2.dest_ip, h2.protocol_type, h2.event_time) LIKE '%s' and h.attack_ip LIKE '%s' and h.proxy_ip LIKE '%s' and  h2.proxy_ip LIKE '%s' and h2.dest_ip LIKE '%s' and h2.protocol_type LIKE '%s' order by h2.event_time DESC", p, attackIP, probeIP, jumpIP, honeypotIP, protocolType)
 	if err := db.Raw(sql).Scan(&ret1).Error; err != nil {
 		return nil, err
@@ -62,6 +83,13 @@ func (event *AttackEvent) GetAttackEvent(payload comm.AttackEventSelectPayload) 
 		ret = append(ret, i)
 	}
 
+	var counterEvents CounterEvent
+	var dataMap = map[string][]string{}
+	data, _ := counterEvents.GetCounterEvents()
+	for _, d := range *data {
+		dataMap[d.IP+"-"+d.Type] = append(dataMap[d.IP+"-"+d.Type], d.Info)
+	}
+
 	for index, data := range ret {
 		d, _ := util.GetLocationByIP(data.AttackIP)
 		if d.City == "-" || d.Country_long == "-" {
@@ -69,46 +97,13 @@ func (event *AttackEvent) GetAttackEvent(payload comm.AttackEventSelectPayload) 
 		} else {
 			ret[index].AttackLocation = d.City + "-" + d.Country_long
 		}
-
-		ret[index].CounterInfo = findCounterMapByIP(ret[index].AttackIP)
-
-		//ret[index].CounterInfo = []string{}
-		//_, ok := dataMap[data.AttackIP+"-"+data.ProtocolType]
-		//if ok {
-		//	ret[index].CounterInfo = dataMap[data.AttackIP+"-"+data.ProtocolType]
-		//}
-	}
-	return &ret, nil
-}
-
-func findCounterMapByIP(attackIP string) map[string]string {
-	CounterEventMap := make(map[string]string)
-	if attackIP == "" {
-		return CounterEventMap
-	}
-	var counterEvents CounterEvent
-	data, err := counterEvents.GetCounterEventsByAttackIp(attackIP)
-
-	if data == nil || err != nil {
-		return CounterEventMap
-	}
-
-	for _, d := range *data {
-		m := StructToMapViaJson(d)
-		for key, value := range m {
-			if value != "" && value != "{}" {
-				CounterEventMap[key] = value
-			}
+		ret[index].CounterInfo = []string{}
+		_, ok := dataMap[data.AttackIP+"-"+data.ProtocolType]
+		if ok {
+			ret[index].CounterInfo = dataMap[data.AttackIP+"-"+data.ProtocolType]
 		}
 	}
-	return CounterEventMap
-}
-
-func StructToMapViaJson(data interface{}) map[string]string {
-	m := make(map[string]string)
-	j, _ := json.Marshal(data)
-	json.Unmarshal(j, &m)
-	return m
+	return &ret, nil
 }
 
 func (event *AttackEvent) GetAttackEventForSource(payload comm.AttackTraceSelectPayload) (*[]comm.TraceSourceResultPayload, error) {
@@ -122,6 +117,26 @@ func (event *AttackEvent) GetAttackEventForSource(payload comm.AttackTraceSelect
 	attackIP := "%" + payload.AttackIP + "%"
 	honeypotIP := "%" + payload.HoneypotIP + "%"
 	selectPayload := "%" + payload.Payload + "%"
+	// fix sql injection
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	if !complite.MatchString(payload.ProtocolType) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.AttackIP) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.HoneypotIP) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.Payload) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.StartTime) {
+		return nil, nil
+	}
+	if !complite.MatchString(payload.EndTime) {
+		return nil, nil
+	}
 
 	if payload.StartTime != "" && payload.EndTime != "" {
 		sql := fmt.Sprintf("select h.attack_ip, h.proxy_ip as ProbeIP, h2.proxy_ip as JumpIP, h2.dest_ip as HoneypotIP, h2.protocol_type, h2.event_time as AttackTime, h2.attack_detail from transparent_events h, protocol_events h2 where LOCATE(h2.attack_ip, h.proxy_ip, 1) > 0 AND LOCATE(h.dest_ip, h2.proxy_ip, 1) > 0 AND h.transparent2_protocol_port = h2.attack_port AND h.attack_ip LIKE '%s' AND h2.dest_ip LIKE '%s' AND h2.protocol_type LIKE '%s' AND CONCAT(h.attack_ip, h.proxy_ip, h2.proxy_ip, h2.dest_ip, h2.protocol_type, h2.event_time, h2.attack_detail) LIKE '%s' AND h2.event_time betweent '%s' and '%s' order by h2.event_time DESC", attackIP, honeypotIP, protocolType, selectPayload, payload.StartTime, payload.EndTime)

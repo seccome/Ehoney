@@ -3,6 +3,7 @@ package models
 import (
 	"decept-defense/controllers/comm"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -27,7 +28,6 @@ var DefaultProtocol = []Protocols{
 	{ProtocolType: "redisproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "redisproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 16379, MaxPort: 16381},
 	{ProtocolType: "sshproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "sshproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10020, MaxPort: 10022},
 	{ProtocolType: "telnetproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "telnetproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10023, MaxPort: 10025},
-	{ProtocolType: "smbproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "smbproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10445, MaxPort: 10447},
 }
 
 func (protocol *Protocols) CreateProtocol() error {
@@ -80,6 +80,13 @@ func (protocol *Protocols) GetProtocol(payload *comm.SelectPayload) (*[]comm.Pro
 	var ret []comm.ProtocolSelectResultPayload
 	var count int64
 	var p = "%" + payload.Payload + "%"
+
+	// fix sql injection
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	if !complite.MatchString(payload.Payload) {
+		return nil, 0, nil
+	}
+
 	sql := fmt.Sprintf("select id, creator, status, create_time, protocol_type, deploy_path, default_flag, min_port, max_port from protocols where CONCAT(id, creator, create_time, protocol_type, deploy_path, min_port, max_port) LIKE '%s' order by create_time DESC", p)
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, 0, err
