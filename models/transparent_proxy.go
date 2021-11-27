@@ -2,6 +2,7 @@ package models
 
 import (
 	"decept-defense/controllers/comm"
+	"decept-defense/pkg/util"
 	"fmt"
 	"strings"
 )
@@ -65,6 +66,10 @@ func (proxy *TransparentProxy) GetTransparentProxyByID(id int64) (*TransparentPr
 func (proxy *TransparentProxy) GetTransparentProxy(payload *comm.SelectTransparentProxyPayload) (*[]comm.TransparentProxySelectResultPayload, int64, error) {
 	var ret []comm.TransparentProxySelectResultPayload
 	var count int64
+	if util.CheckInjectionData(payload.Payload) {
+		return nil, 0, nil
+	}
+
 	var p = "%" + payload.Payload + "%"
 	var sql = ""
 	if payload.ProtocolProxyID != 0 {

@@ -33,6 +33,10 @@ func (server *Probes) CreateServer() error {
 func (server *Probes) GetProbe(payload *comm.SelectPayload) (*[]comm.ProbeSelectResultPayload, int64, error) {
 	var ret []comm.ProbeSelectResultPayload
 	var count int64
+	if util.CheckInjectionData(payload.Payload) {
+		return nil, 0, nil
+	}
+
 	var p string = "%" + payload.Payload + "%"
 	sql := fmt.Sprintf("select id, server_ip as ProbeIP, host_name, create_time, heartbeat_time, status, system_type from probes where CONCAT(server_ip, host_name, create_time, heartbeat_time, system_type) LIKE '%s' order by create_time DESC", p)
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
@@ -81,7 +85,7 @@ func (server *Probes) GetServerByID(ID int64) (*Probes, error) {
 
 func (server *Probes) RefreshServerStatus() error {
 
-	db.Model(server).Where("TIMESTAMPDIFF(second, heartbeat_time, ?) > ?", util.GetCurrentTime(),120).Updates(Probes{Status: comm.FAILED})
-	db.Model(server).Where("TIMESTAMPDIFF(second, heartbeat_time, ?) < ?", util.GetCurrentTime(),120).Updates(Probes{Status: comm.SUCCESS})
+	db.Model(server).Where("TIMESTAMPDIFF(second, heartbeat_time, ?) > ?", util.GetCurrentTime(), 120).Updates(Probes{Status: comm.FAILED})
+	db.Model(server).Where("TIMESTAMPDIFF(second, heartbeat_time, ?) < ?", util.GetCurrentTime(), 120).Updates(Probes{Status: comm.SUCCESS})
 	return nil
 }

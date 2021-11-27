@@ -2,6 +2,7 @@ package models
 
 import (
 	"decept-defense/controllers/comm"
+	"decept-defense/pkg/util"
 	"fmt"
 	"strings"
 )
@@ -66,6 +67,9 @@ func (proxy *ProtocolProxy) GetProtocolProxyByID(id int64) (*ProtocolProxy, erro
 func (proxy *ProtocolProxy) GetProtocolProxy(payload *comm.SelectPayload) (*[]comm.ProtocolProxySelectResultPayload, int64, error) {
 	var ret []comm.ProtocolProxySelectResultPayload
 	var count int64
+	if util.CheckInjectionData(payload.Payload) {
+		return nil, 0, nil
+	}
 	var p string = "%" + payload.Payload + "%"
 	sql := fmt.Sprintf("select h.id, h2.server_ip, h3.server_type, h3.honeypot_name, h3.server_port, h.proxy_port, h3.honeypot_ip, h.create_time, h.creator, h.status, h4.min_port, h4.max_port from protocol_proxies h, honeypot_servers h2, honeypots h3, protocols h4 where h.honeypot_id = h3.id AND h3.servers_id = h2.id AND h.protocol_id = h4.id AND CONCAT(h.id, h2.server_ip, h3.server_type, h3.honeypot_name, h3.server_port, h.proxy_port, h3.honeypot_ip, h.create_time, h.creator, h.status) LIKE '%s' order by h.create_time DESC", p)
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {

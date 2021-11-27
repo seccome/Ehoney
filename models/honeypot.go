@@ -2,6 +2,7 @@ package models
 
 import (
 	"decept-defense/controllers/comm"
+	"decept-defense/pkg/util"
 	"fmt"
 	"strings"
 )
@@ -46,6 +47,11 @@ func (honeypot *Honeypot) DeleteHoneypotByID(id int64) error {
 func (honeypot *Honeypot) GetHoneypot(payload *comm.HoneypotSelectPayload) (*[]comm.HoneypotSelectResultPayload, int64, error) {
 	var ret []comm.HoneypotSelectResultPayload
 	var count int64
+
+	if util.CheckInjectionData(payload.Payload) || util.CheckInjectionData(payload.ProtocolType) {
+		return nil, 0, nil
+	}
+
 	var p = "%" + payload.Payload + "%"
 	var sql string = ""
 	if payload.ProtocolType == "" {

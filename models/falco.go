@@ -2,6 +2,7 @@ package models
 
 import (
 	"decept-defense/controllers/comm"
+	"decept-defense/pkg/util"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -45,6 +46,10 @@ func (event *FalcoAttackEvent) CreateFalcoEvent() error {
 func (event *FalcoAttackEvent) GetFalcoEvent(payload comm.FalcoEventSelectPayload) (*[]comm.FalcoSelectResultPayload, int64, error) {
 	var ret []comm.FalcoSelectResultPayload
 	var count int64
+
+	if util.CheckInjectionData(payload.Payload) || util.CheckInjectionData(payload.StartTime) || util.CheckInjectionData(payload.EndTime) {
+		return nil, 0, nil
+	}
 	var p string = "%" + payload.Payload + "%"
 	var sql = ""
 	if payload.StartTime == "" && payload.EndTime == "" {
@@ -67,7 +72,9 @@ func (event *FalcoAttackEvent) GetFalcoEvent(payload comm.FalcoEventSelectPayloa
 func (event *FalcoAttackEvent) GetFalcoEventForTraceSource(payload comm.AttackTraceSelectPayload) (*[]comm.TraceSourceResultPayload, error) {
 	var ret []comm.TraceSourceResultPayload
 	var result []comm.TraceSourceResultPayload
-
+	if util.CheckInjectionData(payload.Payload) || util.CheckInjectionData(payload.StartTime) || util.CheckInjectionData(payload.EndTime) {
+		return nil, nil
+	}
 	selectPayload := "%" + payload.Payload + "%"
 
 	var sql = ""

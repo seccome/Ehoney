@@ -24,6 +24,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"time"
@@ -39,6 +40,11 @@ func ExecPath() string {
 		panic(err)
 	}
 	return path
+}
+
+func CheckInjectionData(payload string) bool {
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	return !complite.MatchString(payload)
 }
 
 func GetLocationByIP(ip string) (*ip2location.IP2Locationrecord, error) {

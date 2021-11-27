@@ -38,12 +38,18 @@ type AttackSelectResultPayload struct {
 func (event *AttackEvent) GetAttackEvent(payload comm.AttackEventSelectPayload) (*[]comm.AttackSelectResultPayload, error) {
 	var ret []comm.AttackSelectResultPayload
 	var ret1 []comm.AttackSelectResultPayload
+
+	if util.CheckInjectionData(payload.ProtocolType) || util.CheckInjectionData(payload.AttackIP) || util.CheckInjectionData(payload.JumpIP) || util.CheckInjectionData(payload.ProbeIP) || util.CheckInjectionData(payload.HoneypotIP) || util.CheckInjectionData(payload.ProtocolType) {
+		return nil, nil
+	}
+
 	var p = "%" + payload.Payload + "%"
 	var attackIP = "%" + payload.AttackIP + "%"
 	var jumpIP = "%" + payload.JumpIP + "%"
 	var probeIP = "%" + payload.ProbeIP + "%"
 	var honeypotIP = "%" + payload.HoneypotIP + "%"
 	var protocolType = "%" + payload.ProtocolType + "%"
+
 	sql := fmt.Sprintf("select h.attack_ip, h.proxy_ip as ProbeIP, h2.proxy_ip as JumpIP, h2.dest_ip as HoneypotIP, h2.protocol_type, h2.event_time as AttackTime, h2.attack_detail from transparent_events h, protocol_events h2 where LOCATE(h2.attack_ip, h.proxy_ip, 1) > 0 AND LOCATE(h.dest_ip, h2.proxy_ip, 1) > 0 AND h.transparent2_protocol_port = h2.attack_port AND CONCAT(h.attack_ip, h.proxy_ip, h2.proxy_ip, h2.dest_ip, h2.protocol_type, h2.event_time) LIKE '%s' and h.attack_ip LIKE '%s' and h.proxy_ip LIKE '%s' and  h2.proxy_ip LIKE '%s' and h2.dest_ip LIKE '%s' and h2.protocol_type LIKE '%s' order by h2.event_time DESC", p, attackIP, probeIP, jumpIP, honeypotIP, protocolType)
 	if err := db.Raw(sql).Scan(&ret1).Error; err != nil {
 		return nil, err
@@ -71,12 +77,6 @@ func (event *AttackEvent) GetAttackEvent(payload comm.AttackEventSelectPayload) 
 		}
 
 		ret[index].CounterInfo = findCounterMapByIP(ret[index].AttackIP)
-
-		//ret[index].CounterInfo = []string{}
-		//_, ok := dataMap[data.AttackIP+"-"+data.ProtocolType]
-		//if ok {
-		//	ret[index].CounterInfo = dataMap[data.AttackIP+"-"+data.ProtocolType]
-		//}
 	}
 	return &ret, nil
 }
@@ -117,7 +117,9 @@ func (event *AttackEvent) GetAttackEventForSource(payload comm.AttackTraceSelect
 	var ret []comm.AttackSelectResultPayload
 	var ret1 []comm.AttackSelectResultPayload
 	var ret2 []comm.AttackSelectResultPayload
-
+	if util.CheckInjectionData(payload.ProtocolType) || util.CheckInjectionData(payload.AttackIP) || util.CheckInjectionData(payload.HoneypotIP) || util.CheckInjectionData(payload.Payload) || util.CheckInjectionData(payload.StartTime) || util.CheckInjectionData(payload.EndTime) {
+		return nil, nil
+	}
 	protocolType := "%" + payload.ProtocolType + "%"
 	attackIP := "%" + payload.AttackIP + "%"
 	honeypotIP := "%" + payload.HoneypotIP + "%"
