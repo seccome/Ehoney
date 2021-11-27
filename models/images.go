@@ -22,6 +22,7 @@ var DefaultImages = []Images{
 	{ImageAddress: "47.96.71.197:90/ehoney/redis:v1", ImageName: "ehoney/redis", ImagePort: 6379, ImageType: "redisproxy", DefaultFlag: true},
 	{ImageAddress: "47.96.71.197:90/ehoney/telnet:v1", ImageName: "ehoney/telnet", ImagePort: 23, ImageType: "telnetproxy", DefaultFlag: true},
 	{ImageAddress: "47.96.71.197:90/ehoney/smb:v1", ImageName: "ehoney/smb", ImagePort: 445, ImageType: "smbproxy", DefaultFlag: true}, // 由于smb client 必须连接 445 所以改4450 445 留给协议代理
+	{ImageAddress: "47.96.71.197:90/ehoney/ftp:v1", ImageName: "ehoney/ftp", ImagePort: 21, ImageType: "ftpproxy", DefaultFlag: true},
 }
 
 func (image *Images) CreateImage() error {

@@ -371,7 +371,7 @@ function setupDocker() {
       install_Docker
     fi
   fi
-
+  sudo systemctl restart docker
   sleep 1s
   check_docker_service
 }
@@ -413,7 +413,6 @@ function install_Docker() {
   sudo gpasswd -a ${USER} docker
 
   #sudo systemctl daemon-reload
-  sudo systemctl restart docker
 }
 
 function setupRelayAgent() {

@@ -28,6 +28,7 @@ var DefaultProtocol = []Protocols{
 	{ProtocolType: "sshproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "sshproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10020, MaxPort: 10022},
 	{ProtocolType: "telnetproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "telnetproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10023, MaxPort: 10025},
 	{ProtocolType: "smbproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "smbproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10445, MaxPort: 10447},
+	{ProtocolType: "ftpproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "ftpproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10021, MaxPort: 10023},
 }
 
 func (protocol *Protocols) CreateProtocol() error {

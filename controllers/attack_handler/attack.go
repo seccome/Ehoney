@@ -288,7 +288,6 @@ func CreateProtocolAttackEvent(c *gin.Context) {
 	}
 	waning := `攻击类型: ` + attackEvent.AttackType + `\n\n > AgentID:  ` + attackEvent.AgentID + `\n\n > 攻击IP:  ` + attackEvent.AttackIP + `\n\n > 攻击端口:  ` + strconv.Itoa(int(attackEvent.AttackPort)) + `\n\n > 代理IP:  ` + attackEvent.ProxyIP + `\n\n > 代理端口:  ` + strconv.Itoa(int(attackEvent.ProxyPort)) + `\n\n > 蜜罐IP:  ` + attackEvent.DestIP + `\n\n > 蜜罐端口:  ` + strconv.Itoa(int(attackEvent.DestPort)) + `\n\n > 协议类型:  ` + attackEvent.ProtocolType + `\n\n > 创建时间:  ` + attackEvent.EventTime + ``
 	util.SendDingMsg("欺骗防御告警", "协议代理告警", waning)
-
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
 }
 

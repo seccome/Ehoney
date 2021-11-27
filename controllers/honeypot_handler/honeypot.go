@@ -13,7 +13,6 @@ import (
 	"net/http"
 )
 
-
 // CreateHoneypot 创建蜜罐
 // @Summary 创建蜜罐
 // @Description 创建蜜罐
@@ -37,19 +36,19 @@ func CreateHoneypot(c *gin.Context) {
 	var server models.HoneypotServers
 	var image models.Images
 	err := c.ShouldBindJSON(&honeypot)
-	if err != nil{
+	if err != nil {
 		appG.Response(http.StatusOK, app.InvalidParams, nil)
 		return
 	}
 	currentUser, exist := c.Get("currentUser")
-	if !exist{
+	if !exist {
 		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
 		return
 	}
 	honeypot.CreateTime = util.GetCurrentTime()
-	honeypot.Creator =  *(currentUser.(*string))
+	honeypot.Creator = *(currentUser.(*string))
 	r, err := server.GetFirstHoneypotServer()
-	if err != nil{
+	if err != nil {
 		appG.Response(http.StatusOK, app.ErrorHoneypotServerNotExist, nil)
 		return
 	}
@@ -59,33 +58,32 @@ func CreateHoneypot(c *gin.Context) {
 		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
 		return
 	}
-	if err =  honeypot.GetHoneypotByName(honeypot.HoneypotName); err == nil{
+	if err = honeypot.GetHoneypotByName(honeypot.HoneypotName); err == nil {
 		appG.Response(http.StatusOK, app.ErrorHoneypotNameExist, nil)
 		return
 	}
-	flag, err :=  cluster.DeploymentIsExist(honeypot.HoneypotName)
-	if err != nil{
+	flag, err := cluster.DeploymentIsExist(honeypot.HoneypotName)
+	if err != nil {
 		appG.Response(http.StatusOK, app.INTERNAlERROR, err)
 		return
 	}
-	if flag{
+	if flag {
 		appG.Response(http.StatusOK, app.ErrorHoneypotPodExist, nil)
 		return
 	}
-	pod, err :=  cluster.CreateDeployment(honeypot.HoneypotName, s.ImageAddress, s.ImagePort)
-	if err != nil{
+	pod, err := cluster.CreateDeployment(honeypot.HoneypotName, s.ImageAddress, s.ImagePort)
+	if err != nil {
 		cluster.DeleteDeployment(honeypot.HoneypotName)
 		appG.Response(http.StatusOK, app.ErrorHoneypotCreate, err)
 		return
 	}
 	honeypot.PodName = pod.Name
-	//honeypot.HoneypotIP = pod.Status.PodIP
 	honeypot.ServerPort = s.ImagePort
 	honeypot.ServerType = s.ImageType
 	honeypot.Status = comm.RUNNING
 
 	err = honeypot.CreateHoneypot()
-	if err != nil{
+	if err != nil {
 		//exception remove created honeypot
 		err = cluster.DeleteDeployment(honeypot.HoneypotName)
 		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
@@ -114,12 +112,12 @@ func GetHoneypots(c *gin.Context) {
 	var payload comm.HoneypotSelectPayload
 	var record models.Honeypot
 	err := c.ShouldBindJSON(&payload)
-	if err != nil{
+	if err != nil {
 		appG.Response(http.StatusOK, app.InvalidParams, nil)
 		return
 	}
 	data, count, err := record.GetHoneypot(&payload)
-	if err != nil{
+	if err != nil {
 		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
 		return
 	}
@@ -151,45 +149,43 @@ func DeleteHoneypot(c *gin.Context) {
 		return
 	}
 	_, err := protocolProxy.GetProtocolProxyByHoneypotID(id)
-	if err == nil{
+	if err == nil {
 		appG.Response(http.StatusOK, app.ErrorHoneypotProtocolProxyExist, nil)
 		return
 	}
 
 	data, err := honeypot.GetHoneypotByID(id)
-	if err != nil{
+	if err != nil {
 		zap.L().Error(err.Error())
 		appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
 		return
 	}
-	if err = honeypot.DeleteHoneypotByID(id); err != nil{
+	if err = honeypot.DeleteHoneypotByID(id); err != nil {
 		zap.L().Error(err.Error())
 		appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
 		return
 	}
 	flag, err := cluster.DeploymentIsExist(data.HoneypotName)
-	if err != nil{
+	if err != nil {
 		data.CreateHoneypot()
 		zap.L().Error(err.Error())
 		appG.Response(http.StatusOK, app.ErrorHoneypotDelete, err.Error())
 		return
 	}
-	if !flag{
+	if !flag {
 		appG.Response(http.StatusOK, app.SUCCESS, nil)
 		return
 	}
 	err = cluster.DeleteDeployment(data.HoneypotName)
-	if err != nil{
+	if err != nil {
 		data.CreateHoneypot()
 		zap.L().Error(err.Error())
 		appG.Response(http.StatusOK, app.ErrorHoneypotDelete, err.Error())
 		return
 	}
 
-
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
 }
-
 
 // GetHoneypotDetail 获得蜜罐详细信息
 // @Summary 获得蜜罐详细信息
@@ -215,14 +211,13 @@ func GetHoneypotDetail(c *gin.Context) {
 		return
 	}
 	data, err := honeypot.GetHoneypotByID(id)
-	if err != nil{
+	if err != nil {
 		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
 		return
 	}
 	result := cluster.GetPodDetailInfo(data.PodName)
 	appG.Response(http.StatusOK, app.SUCCESS, result)
 }
-
 
 // GetProtocolProxyHoneypots 协议代理蜜罐
 // @Summary 查看已经进行协议转发的蜜罐
@@ -237,26 +232,25 @@ func GetProtocolProxyHoneypots(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var honeypot models.Honeypot
 	data, err := honeypot.GetProtocolProxyHoneypot()
-	if err != nil{
+	if err != nil {
 		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
 		return
 	}
 	appG.Response(http.StatusOK, app.SUCCESS, data)
 }
 
-func RefreshHoneypotStatus(){
+func RefreshHoneypotStatus() {
 	var record models.Honeypot
-	honeypots, _ :=  record.GetPodNameList()
-	for _, honeypot := range honeypots{
-		r :=  cluster.GetPodDetailInfo(honeypot)
-		if r.Status == "Running"{
+	honeypots, _ := record.GetPodNameList()
+	for _, honeypot := range honeypots {
+		r := cluster.GetPodDetailInfo(honeypot)
+		if r.Status == "Running" {
 			record.RefreshServerStatusByPodName(honeypot, comm.SUCCESS, r.PodIP)
-		}else if r.Status == "Failed"{
+		} else if r.Status == "Failed" {
 			record.RefreshServerStatusByPodName(honeypot, comm.FAILED, "")
-		}else{
+		} else {
 			continue
 		}
 	}
 	return
 }
-

@@ -89,11 +89,64 @@ func CreateDeployment(podName, imageAddress string, containerPort int32) (*apiV1
 		},
 	}
 
-	//if containerPort == 445 {
-	//	deployment.Spec.Template.Spec.Containers[0].Ports[0].HostPort = 445
-	//	zap.L().Info("set smb pod host port 445")
-	//	zap.L().Info(fmt.Sprintf("%v", deployment.Spec.Template.Spec.Containers[0].Ports[0]))
-	//}
+	if containerPort == 21 {
+
+		var dataPort = apiV1.ContainerPort{
+			Name:          "data",
+			ContainerPort: 21100,
+			HostPort:      21100,
+		}
+
+		var env1 = apiV1.EnvVar{
+			Name:  "FTP_USER",
+			Value: "admin",
+		}
+
+		var env2 = apiV1.EnvVar{
+			Name:  "FTP_PASS",
+			Value: "admin",
+		}
+
+		var env3 = apiV1.EnvVar{
+			Name:  "PASV_ADDRESS",
+			Value: "192.168.240.160",
+		}
+
+		var env4 = apiV1.EnvVar{
+			Name:  "PASV_PROMISCUOUS",
+			Value: "YES",
+		}
+		var env5 = apiV1.EnvVar{
+			Name:  "PASV_MIN_PORT",
+			Value: "21100",
+		}
+		var env6 = apiV1.EnvVar{
+			Name:  "PASV_MAX_PORT",
+			Value: "21100",
+		}
+		deployment.Spec.Template.Spec.Containers[0].Ports[0].HostPort = 21
+		deployment.Spec.Template.Spec.Containers[0].Ports = append(deployment.Spec.Template.Spec.Containers[0].Ports, dataPort)
+		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, env1)
+		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, env2)
+		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, env3)
+		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, env4)
+		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, env5)
+		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, env6)
+
+		//deployment.Spec.Template.Spec.Containers[0].Env[0].Name = "FTP_USER"
+		//deployment.Spec.Template.Spec.Containers[0].Env[0].Value = "admin"
+		//deployment.Spec.Template.Spec.Containers[0].Env[1].Name = "FTP_PASS"
+		//deployment.Spec.Template.Spec.Containers[0].Env[1].Value = "admin"
+		//deployment.Spec.Template.Spec.Containers[0].Env[2].Name = "PASV_ADDRESS"
+		//deployment.Spec.Template.Spec.Containers[0].Env[2].Value = ""
+		//deployment.Spec.Template.Spec.Containers[0].Env[3].Name = "PASV_PROMISCUOUS"
+		//deployment.Spec.Template.Spec.Containers[0].Env[3].Value = "YES"
+		//deployment.Spec.Template.Spec.Containers[0].Env[4].Name = "PASV_MIN_PORT"
+		//deployment.Spec.Template.Spec.Containers[0].Env[4].Value = "21100"
+		//deployment.Spec.Template.Spec.Containers[0].Env[5].Name = "PASV_MAX_PORT"
+		//deployment.Spec.Template.Spec.Containers[0].Env[5].Value = "21100"
+		zap.L().Info(fmt.Sprintf("ftp deployment: %v", deployment.Spec.Template.Spec.Containers[0].Ports[0]))
+	}
 	zap.L().Info("Creating deployment...")
 
 	zap.L().Info(fmt.Sprintf("%v", deployment))
