@@ -111,7 +111,7 @@ function kill_if_process_exist() {
 
 # 检查软件是否安装 curl wget zip go redis mysql docker kubectl;
 function prepare_base_install() {
-  for i in yum vim wget curl unzip kernel-devel-$(uname -r); do
+  for i in wget curl unzip kernel-devel-$(uname -r); do
     command -v $i &>/dev/null || install_soft $i
   done
   # yumRepoUpdate

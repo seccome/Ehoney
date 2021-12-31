@@ -64,6 +64,7 @@ type AppSetting struct {
 	UploadPath         string
 	TokenTraceAddress  string
 	TokenTraceApiPath  string
+	EngineVersion      string
 	WebHook            string
 	TraceHost          string
 	Extranet           string

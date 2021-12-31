@@ -43,7 +43,7 @@ func ExecPath() string {
 }
 
 func CheckInjectionData(payload string) bool {
-	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:]*$`)
+	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:\/\\]*$`)
 	return !complite.MatchString(payload)
 }
 

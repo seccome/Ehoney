@@ -133,7 +133,7 @@ func CreateTransparentProxy(c *gin.Context) {
 		return
 	}
 
-	timeTicker := time.NewTicker(50 * time.Microsecond)
+	timeTicker := time.NewTicker(10 * time.Microsecond)
 	count := 0
 	for {
 		<-timeTicker.C
@@ -343,7 +343,7 @@ func OfflineTransparentProxy(c *gin.Context) {
 		appG.Response(http.StatusOK, app.ErrorHoneypotNotExist, nil)
 		return
 	}
-	s, err := probe.GetServerStatusByID(r.ServerID)
+	s, err := probe.GetServerStatusByID2(r.ServerID)
 	if err != nil {
 		appG.Response(http.StatusOK, app.ErrorProbeServerNotExist, nil)
 		return
@@ -371,7 +371,7 @@ func OfflineTransparentProxy(c *gin.Context) {
 			return
 		}
 	}
-	timeTicker := time.NewTicker(50 * time.Microsecond)
+	timeTicker := time.NewTicker(10 * time.Microsecond)
 	count := 0
 	for {
 		<-timeTicker.C
@@ -391,6 +391,116 @@ func OfflineTransparentProxy(c *gin.Context) {
 		}
 	}
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
+}
+
+// BatchOfflineTransparentProxy 批量下线透明代理
+// @Summary 批量下线透明代理
+// @Description 批量下线透明代理
+// @Tags 影子代理
+// @Produce application/json
+// @Accept application/json
+// @Param int query int true "int valid" minimum(1)
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success 200 {string} json "{"code":200,"msg":"ok","data":{}}"
+// @Failure 400 {string} json "{"code":400,"msg":"请求参数错误","data":{}}"
+// @Failure 500 {string} json "{"code":500,"msg":"内部异常","data":{}}"
+// @Router /api/v1/proxy/transparent/offline/:id [post]
+func BatchOfflineTransparentProxy(c *gin.Context) {
+	appG := app.Gin{C: c}
+	valid := validation.Validation{}
+	var payload comm.BatchSelectPayload
+
+	err := c.ShouldBind(&payload)
+
+	if err != nil {
+		appG.Response(http.StatusOK, app.InvalidParams, nil)
+		return
+	}
+
+	for _, id := range payload.Ids {
+		valid.Min(id, 1, "id").Message("ID必须大于0")
+		if valid.HasErrors() {
+			appG.Response(http.StatusOK, app.InvalidParams, nil)
+			return
+		}
+	}
+	for _, id := range payload.Ids {
+		code := offlineTransparent(int64(id))
+		if code != app.SUCCESS {
+			appG.Response(http.StatusOK, code, nil)
+			return
+		}
+	}
+
+	appG.Response(http.StatusOK, app.SUCCESS, nil)
+
+}
+
+func offlineTransparent(id int64) int {
+	var transparentProxy models.TransparentProxy
+	var protocolProxy models.ProtocolProxy
+	var probe models.Probes
+	var honeypotServer models.HoneypotServers
+	var honeypot models.Honeypot
+	r, err := transparentProxy.GetTransparentProxyByID(id)
+	if err != nil {
+
+		return app.ErrorTransparentProxyNotExist
+	}
+	if r.Status == comm.FAILED {
+		return app.ErrorTransparentOffline
+	}
+	r1, err := protocolProxy.GetProtocolProxyByID(r.ProtocolProxyID)
+	if err != nil {
+		return app.ErrorProtocolProxyNotExist
+	}
+	r2, err := honeypot.GetHoneypotByID(r1.HoneypotID)
+	if err != nil {
+		return app.ErrorHoneypotNotExist
+	}
+	s, err := probe.GetServerStatusByID2(r.ServerID)
+	if err != nil {
+		return app.ErrorProbeServerNotExist
+	}
+	p, err := honeypotServer.GetServerByID(r2.ServersID)
+	if err != nil {
+		return app.ErrorProbeServerNotExist
+	}
+
+	var taskPayload comm.ProxyTaskPayload
+	{
+		taskPayload.TaskType = comm.TransparentProxy
+		taskPayload.OperatorType = comm.WITHDRAW
+		taskPayload.HoneypotServerPort = r1.ProxyPort
+		taskPayload.ProxyPort = r.ProxyPort
+		taskPayload.HoneypotServerIP = p.ServerIP
+		taskPayload.TaskID = r.TaskID
+		taskPayload.ProbeIP = s.ServerIP
+		taskPayload.AgentID = s.AgentID
+		jsonByte, _ := json.Marshal(taskPayload)
+		err = message_client.PublishMessage(configs.GetSetting().App.TaskChannel, string(jsonByte))
+		if err != nil {
+			return app.ErrorRedis
+		}
+	}
+	timeTicker := time.NewTicker(10 * time.Microsecond)
+	count := 0
+	for {
+		<-timeTicker.C
+		count++
+		proxy, err := transparentProxy.GetTransparentProxyByTaskID(taskPayload.TaskID)
+		if err == nil {
+			if proxy.Status == comm.FAILED {
+				timeTicker.Stop()
+				return app.SUCCESS
+			}
+		}
+		if count >= 100 {
+			timeTicker.Stop()
+			return app.ErrorTransparentOffline
+		}
+		time.Sleep(500)
+	}
 }
 
 // OnlineTransparentProxy 上线透明代理
@@ -439,7 +549,7 @@ func OnlineTransparentProxy(c *gin.Context) {
 		appG.Response(http.StatusOK, app.ErrorHoneypotNotExist, nil)
 		return
 	}
-	s, err := probe.GetServerStatusByID(r.ServerID)
+	s, err := probe.GetServerStatusByID2(r.ServerID)
 	if err != nil {
 		appG.Response(http.StatusOK, app.ErrorProbeServerNotExist, nil)
 		return
@@ -467,7 +577,7 @@ func OnlineTransparentProxy(c *gin.Context) {
 			return
 		}
 	}
-	timeTicker := time.NewTicker(50 * time.Microsecond)
+	timeTicker := time.NewTicker(10 * time.Microsecond)
 	count := 0
 	for {
 		<-timeTicker.C
@@ -488,6 +598,111 @@ func OnlineTransparentProxy(c *gin.Context) {
 	}
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
+}
+
+// BatchOnlineTransparentProxy 批量上线透明代理
+// @Summary 批量上线透明代理
+// @Description 批量上线透明代理
+// @Tags 影子代理
+// @Produce application/json
+// @Accept application/json
+// @Param int query int true "int valid" minimum(1)
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success 200 {string} json "{"code":200,"msg":"ok","data":{}}"
+// @Failure 400 {string} json "{"code":400,"msg":"请求参数错误","data":{}}"
+// @Failure 500 {string} json "{"code":500,"msg":"内部异常","data":{}}"
+// @Router /api/v1/proxy/transparent/online/batch [post]
+func BatchOnlineTransparentProxy(c *gin.Context) {
+	appG := app.Gin{C: c}
+	valid := validation.Validation{}
+	var payload comm.BatchSelectPayload
+
+	err := c.ShouldBind(&payload)
+
+	if err != nil {
+		appG.Response(http.StatusOK, app.InvalidParams, nil)
+		return
+	}
+
+	for _, id := range payload.Ids {
+		valid.Min(id, 1, "id").Message("ID必须大于0")
+		if valid.HasErrors() {
+			appG.Response(http.StatusOK, app.InvalidParams, nil)
+			return
+		}
+	}
+	for _, id := range payload.Ids {
+		code := onlineTransparentProxyById(int64(id))
+		if code != app.SUCCESS {
+			appG.Response(http.StatusOK, code, nil)
+			return
+		}
+	}
+
+	appG.Response(http.StatusOK, app.SUCCESS, nil)
+}
+
+func onlineTransparentProxyById(transparentId int64) int {
+	var transparentProxy models.TransparentProxy
+	var protocolProxy models.ProtocolProxy
+	var probe models.Probes
+	var honeypotServer models.HoneypotServers
+	var honeypot models.Honeypot
+	r, err := transparentProxy.GetTransparentProxyByID(transparentId)
+	if err != nil {
+		return app.ErrorTransparentProxyNotExist
+	}
+	r1, err := protocolProxy.GetProtocolProxyByID(r.ProtocolProxyID)
+	if err != nil {
+		return app.ErrorProtocolProxyNotExist
+	}
+	r2, err := honeypot.GetHoneypotByID(r1.HoneypotID)
+	if err != nil {
+		return app.ErrorHoneypotNotExist
+	}
+	s, err := probe.GetServerStatusByID2(r.ServerID)
+	if err != nil {
+		return app.ErrorProbeServerNotExist
+	}
+	p, err := honeypotServer.GetServerByID(r2.ServersID)
+	if err != nil {
+		return app.ErrorProbeServerNotExist
+	}
+
+	var taskPayload comm.ProxyTaskPayload
+	{
+		taskPayload.TaskType = comm.TransparentProxy
+		taskPayload.OperatorType = comm.DEPLOY
+		taskPayload.HoneypotServerPort = r1.ProxyPort
+		taskPayload.ProxyPort = r.ProxyPort
+		taskPayload.HoneypotServerIP = p.ServerIP
+		taskPayload.TaskID = r.TaskID
+		taskPayload.ProbeIP = s.ServerIP
+		taskPayload.AgentID = s.AgentID
+		jsonByte, _ := json.Marshal(taskPayload)
+		err = message_client.PublishMessage(configs.GetSetting().App.TaskChannel, string(jsonByte))
+		if err != nil {
+			return app.ErrorRedis
+		}
+	}
+	timeTicker := time.NewTicker(10 * time.Microsecond)
+	count := 0
+	for {
+		<-timeTicker.C
+		count++
+		proxy, err := transparentProxy.GetTransparentProxyByTaskID(taskPayload.TaskID)
+		if err == nil {
+			if proxy.Status == comm.SUCCESS {
+				timeTicker.Stop()
+				return app.SUCCESS
+			}
+		}
+		time.Sleep(500)
+		if count >= 10 {
+			timeTicker.Stop()
+			return app.ErrorTransparentProxyOnlineFail
+		}
+	}
 }
 
 // TestTransparentProxy 测试透明代理
@@ -519,7 +734,7 @@ func TestTransparentProxy(c *gin.Context) {
 		appG.Response(http.StatusOK, app.ErrorTransparentProxyNotExist, nil)
 		return
 	}
-	s, err := probe.GetServerStatusByID(r.ServerID)
+	s, err := probe.GetServerStatusByID2(r.ServerID)
 	if err != nil {
 		appG.Response(http.StatusOK, app.ErrorProbeServerNotExist, nil)
 		return

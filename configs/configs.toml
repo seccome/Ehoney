@@ -8,6 +8,7 @@
   tokentraceaddress = "http://127.0.0.1:5000"
   tokentraceapipath = "api/msgreceive"
   uploadpath = "upload"
+  engineversion = "1.0"
   webhook = ""
 
 [database]

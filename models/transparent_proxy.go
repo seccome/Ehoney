@@ -69,13 +69,20 @@ func (proxy *TransparentProxy) GetTransparentProxy(payload *comm.SelectTranspare
 	if util.CheckInjectionData(payload.Payload) {
 		return nil, 0, nil
 	}
-
+	baseSql := "select h.id, h.proxy_port, h2.server_ip as ProbeIP, h.create_time, h.creator, h.status, h3.proxy_port as ProtocolPort, h4.protocol_type  from transparent_proxies h, probes h2, protocol_proxies h3, protocols h4 where "
 	var p = "%" + payload.Payload + "%"
+
+	if payload.Status != 0 {
+		baseSql = fmt.Sprintf("%s h.status = %d ", baseSql, payload.Status)
+	} else {
+		baseSql = fmt.Sprintf("%s h.status != 0 ", baseSql)
+	}
+
 	var sql = ""
 	if payload.ProtocolProxyID != 0 {
-		sql = fmt.Sprintf("select h.id, h.proxy_port, h2.server_ip as ProbeIP, h.create_time, h.creator, h.status, h3.proxy_port as ProtocolPort, h4.protocol_type  from transparent_proxies h, probes h2, protocol_proxies h3, protocols h4 where h3.id = %d AND  protocol_proxy_id = %d AND h4.id = h3.protocol_id AND h.server_id = h2.id AND CONCAT(h.id, h.proxy_port, h2.server_ip, h.create_time, h.creator) LIKE '%s' order by h.create_time DESC", payload.ProtocolProxyID, payload.ProtocolProxyID, p)
+		sql = fmt.Sprintf("%s and h3.id = %d AND  protocol_proxy_id = %d AND h4.id = h3.protocol_id AND h.server_id = h2.id AND CONCAT(h.id, h.proxy_port, h2.server_ip, h.create_time, h.creator) LIKE '%s' order by h.create_time DESC", baseSql, payload.ProtocolProxyID, payload.ProtocolProxyID, p)
 	} else {
-		sql = fmt.Sprintf("select h.id, h.proxy_port, h2.server_ip as ProbeIP, h.create_time, h.creator, h.status, h3.proxy_port as ProtocolPort, h4.protocol_type  from transparent_proxies h, probes h2, protocol_proxies h3, protocols h4 where h.server_id = h2.id  AND h3.id = h.protocol_proxy_id AND h4.id = h3.protocol_id AND CONCAT(h.id, h.proxy_port, h2.server_ip, h.create_time, h.creator) LIKE '%s' order by h.create_time DESC", p)
+		sql = fmt.Sprintf("%s and h.server_id = h2.id  AND h3.id = h.protocol_proxy_id AND h4.id = h3.protocol_id AND CONCAT(h.id, h.proxy_port, h2.server_ip, h.create_time, h.creator) LIKE '%s' order by h.create_time DESC", baseSql, p)
 	}
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, 0, err

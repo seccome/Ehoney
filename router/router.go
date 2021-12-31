@@ -74,7 +74,12 @@ func MakeRoute() *gin.Engine {
 
 			public.GET("/extranet", extranet_handler.GetExtranetConfig)
 
+			public.GET("/engine/linux/version", agent_handler.QueryLinuxEngineVersion)
+			public.GET("/engine/linux", agent_handler.DownloadLinuxEngine)
+			public.POST("/engine/linux/upload", agent_handler.UploadLinuxEngine)
 			public.GET("/transparentList", trans_proxy_handler.GetTransparentByAgent)
+			public.PUT("/webhook", webhook_handler.UpdateWebHookConfig)
+
 		}
 		private := api.Group("/v1/")
 		private.Use(jwt.JWT())
@@ -206,8 +211,15 @@ func MakeRoute() *gin.Engine {
 			private.DELETE("/proxy/transparent/:id", trans_proxy_handler.DeleteTransparentProxy)
 			//online transparent proxy
 			private.POST("/proxy/transparent/online/:id", trans_proxy_handler.OnlineTransparentProxy)
+
+			//batch online transparent proxy
+			private.POST("/proxy/transparent/online/batch", trans_proxy_handler.BatchOnlineTransparentProxy)
+
 			//offline transparent proxy
 			private.POST("/proxy/transparent/offline/:id", trans_proxy_handler.OfflineTransparentProxy)
+
+			//batch offline transparent proxy
+			private.POST("/proxy/transparent/offline/batch", trans_proxy_handler.BatchOfflineTransparentProxy)
 			//test transparent proxy
 			private.GET("/proxy/transparent/test/:id", trans_proxy_handler.TestTransparentProxy)
 

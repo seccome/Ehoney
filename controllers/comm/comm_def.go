@@ -194,6 +194,10 @@ type FalcoEventSelectPayload struct {
 	EndTime   string `json:"EndTime"`   //结束时间
 }
 
+type BatchSelectPayload struct {
+	Ids []int64 `json:"Ids"`
+}
+
 type TokenTraceSelectPayload struct {
 	SelectPayload
 	ServerType string `json:"ServerType"` //服务类型 蜜罐（honeypot）or 探针（probe）
@@ -225,6 +229,7 @@ type HoneypotSelectPayload struct {
 type SelectTransparentProxyPayload struct {
 	SelectPayload
 	ProtocolProxyID int64 `json:"ProtocolProxyID"` //协议代理ID
+	Status          int64 `json:"Status"`          //: 2 下线 3 上线
 }
 
 type AttackStatistics struct {

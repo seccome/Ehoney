@@ -75,6 +75,14 @@ func (server *Probes) GetServerStatusByID(ID int64) (*Probes, error) {
 	return &ret, nil
 }
 
+func (server *Probes) GetServerStatusByID2(ID int64) (*Probes, error) {
+	var ret Probes
+	if err := db.Take(&ret, "id = ?", ID, comm.SUCCESS).Error; err != nil {
+		return nil, err
+	}
+	return &ret, nil
+}
+
 func (server *Probes) GetServerByID(ID int64) (*Probes, error) {
 	var ret Probes
 	if err := db.Where("id = ?", ID).Find(server).Scan(&ret).Error; err != nil {
