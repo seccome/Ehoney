@@ -340,7 +340,7 @@ func LoadGetFinalPathNameByHandle() error {
 	return procGetFinalPathNameByHandleW.Find()
 }
 
-//sys	CreateEnvironmentBlock(block **uint16, token syscall.Token, inheritExisting bool) (err error) = userenv.CreateEnvironmentBlock
+//sys	CreateEnvironmentBlock(block **uint16, token_builder syscall.Token, inheritExisting bool) (err error) = userenv.CreateEnvironmentBlock
 //sys	DestroyEnvironmentBlock(block *uint16) (err error) = userenv.DestroyEnvironmentBlock
 
 //sys	RtlGenRandom(buf []byte) (err error) = advapi32.SystemFunction036

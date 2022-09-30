@@ -132,12 +132,12 @@ func topology() {
 			for _, client := range clients {
 				data, err := json.Marshal(msg)
 				if err != nil {
-					fmt.Println(err)
+					zap.L().Error(err.Error())
 					return
 				}
 				fmt.Println(data)
 				if client.Conn.WriteMessage(websocket.TextMessage, data) != nil {
-					fmt.Println("Fail to write message")
+					zap.L().Info("Fail to write message")
 				}
 			}
 		// 有Client加入
@@ -213,9 +213,8 @@ func TopologyMapHandle(context *gin.Context) {
 	return
 }
 
-// 查询被攻击pod 的完整路径
 func QueryTopology() ([]comm.TopologyNode, []comm.TopologyLine) {
-	nodes, lines := QueryTopologyNodes()
+	nodes, lines := QueryTopologyMap()
 
 	if nodes == nil {
 		return nodes, lines
@@ -230,64 +229,74 @@ func QueryTopology() ([]comm.TopologyNode, []comm.TopologyLine) {
 	3. 所有部署的协议代理 为协议代理节点 以及 透明代理和蜜罐的连线信息
     4. 所有部署的蜜罐 为蜜罐节点
 */
-func QueryTopologyNodes() ([]comm.TopologyNode, []comm.TopologyLine) {
+func QueryTopologyMap() ([]comm.TopologyNode, []comm.TopologyLine) {
 
-	var topologyNodeNodes []comm.TopologyNode
+	var topologyNodes []comm.TopologyNode
+	var protocolAttackNodes []comm.TopologyNode
 	var topologyNodeLines = map[string]comm.TopologyLine{}
 	var topologyNodeLineArray []comm.TopologyLine
-
 	var topologyNodeGreenLines = map[string]comm.TopologyLine{}
 	var topologyNodeRedLines = map[string]comm.TopologyLine{}
-	var protocolProxy models.ProtocolProxy
-	var transparentProxy models.TransparentProxy
-	var honeypot models.Honeypot
-	var transparentEvent models.TransparentEvent
+	var protocolProxies models.ProtocolProxy
+	var transparentProxies models.TransparentProxy
+	var honeypots models.Honeypot
+	var transparentEvents models.TransparentEvent
 
-	protocolProxyNodes, err := protocolProxy.QueryProtocolProxyNode()
+	transparentProxyNodes, err := transparentProxies.GetTransparentProxyNodes()
+
+	protocolProxyNodes, err := protocolProxies.QueryProtocolProxyNode()
 
 	if err == nil {
 		for _, protocolProxyNode := range protocolProxyNodes {
-			topologyNodeNodes = append(topologyNodeNodes, protocolProxyNode)
+			topologyNodes = append(topologyNodes, protocolProxyNode)
 		}
 	}
 
-	probeProxyNodes, err := transparentProxy.GetTransparentProxyNodes()
-
-	if err == nil {
-		for _, probeProxyNode := range probeProxyNodes {
-			topologyNodeNodes = append(topologyNodeNodes, probeProxyNode)
-		}
-	}
-
-	honeypotNodes, err := honeypot.GetHoneypotNodes()
+	honeypotNodes, err := honeypots.GetHoneypotNodes()
 
 	if err == nil {
 		for _, honeypotNode := range honeypotNodes {
-			topologyNodeNodes = append(topologyNodeNodes, honeypotNode)
+			topologyNodes = append(topologyNodes, honeypotNode)
 		}
 	}
-
-	edgeAttackNodes, err := transparentEvent.GetTransparentEventNodes()
+	// 10分钟之内有攻击的节点 才算入
+	attackNodesForAgent, err := transparentEvents.GetTransparentEventNodes()
 
 	if err == nil {
-		for _, attackNode := range edgeAttackNodes {
-			topologyNodeNodes = append(topologyNodeNodes, attackNode)
+		for _, attackNode := range attackNodesForAgent {
+			topologyNodes = append(topologyNodes, attackNode)
 		}
 	}
 
-	protocolAttackNodes, err := protocolProxy.QueryProtocolAttackNode()
+	protocolAttackOriginNodes, err := protocolProxies.QueryProtocolAttackNode()
+
+	// 去除为透明代理的节点
 	if err == nil {
-		for _, attackNode := range protocolAttackNodes {
-			topologyNodeNodes = append(topologyNodeNodes, attackNode)
+		for _, attackNode := range protocolAttackOriginNodes {
+
+			if transparentProxyNodes != nil {
+				for _, transparentProxyNode := range transparentProxyNodes {
+					if !strings.Contains(transparentProxyNode.Ip, attackNode.Ip) {
+						topologyNodes = append(topologyNodes, attackNode)
+						protocolAttackNodes = append(protocolAttackNodes, attackNode)
+					}
+				}
+			} else {
+				topologyNodes = append(topologyNodes, attackNode)
+				protocolAttackNodes = append(protocolAttackNodes, attackNode)
+			}
 		}
 	}
-
-	QueryAttack2ProbeRedLines(edgeAttackNodes, probeProxyNodes, topologyNodeRedLines)
-	QueryAttack2ProtocolRedLines(protocolAttackNodes, protocolProxyNodes, topologyNodeRedLines)
-	QueryProbe2ProtocolGreenLines(probeProxyNodes, protocolProxyNodes, topologyNodeGreenLines)
-	QueryProbe2ProtocolRedLines(probeProxyNodes, protocolProxyNodes, topologyNodeRedLines)
+	// 查询攻击者 至 Agent 节点之间的 连线
+	buildAttack2AgentRedLines(attackNodesForAgent, transparentProxyNodes, topologyNodeRedLines)
+	// 查询攻击者 至 协议代理 节点之间的 连线
+	buildAttack2ProtocolRedLines(protocolAttackNodes, topologyNodeRedLines)
+	// 查询被攻击的Agent 至 协议代理 节点之间的 连线
+	QueryAttackedAgent2ProtocolRedLines(attackNodesForAgent, protocolProxyNodes, topologyNodeRedLines)
+	// 查询所有协议代理 至 蜜罐 节点之间的 连线
 	QueryProtocol2PodGreenLines(protocolProxyNodes, honeypotNodes, topologyNodeGreenLines)
-	QueryProtocol2PodRedLines(probeProxyNodes, honeypotNodes, topologyNodeRedLines)
+	// 查询被攻击的协议代理 至 蜜罐 节点之间的 连线
+	QueryProtocol2PodRedLines(transparentProxyNodes, honeypotNodes, topologyNodeRedLines)
 
 	for key, line := range topologyNodeGreenLines {
 		topologyNodeLines[key] = line
@@ -298,23 +307,10 @@ func QueryTopologyNodes() ([]comm.TopologyNode, []comm.TopologyLine) {
 	}
 
 	for _, line := range topologyNodeLines {
-		valid := false
-		if strings.Contains(line.Target, "POD") {
-			for _, node := range topologyNodeNodes {
-				if node.NodeType == "POD" && line.Target == node.Id {
-					valid = true
-				}
-			}
-		} else {
-			valid = true
-		}
-
-		if valid {
-			topologyNodeLineArray = append(topologyNodeLineArray, line)
-		}
+		topologyNodeLineArray = append(topologyNodeLineArray, line)
 	}
 
-	return topologyNodeNodes, topologyNodeLineArray
+	return topologyNodes, topologyNodeLineArray
 }
 
 func buildIpParam(nodes []comm.TopologyNode) string {
@@ -341,11 +337,11 @@ func buildIpParam(nodes []comm.TopologyNode) string {
     5. 查协议代理攻击日志表 为协议代理到蜜罐的红线
 */
 
-func QueryAttack2ProbeRedLines(attackNodes, probeNodes []comm.TopologyNode, redLines map[string]comm.TopologyLine) {
+func buildAttack2AgentRedLines(attackNodes, probeNodes []comm.TopologyNode, redLines map[string]comm.TopologyLine) {
 	var transparentEvent models.TransparentEvent
 	attackIpParams := buildIpParam(attackNodes)
 	probeIpParams := buildIpParam(probeNodes)
-	lineArray, _ := transparentEvent.QueryAttack2ProbeLines(attackIpParams, probeIpParams)
+	lineArray, _ := transparentEvent.QueryAttack2AgentLines(attackIpParams, probeIpParams)
 	if len(lineArray) == 0 {
 		return
 	}
@@ -355,11 +351,10 @@ func QueryAttack2ProbeRedLines(attackNodes, probeNodes []comm.TopologyNode, redL
 	}
 }
 
-func QueryAttack2ProtocolRedLines(attackNodes, probeNodes []comm.TopologyNode, redLines map[string]comm.TopologyLine) {
-	var protocolEvent models.ProtocolEvent
-	attackIpParams := buildIpParam(attackNodes)
-	probeIpParams := buildIpParam(probeNodes)
-	lineArray, _ := protocolEvent.QueryAttack2ProbeLines(attackIpParams, probeIpParams)
+func buildAttack2ProtocolRedLines(protocolAttackNodes []comm.TopologyNode, redLines map[string]comm.TopologyLine) {
+	var protocolEvents models.ProtocolEvent
+	attackIpParams := buildIpParam(protocolAttackNodes)
+	lineArray, _ := protocolEvents.QueryAttack2ProtocolLines(attackIpParams)
 	if len(lineArray) == 0 {
 		return
 	}
@@ -371,7 +366,7 @@ func QueryAttack2ProtocolRedLines(attackNodes, probeNodes []comm.TopologyNode, r
 
 func QueryProbe2ProtocolGreenLines(probeNodes, protocolNodes []comm.TopologyNode, greenLines map[string]comm.TopologyLine) {
 	var transparentProxy models.TransparentProxy
-	lineArray, _ := transparentProxy.QueryProbe2ProtocolGreenLines()
+	lineArray, _ := transparentProxy.QueryTransparent2ProtocolGreenLines()
 	if len(lineArray) == 0 {
 		return
 	}
@@ -381,9 +376,15 @@ func QueryProbe2ProtocolGreenLines(probeNodes, protocolNodes []comm.TopologyNode
 	}
 }
 
-func QueryProbe2ProtocolRedLines(probeNodes, protocolNodes []comm.TopologyNode, redLines map[string]comm.TopologyLine) {
-	var protocolEvent models.ProtocolEvent
-	lineArray, _ := protocolEvent.QueryTransparent2ProbeRedLines()
+func QueryAttackedAgent2ProtocolRedLines(attackedAgentNodes, protocolNodes []comm.TopologyNode, redLines map[string]comm.TopologyLine) {
+	var protocolEvents models.ProtocolEvent
+
+	if attackedAgentNodes == nil || len(attackedAgentNodes) == 0 {
+		return
+	}
+	agentIpParams := buildIpParam(attackedAgentNodes)
+
+	lineArray, _ := protocolEvents.QueryAttackedAgent2ProtocolRedLines(agentIpParams)
 	if len(lineArray) == 0 {
 		return
 	}
@@ -412,7 +413,9 @@ func QueryProtocol2PodRedLines(protocolNodes, podNodes []comm.TopologyNode, redL
 		return
 	}
 	for _, line := range lineArray {
-		lineKey := fmt.Sprintf("%s-%s", line.Source, line.Target)
-		redLines[lineKey] = line
+		if line.Target != "-POD" {
+			lineKey := fmt.Sprintf("%s-%s", line.Source, line.Target)
+			redLines[lineKey] = line
+		}
 	}
 }

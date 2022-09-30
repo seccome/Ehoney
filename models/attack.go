@@ -1,84 +1,107 @@
 package models
 
 import (
-	"decept-defense/controllers/comm"
 	"decept-defense/pkg/util"
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
+	"strings"
 )
 
 type AttackEvent struct {
-	ID            int64  `gorm:"primary_key;AUTO_INCREMENT;not null;unique;column:id" json:"id"`
-	CreateTime    string `gorm:"not null"`
-	AttackIP      string `gorm:"unique" form:"AttackIP" json:"AttackIP" gorm:"unique;size:256" binding:"required"`
-	HoneypotIP    string `gorm:"unique" form:"HoneypotIP" json:"HoneypotIP" gorm:"unique;size:256" binding:"required"`
-	AttackAddress string `gorm:"unique" form:"AttackAddress" json:"AttackAddress" gorm:"unique;size:256" binding:"required"`
-	ProtocolType  string `gorm:"unique" form:"ProtocolType" json:"ProtocolType" gorm:"unique;size:256"`
-	ProbeIP       string `gorm:"unique" form:"ProbeIP" json:"ProbeIP" gorm:"unique;size:256" binding:"required"`
-}
-
-func (event *AttackEvent) CreateAttackEvent() error {
-	if err := db.Create(event).Error; err != nil {
-		return err
-	}
-	return nil
+	TransparentEventId string `form:"TransparentEventId" json:"TransparentEventId"`
+	ProtocolEventId    string `form:"ProtocolEventId" json:"ProtocolEventId"`
+	AttackIp           string `form:"AttackIp" json:"AttackIp"`
+	AttackLocation     string `form:"AttackLocation" json:"AttackLocation"`
+	AgentIp            string `form:"AgentIp" json:"AgentIp"`
+	AgentPort          int32  `json:"AgentPort" form:"AgentPort"` //代理端口
+	ProtocolType       string `form:"ProtocolType" json:"ProtocolType"`
+	ProtocolPort       int32  `json:"ProtocolPort" form:"ProtocolPort"` //协议端口
+	HoneypotIp         string `form:"HoneypotIp" json:"HoneypotIp"`
+	HoneypotPort       int32  `form:"HoneypotPort" json:"HoneypotPort"` //代理端口
+	AttackDetail       string `form:"AttackDetail" json:"AttackDetail"` //代理端口
+	CreateTime         int64  `form:"CreateTime" json:"CreateTime"`
 }
 
 type AttackSelectResultPayload struct {
-	ID             int64  `json:"ID"`             //攻击日志ID
-	AttackIP       string `json:"AttackIP"`       //攻击IP
-	ProbeIP        string `json:"ProbeIP"`        //探针IP
-	JumpIP         string `json:"JumpIP"`         //跳转IP
-	HoneypotIP     string `json:"HoneypotIP"`     //蜜罐IP
+	AttackIp       string `json:"AttackIp"`       //攻击IP
+	AgentIp        string `json:"AgentIp"`        //探针IP
+	HoneypotIp     string `json:"HoneypotIp"`     //蜜罐IP
 	ProtocolType   string `json:"ProtocolType"`   //协议类型
 	AttackTime     string `json:"AttackTime"`     //攻击时间
 	AttackLocation string `json:"AttackLocation"` //攻击位置
 }
 
-func (event *AttackEvent) GetAttackEvent(payload comm.AttackEventSelectPayload) (*[]comm.AttackSelectResultPayload, error) {
-	var ret []comm.AttackSelectResultPayload
-	var ret1 []comm.AttackSelectResultPayload
+func (event *AttackEvent) GetAttackEvent(queryMap map[string]interface{}) (*[]AttackEvent, int64, error) {
+	var ret []AttackEvent
+	var total int64
+	sql := fmt.Sprintf("SELECT te.transparent_event_id as TransparentEventId, pe.protocol_event_id as ProtocolEventId, ifnull(te.create_time, pe.create_time) As CreateTime,  ifnull(te.attack_ip, pe.attack_ip) as AttackIp, te.proxy_ip as AgentIp, te.proxy_port as AgentPort, pe.proxy_port as ProtocolPort, pe.protocol_type as ProtocolType,  pe.attack_detail as AttackDetail, pe.dest_ip as HoneypotIp, pe.dest_port as HoneypotPort FROM protocol_events pe left join transparent_events te on pe.proxy_port = te.dest_port ")
+	sqlTotal := fmt.Sprintf("SELECT count(1) FROM protocol_events pe left join transparent_events te on pe.proxy_port = te.dest_port ")
 
-	if util.CheckInjectionData(payload.ProtocolType) || util.CheckInjectionData(payload.AttackIP) || util.CheckInjectionData(payload.JumpIP) || util.CheckInjectionData(payload.ProbeIP) || util.CheckInjectionData(payload.HoneypotIP) || util.CheckInjectionData(payload.ProtocolType) {
-		return nil, nil
+	conditionFlag := false
+	conditionSql := ""
+	for key, val := range queryMap {
+
+		if key == "PageSize" || key == "PageNumber" {
+			continue
+		}
+		if val == "" {
+			continue
+		}
+		if util.CheckInjectionData(val.(string)) {
+			return nil, 0, nil
+		}
+		condition := "where"
+		if !conditionFlag {
+			conditionFlag = true
+		} else {
+			condition = "and"
+		}
+		if key == "StartTime" {
+			conditionSql = fmt.Sprintf(" %s %s te.create_time > %s or pe.create_time > %s", conditionSql, condition, val, val)
+		}
+		if key == "EndTime" {
+			conditionSql = fmt.Sprintf(" %s %s te.create_time > %s or pe.create_time > %s", conditionSql, condition, val, val)
+		}
+		if key == "AttackIp" {
+			conditionSql = fmt.Sprintf(" %s %s te.attack_ip = '%s' or pe.attack_ip = '%s' ", conditionSql, condition, val, val)
+		}
+		if key == "AgentIp" {
+			conditionSql = fmt.Sprintf(" %s %s te.proxy_ip like '%s'", conditionSql, condition, "%"+val.(string)+"%")
+		}
+		if key == "HoneypotIp" {
+			conditionSql = fmt.Sprintf(" %s %s pe.dest_ip = '%s'", conditionSql, condition, val)
+		}
+		if key == "ProtocolType" {
+			conditionSql = fmt.Sprintf(" %s %s pe.protocol_type = '%s'", conditionSql, condition, val)
+		}
 	}
 
-	var p = "%" + payload.Payload + "%"
-	var attackIP = "%" + payload.AttackIP + "%"
-	var jumpIP = "%" + payload.JumpIP + "%"
-	var probeIP = "%" + payload.ProbeIP + "%"
-	var honeypotIP = "%" + payload.HoneypotIP + "%"
-	var protocolType = "%" + payload.ProtocolType + "%"
+	pageSize := int(queryMap["PageSize"].(float64))
 
-	sql := fmt.Sprintf("select h.attack_ip, h.proxy_ip as ProbeIP, h2.proxy_ip as JumpIP, h2.dest_ip as HoneypotIP, h2.protocol_type, h2.event_time as AttackTime, h2.attack_detail from transparent_events h, protocol_events h2 where LOCATE(h2.attack_ip, h.proxy_ip, 1) > 0 AND LOCATE(h.dest_ip, h2.proxy_ip, 1) > 0 AND h.transparent2_protocol_port = h2.attack_port AND CONCAT(h.attack_ip, h.proxy_ip, h2.proxy_ip, h2.dest_ip, h2.protocol_type, h2.event_time) LIKE '%s' and h.attack_ip LIKE '%s' and h.proxy_ip LIKE '%s' and  h2.proxy_ip LIKE '%s' and h2.dest_ip LIKE '%s' and h2.protocol_type LIKE '%s' order by h2.event_time DESC", p, attackIP, probeIP, jumpIP, honeypotIP, protocolType)
-	if err := db.Raw(sql).Scan(&ret1).Error; err != nil {
-		return nil, err
+	pageNumber := int(queryMap["PageNumber"].(float64))
+
+	t := fmt.Sprintf("order by pe.create_time DESC limit %d offset %d ", pageSize, (pageNumber-1)*pageSize)
+	sql = strings.Join([]string{sql, conditionSql, t}, " ")
+	zap.L().Info(sql)
+	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
+		return nil, total, err
 	}
 
-	var ret2 []comm.AttackSelectResultPayload
-	sql = fmt.Sprintf("select attack_ip, dest_ip as HoneypotIP, proxy_ip as JumpIP, protocol_type, event_time as AttackTime, attack_detail from  protocol_events  where  CONCAT(attack_ip, dest_ip, protocol_type, event_time) LIKE '%s' and attack_ip LIKE '%s' and proxy_ip LIKE '%s'  and dest_ip LIKE '%s' and protocol_type LIKE '%s' order by event_time DESC", p, attackIP, jumpIP, honeypotIP, protocolType)
-	if err := db.Raw(sql).Scan(&ret2).Error; err != nil {
-		return nil, err
-	}
-	for _, i := range ret1 {
-		ret = append(ret, i)
-	}
-
-	for _, i := range ret2 {
-		ret = append(ret, i)
+	sqlTotal = strings.Join([]string{sqlTotal, conditionSql}, " ")
+	if err := db.Raw(sqlTotal).Scan(&total).Error; err != nil {
+		return nil, total, err
 	}
 
 	for index, data := range ret {
-		d, _ := util.GetLocationByIP(data.AttackIP)
+		d, _ := util.GetLocationByIP(data.AttackIp)
 		if d.City == "-" || d.Country_long == "-" {
 			ret[index].AttackLocation = "LAN"
 		} else {
 			ret[index].AttackLocation = d.City + "-" + d.Country_long
 		}
-
-		ret[index].CounterInfo = findCounterMapByIP(ret[index].AttackIP)
 	}
-	return &ret, nil
+	return &ret, total, nil
 }
 
 func findCounterMapByIP(attackIP string) map[string]string {
@@ -109,60 +132,4 @@ func StructToMapViaJson(data interface{}) map[string]string {
 	j, _ := json.Marshal(data)
 	json.Unmarshal(j, &m)
 	return m
-}
-
-func (event *AttackEvent) GetAttackEventForSource(payload comm.AttackTraceSelectPayload) (*[]comm.TraceSourceResultPayload, error) {
-	var result []comm.TraceSourceResultPayload
-
-	var ret []comm.AttackSelectResultPayload
-	var ret1 []comm.AttackSelectResultPayload
-	var ret2 []comm.AttackSelectResultPayload
-	if util.CheckInjectionData(payload.ProtocolType) || util.CheckInjectionData(payload.AttackIP) || util.CheckInjectionData(payload.HoneypotIP) || util.CheckInjectionData(payload.Payload) || util.CheckInjectionData(payload.StartTime) || util.CheckInjectionData(payload.EndTime) {
-		return nil, nil
-	}
-	protocolType := "%" + payload.ProtocolType + "%"
-	attackIP := "%" + payload.AttackIP + "%"
-	honeypotIP := "%" + payload.HoneypotIP + "%"
-	selectPayload := "%" + payload.Payload + "%"
-
-	if payload.StartTime != "" && payload.EndTime != "" {
-		sql := fmt.Sprintf("select h.attack_ip, h.proxy_ip as ProbeIP, h2.proxy_ip as JumpIP, h2.dest_ip as HoneypotIP, h2.protocol_type, h2.event_time as AttackTime, h2.attack_detail from transparent_events h, protocol_events h2 where LOCATE(h2.attack_ip, h.proxy_ip, 1) > 0 AND LOCATE(h.dest_ip, h2.proxy_ip, 1) > 0 AND h.transparent2_protocol_port = h2.attack_port AND h.attack_ip LIKE '%s' AND h2.dest_ip LIKE '%s' AND h2.protocol_type LIKE '%s' AND CONCAT(h.attack_ip, h.proxy_ip, h2.proxy_ip, h2.dest_ip, h2.protocol_type, h2.event_time, h2.attack_detail) LIKE '%s' AND h2.event_time betweent '%s' and '%s' order by h2.event_time DESC", attackIP, honeypotIP, protocolType, selectPayload, payload.StartTime, payload.EndTime)
-		if err := db.Raw(sql).Scan(&ret1).Error; err != nil {
-			return nil, err
-		}
-
-		sql = fmt.Sprintf("select attack_ip, dest_ip as HoneypotIP, protocol_type, event_time as AttackTime, attack_detail from  protocol_events  where attack_ip LIKE '%s' AND dest_ip LIKE '%s' AND protocol_type LIKE '%s' AND CONCAT(attack_ip, dest_ip, protocol_type, event_time, attack_detail) LIKE '%s' ANT event_time between '%s' and '%s' order by event_time DESC", attackIP, honeypotIP, protocolType, selectPayload, payload.StartTime, payload.EndTime)
-		if err := db.Raw(sql).Scan(&ret2).Error; err != nil {
-			return nil, err
-		}
-		for _, i := range ret1 {
-			ret = append(ret, i)
-		}
-
-		for _, i := range ret2 {
-			ret = append(ret, i)
-		}
-	} else {
-		sql := fmt.Sprintf("select h.attack_ip, h.proxy_ip as ProbeIP, h2.proxy_ip as JumpIP, h2.dest_ip as HoneypotIP, h2.protocol_type, h2.event_time as AttackTime, h2.attack_detail from transparent_events h, protocol_events h2 where LOCATE(h2.attack_ip, h.proxy_ip, 1) > 0 AND LOCATE(h.dest_ip, h2.proxy_ip, 1) > 0 AND h.transparent2_protocol_port = h2.attack_port AND h.attack_ip LIKE '%s' AND h2.dest_ip LIKE '%s' AND h2.protocol_type LIKE '%s' AND CONCAT(h.attack_ip, h.proxy_ip, h2.proxy_ip, h2.dest_ip, h2.protocol_type, h2.event_time, h2.attack_detail) LIKE '%s' order by h2.event_time DESC", attackIP, honeypotIP, protocolType, selectPayload)
-		if err := db.Raw(sql).Scan(&ret1).Error; err != nil {
-			return nil, err
-		}
-
-		sql = fmt.Sprintf("select attack_ip, dest_ip as HoneypotIP, protocol_type, event_time as AttackTime, attack_detail from  protocol_events  where attack_ip LIKE '%s' AND dest_ip LIKE '%s' AND protocol_type LIKE '%s' AND CONCAT(attack_ip, dest_ip, protocol_type, event_time, attack_detail) LIKE '%s' order by event_time DESC", attackIP, honeypotIP, protocolType, selectPayload)
-		if err := db.Raw(sql).Scan(&ret2).Error; err != nil {
-			return nil, err
-		}
-		for _, i := range ret1 {
-			ret = append(ret, i)
-		}
-
-		for _, i := range ret2 {
-			ret = append(ret, i)
-		}
-	}
-
-	for _, i := range ret {
-		result = append(result, comm.TraceSourceResultPayload{Time: i.AttackTime, HoneypotIP: i.HoneypotIP, AttackIP: i.AttackIP, ProtocolType: i.ProtocolType, Detail: i.AttackDetail, Log: i.AttackDetail})
-	}
-	return &result, nil
 }

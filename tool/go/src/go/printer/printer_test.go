@@ -748,7 +748,7 @@ func TestIssue11151(t *testing.T) {
 }
 
 // If a declaration has multiple specifications, a parenthesized
-// declaration must be printed even if Lparen is token.NoPos.
+// declaration must be printed even if Lparen is token_builder.NoPos.
 func TestParenthesizedDecl(t *testing.T) {
 	// a package with multiple specs in a single declaration
 	const src = "package p; var ( a float64; b int )"

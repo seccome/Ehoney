@@ -17,7 +17,7 @@ import (
 // our command line are for us, and some are for the binary we're running,
 // and some are for both.
 
-// ErrFlagTerminator indicates the distinguished token "--", which causes the
+// ErrFlagTerminator indicates the distinguished token_builder "--", which causes the
 // flag package to treat all subsequent arguments as non-flags.
 var ErrFlagTerminator = errors.New("flag terminator")
 

@@ -43,8 +43,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -79,8 +79,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -160,7 +160,7 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"code\":200,\"msg\":\"ok\",\"data\":{\"token\":\"\"}}",
+                        "description": "{\"code\":200,\"msg\":\"ok\",\"data\":{\"token_builder\":\"\"}}",
                         "schema": {
                             "type": "string"
                         }
@@ -221,7 +221,7 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"code\":200,\"msg\":\"ok\",\"data\":{\"token\":\"\"}}",
+                        "description": "{\"code\":200,\"msg\":\"ok\",\"data\":{\"token_builder\":\"\"}}",
                         "schema": {
                             "type": "string"
                         }
@@ -251,8 +251,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -284,8 +284,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -314,8 +314,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -344,8 +344,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -374,8 +374,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -404,8 +404,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -476,8 +476,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -520,8 +520,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -543,7 +543,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/attack/token": {
+        "/api/v1/attack/token_builder": {
             "post": {
                 "description": "密签跟踪日志",
                 "produces": [
@@ -614,8 +614,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -724,8 +724,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -789,8 +789,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -848,8 +848,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -899,8 +899,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -970,8 +970,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1053,8 +1053,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1156,8 +1156,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1205,7 +1205,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/probe_bait_handler.ProbeBaitCreatePayload"
+                            "$ref": "#/definitions/agent_bait_handler.ProbeBaitCreatePayload"
                         }
                     },
                     {
@@ -1213,7 +1213,7 @@ var doc = `{
                         "name": "DeployPath",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/probe_bait_handler.ProbeBaitCreatePayload"
+                            "$ref": "#/definitions/agent_bait_handler.ProbeBaitCreatePayload"
                         }
                     },
                     {
@@ -1221,7 +1221,7 @@ var doc = `{
                         "name": "BaitData",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/probe_bait_handler.ProbeBaitCreatePayload"
+                            "$ref": "#/definitions/agent_bait_handler.ProbeBaitCreatePayload"
                         }
                     },
                     {
@@ -1230,13 +1230,13 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/probe_bait_handler.ProbeBaitCreatePayload"
+                            "$ref": "#/definitions/agent_bait_handler.ProbeBaitCreatePayload"
                         }
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1312,8 +1312,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1363,8 +1363,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1472,8 +1472,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1552,8 +1552,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1597,8 +1597,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1630,8 +1630,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1703,8 +1703,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1778,8 +1778,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1835,8 +1835,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1912,8 +1912,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1969,8 +1969,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2020,8 +2020,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2087,8 +2087,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2158,8 +2158,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2203,8 +2203,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2268,8 +2268,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2339,8 +2339,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2393,8 +2393,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2464,8 +2464,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2523,8 +2523,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2600,8 +2600,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2651,8 +2651,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2714,8 +2714,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2785,8 +2785,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2838,8 +2838,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2891,8 +2891,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -2962,8 +2962,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3015,8 +3015,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3087,8 +3087,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3140,8 +3140,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3193,8 +3193,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3246,8 +3246,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3326,8 +3326,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3379,8 +3379,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3408,7 +3408,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token": {
+        "/api/v1/token_builder": {
             "post": {
                 "description": "创建密签",
                 "consumes": [
@@ -3442,8 +3442,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3483,7 +3483,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token/honeypot": {
+        "/api/v1/token_builder/honeypot": {
             "post": {
                 "description": "创建蜜罐密签",
                 "consumes": [
@@ -3525,8 +3525,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3578,7 +3578,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token/honeypot/:id": {
+        "/api/v1/token_builder/honeypot/:id": {
             "get": {
                 "description": "下载蜜罐密签接口",
                 "consumes": [
@@ -3602,8 +3602,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3653,8 +3653,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3682,7 +3682,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token/honeypot/set": {
+        "/api/v1/token_builder/honeypot/set": {
             "post": {
                 "description": "用户查看自定义蜜罐密签接口",
                 "consumes": [
@@ -3733,8 +3733,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3762,7 +3762,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token/id": {
+        "/api/v1/token_builder/id": {
             "get": {
                 "description": "下载蜜罐诱饵接口",
                 "consumes": [
@@ -3786,8 +3786,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3837,8 +3837,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3866,7 +3866,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token/name/set": {
+        "/api/v1/token_builder/name/set": {
             "get": {
                 "description": "查看密签名称列表",
                 "consumes": [
@@ -3882,8 +3882,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3899,7 +3899,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token/probe": {
+        "/api/v1/token_builder/probe": {
             "post": {
                 "description": "创建探针密签",
                 "consumes": [
@@ -3942,8 +3942,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -3995,7 +3995,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token/probe/:id": {
+        "/api/v1/token_builder/probe/:id": {
             "delete": {
                 "description": "删除探针密签",
                 "consumes": [
@@ -4019,8 +4019,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -4048,7 +4048,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token/probe/set": {
+        "/api/v1/token_builder/probe/set": {
             "post": {
                 "description": "查看探针密签",
                 "consumes": [
@@ -4099,8 +4099,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -4128,7 +4128,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token/set": {
+        "/api/v1/token_builder/set": {
             "post": {
                 "description": "查找密签",
                 "consumes": [
@@ -4170,8 +4170,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -4199,7 +4199,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token/trace": {
+        "/api/v1/token_builder/trace": {
             "get": {
                 "description": "获得密签跟踪URL",
                 "consumes": [
@@ -4215,8 +4215,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -4261,8 +4261,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -4284,7 +4284,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/token/type": {
+        "/api/v1/token_builder/type": {
             "get": {
                 "description": "查看支持密签类型",
                 "consumes": [
@@ -4300,8 +4300,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -4391,8 +4391,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -4437,8 +4437,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
+                        "default": "Bearer \u003cAdd access token_builder here\u003e",
+                        "description": "Insert your access token_builder",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -5513,7 +5513,7 @@ var doc = `{
                 }
             }
         },
-        "probe_bait_handler.ProbeBaitCreatePayload": {
+        "agent_bait_handler.ProbeBaitCreatePayload": {
             "type": "object",
             "required": [
                 "baitID",

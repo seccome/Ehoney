@@ -15,7 +15,7 @@ const DefaultBufSize = defaultBufSize
 
 func (s *Scanner) MaxTokenSize(n int) {
 	if n < utf8.UTFMax || n > 1e9 {
-		panic("bad max token size")
+		panic("bad max token_builder size")
 	}
 	if n < len(s.buf) {
 		s.buf = make([]byte, n)

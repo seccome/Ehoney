@@ -44,10 +44,10 @@ type parser struct {
 	leadComment *ast.CommentGroup // last lead comment
 	lineComment *ast.CommentGroup // last line comment
 
-	// Next token
-	pos token.Pos   // token position
-	tok token.Token // one token look-ahead
-	lit string      // token literal
+	// Next token_builder
+	pos token.Pos   // token_builder position
+	tok token.Token // one token_builder look-ahead
+	lit string      // token_builder literal
 
 	// Non-syntactic parser control
 	exprLev int // < 0: in control clause, >= 0: in expression
@@ -226,12 +226,12 @@ func un(p *parser) {
 	p.printTrace(")")
 }
 
-// Advance to the next token.
+// Advance to the next token_builder.
 func (p *parser) next0() {
-	// Because of one-token look-ahead, print the previous token
+	// Because of one-token_builder look-ahead, print the previous token_builder
 	// when tracing as it provides a more readable output. The
-	// very first token (!p.pos.IsValid()) is not initialized
-	// (it is token.ILLEGAL), so don't print it .
+	// very first token_builder (!p.pos.IsValid()) is not initialized
+	// (it is token_builder.ILLEGAL), so don't print it .
 	if p.trace && p.pos.IsValid() {
 		s := p.tok.String()
 		switch {
@@ -270,7 +270,7 @@ func (p *parser) consumeComment() (comment *ast.Comment, endline int) {
 // Consume a group of adjacent comments, add it to the parser's
 // comments list, and return it together with the line at which
 // the last comment in the group ends. An empty line or non-comment
-// token terminates a comment group.
+// token_builder terminates a comment group.
 //
 func (p *parser) consumeCommentGroup() (comments *ast.CommentGroup, endline int) {
 	var list []*ast.Comment
@@ -288,16 +288,16 @@ func (p *parser) consumeCommentGroup() (comments *ast.CommentGroup, endline int)
 	return
 }
 
-// Advance to the next non-comment token. In the process, collect
+// Advance to the next non-comment token_builder. In the process, collect
 // any comment groups encountered, and remember the last lead and
 // line comments.
 //
 // A lead comment is a comment group that starts and ends in a
 // line without any other tokens and that is followed by a non-comment
-// token on the line immediately after the comment group.
+// token_builder on the line immediately after the comment group.
 //
 // A line comment is a comment group that follows a non-comment
-// token on the same line, and that has no tokens after it on the line
+// token_builder on the same line, and that has no tokens after it on the line
 // where it ends.
 //
 // Lead and line comments may be considered documentation that is
@@ -314,11 +314,11 @@ func (p *parser) next() {
 		var endline int
 
 		if p.file.Line(p.pos) == line {
-			// The comment is on same line as the previous token; it
+			// The comment is on same line as the previous token_builder; it
 			// cannot be a lead comment but may be a line comment.
 			comment, endline = p.consumeCommentGroup()
 			if p.file.Line(p.pos) != endline {
-				// The next token is on a different line, thus
+				// The next token_builder is on a different line, thus
 				// the last comment group is a line comment.
 				p.lineComment = comment
 			}
@@ -331,7 +331,7 @@ func (p *parser) next() {
 		}
 
 		if endline+1 == p.file.Line(p.pos) {
-			// The next token is following on the line immediately after the
+			// The next token_builder is following on the line immediately after the
 			// comment group, thus the last comment group is a lead comment.
 			p.leadComment = comment
 		}

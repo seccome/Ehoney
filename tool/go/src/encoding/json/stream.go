@@ -72,7 +72,7 @@ func (dec *Decoder) Decode(v interface{}) error {
 	// object from it before the error happened.
 	err = dec.d.unmarshal(v)
 
-	// fixup token streaming state
+	// fixup token_builder streaming state
 	dec.tokenValueEnd()
 
 	return err
@@ -356,7 +356,7 @@ func (d Delim) String() string {
 	return string(d)
 }
 
-// Token returns the next JSON token in the input stream.
+// Token returns the next JSON token_builder in the input stream.
 // At the end of the input stream, Token returns nil, io.EOF.
 //
 // Token guarantees that the delimiters [ ] { } it returns are
@@ -507,8 +507,8 @@ func (dec *Decoder) peek() (byte, error) {
 }
 
 // InputOffset returns the input stream byte offset of the current decoder position.
-// The offset gives the location of the end of the most recently returned token
-// and the beginning of the next token.
+// The offset gives the location of the end of the most recently returned token_builder
+// and the beginning of the next token_builder.
 func (dec *Decoder) InputOffset() int64 {
 	return dec.scanned + int64(dec.scanp)
 }

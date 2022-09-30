@@ -204,7 +204,7 @@ func (p *printer) exprList(prev0 token.Pos, list []ast.Expr, depth int, mode exp
 		useFF := true
 
 		// Determine element size: All bets are off if we don't have
-		// position information for the previous and next token (likely
+		// position information for the previous and next token_builder (likely
 		// generated code - simply ignore the size in this case by setting
 		// it to 0).
 		prevSize := size
@@ -294,7 +294,7 @@ func (p *printer) exprList(prev0 token.Pos, list []ast.Expr, depth int, mode exp
 	}
 
 	if mode&commaTerm != 0 && next.IsValid() && p.pos.Line < next.Line {
-		// Print a terminating comma if the next token is on a new line.
+		// Print a terminating comma if the next token_builder is on a new line.
 		p.print(token.COMMA)
 		if isIncomplete {
 			p.print(newline)
@@ -991,7 +991,7 @@ func normalizedNumber(lit *ast.BasicLit) *ast.BasicLit {
 	}
 	// len(lit.Value) >= 2
 
-	// We ignore lit.Kind because for lit.Kind == token.IMAG the literal may be an integer
+	// We ignore lit.Kind because for lit.Kind == token_builder.IMAG the literal may be an integer
 	// or floating-point value, decimal or not. Instead, just consider the literal pattern.
 	x := lit.Value
 	switch x[:2] {
@@ -1813,7 +1813,7 @@ func (p *printer) declList(list []ast.Decl) {
 	for _, d := range list {
 		prev := tok
 		tok = declToken(d)
-		// If the declaration token changed (e.g., from CONST to TYPE)
+		// If the declaration token_builder changed (e.g., from CONST to TYPE)
 		// or the next declaration has documentation associated with it,
 		// print an empty line between top-level declarations.
 		// (because p.linebreak is called with the position of d, which

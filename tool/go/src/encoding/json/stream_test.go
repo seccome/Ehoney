@@ -334,7 +334,7 @@ type decodeThis struct {
 }
 
 var tokenStreamCases = []tokenStreamCase{
-	// streaming token cases
+	// streaming token_builder cases
 	{json: `10`, expTokens: []interface{}{float64(10)}},
 	{json: ` [10] `, expTokens: []interface{}{
 		Delim('['), float64(10), Delim(']')}},

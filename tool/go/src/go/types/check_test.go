@@ -7,10 +7,10 @@
 // compared against the error messages expected in the test files.
 //
 // Expected errors are indicated in the test files by putting a comment
-// of the form /* ERROR "rx" */ immediately following an offending token.
+// of the form /* ERROR "rx" */ immediately following an offending token_builder.
 // The harness will verify that an error matching the regular expression
 // rx is reported at that source position. Consecutive comments may be
-// used to indicate multiple errors for the same token position.
+// used to indicate multiple errors for the same token_builder position.
 //
 // For instance, the following test file indicates that a "not declared"
 // error should be reported for the undeclared variable x:
@@ -140,7 +140,7 @@ func parseFiles(t *testing.T, filenames []string) ([]*ast.File, []error) {
 // rx is a regular expression that matches the expected error message.
 // Space around "rx" or rx is ignored. Use the form `ERROR HERE "rx"`
 // for error messages that are located immediately after rather than
-// at a token's position.
+// at a token_builder's position.
 //
 var errRx = regexp.MustCompile(`^ *ERROR *(HERE)? *"?([^"]*)"?`)
 
@@ -160,8 +160,8 @@ func errMap(t *testing.T, testname string, files []*ast.File) map[string][]strin
 
 		var s scanner.Scanner
 		s.Init(fset.AddFile(filename, -1, len(src)), src, nil, scanner.ScanComments)
-		var prev token.Pos // position of last non-comment, non-semicolon token
-		var here token.Pos // position immediately after the token at position prev
+		var prev token.Pos // position of last non-comment, non-semicolon token_builder
+		var here token.Pos // position immediately after the token_builder at position prev
 
 	scanFile:
 		for {
@@ -189,7 +189,7 @@ func errMap(t *testing.T, testname string, files []*ast.File) map[string][]strin
 				fallthrough
 			default:
 				prev = pos
-				var l int // token length
+				var l int // token_builder length
 				if tok.IsLiteral() {
 					l = len(lit)
 				} else {

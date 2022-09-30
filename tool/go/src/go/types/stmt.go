@@ -158,7 +158,7 @@ func (check *Checker) closeScope() {
 }
 
 func assignOp(op token.Token) token.Token {
-	// token_test.go verifies the token ordering this function relies on
+	// token_test.go verifies the token_builder ordering this function relies on
 	if token.ADD_ASSIGN <= op && op <= token.AND_NOT_ASSIGN {
 		return op + (token.ADD - token.ADD_ASSIGN)
 	}

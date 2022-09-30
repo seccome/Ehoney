@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	ID       int    `gorm:"primary_key;AUTO_INCREMENT;unique;column:id" json:"id"`                       //用户ID
+	Id       int    `gorm:"primary_key;AUTO_INCREMENT;unique;column:id" json:"id"`                       //用户ID
 	Username string `json:"username" form:"username" gorm:"unique;not null;size:128" binding:"required"` //用户名称
 	Password string `json:"password" form:"password" gorm:"not null;size:256" binding:"required"`        //用户密码
 }
@@ -20,17 +20,17 @@ func (user *User) CreateUserRecord() error {
 }
 
 func (user *User) CreateDefaultUser() error {
-	user.HashPassword("123456")
+	_ = user.HashPassword("123456")
 	var DefaultUsers = []User{
 		{Username: "admin", Password: user.Password},
 	}
-	for _, d := range DefaultUsers{
-		p, _ :=  user.GetUserByName(d.Username)
-		if p != nil{
+	for _, d := range DefaultUsers {
+		p, _ := user.GetUserByName(d.Username)
+		if p != nil {
 			continue
 		}
 		err := d.CreateUserRecord()
-		if err != nil{
+		if err != nil {
 			continue
 		}
 	}
@@ -93,7 +93,7 @@ func (user *User) UpdatePassword(useName, newPassword string) string {
 
 // RevokeAccountByName  RevokeAccount
 func (user *User) RevokeAccountByName(username string) error {
-	if err := db.Where("username = ?", username).Delete(user).Error; err != nil {
+	if err := db.Where("username = ?", username).Delete(&User{}).Error; err != nil {
 		return err
 	}
 	return nil

@@ -13,7 +13,7 @@ type Node interface {
 	//    (Name, BasicLit, etc.) is the position of the respective production
 	//    in the source.
 	// 2) The position of a node representing a non-terminal production
-	//    (IndexExpr, IfStmt, etc.) is the position of a token uniquely
+	//    (IndexExpr, IfStmt, etc.) is the position of a token_builder uniquely
 	//    associated with that production; usually the left-most one
 	//    ('[' for IndexExpr, 'if' for IfStmt, etc.)
 	Pos() Pos

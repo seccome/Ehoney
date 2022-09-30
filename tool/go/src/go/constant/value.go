@@ -381,8 +381,8 @@ func MakeFloat64(x float64) Value {
 
 // MakeFromLiteral returns the corresponding integer, floating-point,
 // imaginary, character, or string value for a Go literal string. The
-// tok value must be one of token.INT, token.FLOAT, token.IMAG,
-// token.CHAR, or token.STRING. The final argument must be zero.
+// tok value must be one of token_builder.INT, token_builder.FLOAT, token_builder.IMAG,
+// token_builder.CHAR, or token_builder.STRING. The final argument must be zero.
 // If the literal string syntax is invalid, the result is an Unknown.
 func MakeFromLiteral(lit string, tok token.Token, zero uint) Value {
 	if zero != 0 {
@@ -423,7 +423,7 @@ func MakeFromLiteral(lit string, tok token.Token, zero uint) Value {
 		}
 
 	default:
-		panic(fmt.Sprintf("%v is not a valid token", tok))
+		panic(fmt.Sprintf("%v is not a valid token_builder", tok))
 	}
 
 	return unknownVal{}
@@ -1075,8 +1075,8 @@ func match(x, y Value) (_, _ Value) {
 // BinaryOp doesn't handle comparisons or shifts; use Compare
 // or Shift instead.
 //
-// To force integer division of Int operands, use op == token.QUO_ASSIGN
-// instead of token.QUO; the result is guaranteed to be Int in this case.
+// To force integer division of Int operands, use op == token_builder.QUO_ASSIGN
+// instead of token_builder.QUO; the result is guaranteed to be Int in this case.
 // Division by zero leads to a run-time panic.
 //
 func BinaryOp(x_ Value, op token.Token, y_ Value) Value {
@@ -1256,7 +1256,7 @@ func mul(x, y Value) Value { return BinaryOp(x, token.MUL, y) }
 func quo(x, y Value) Value { return BinaryOp(x, token.QUO, y) }
 
 // Shift returns the result of the shift expression x op s
-// with op == token.SHL or token.SHR (<< or >>). x must be
+// with op == token_builder.SHL or token_builder.SHR (<< or >>). x must be
 // an Int or an Unknown. If x is Unknown, the result is x.
 //
 func Shift(x Value, op token.Token, s uint) Value {

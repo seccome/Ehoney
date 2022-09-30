@@ -1273,7 +1273,7 @@ func (ts *testScript) parse(line string) command {
 		switch want := simpleStatus(arg); want {
 		case failure, successOrFailure:
 			if cmd.want != "" {
-				ts.fatalf("duplicated '!' or '?' token")
+				ts.fatalf("duplicated '!' or '?' token_builder")
 			}
 			cmd.want = want
 			return

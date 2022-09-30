@@ -10,49 +10,6 @@ type SelectVirusPayload struct {
 	VirusFilePath  string `json:"VirusFilePath" `
 }
 
-type HoneypotSelectResultPayload struct {
-	ID           int64      `json:"ID"`           //蜜罐ID
-	ServerType   string     `json:"ServerType"`   //蜜罐类型
-	HoneypotName string     `json:"HoneypotName"` //蜜罐名称
-	HoneypotIP   string     `json:"HoneypotIP"`   //蜜罐IP
-	ServerIP     string     `json:"ServerIP"`     //蜜网IP
-	CreateTime   string     `json:"CreateTime"`   //创建时间
-	Status       TaskStatus `json:"Status"`       //蜜罐状态
-	Creator      string     `json:"Creator"`      //创建用户
-}
-
-type ProbeSelectResultPayload struct {
-	ID            int64      `json:"ID"`            //探针ID
-	ProbeIP       string     `json:"ProbeIP"`       //探针IP
-	HostName      string     `json:"HostName"`      //探针名称
-	HeartbeatTime string     `json:"HeartbeatTime"` //心跳时间
-	CreateTime    string     `json:"CreateTime"`    //注册时间
-	SystemType    string     `json:"SystemType"`    //系统类型
-	Status        TaskStatus `json:"Status"`        //状态
-}
-
-type TransProxySelectPayload struct {
-	ProxyPort          int32  `json:"ProxyPort"`
-	ProtocolType       string `json:"ProtocolType"`
-	ProbeIP            string `json:"ProbeIP"`
-	HoneypotServerIP   string `json:"HoneypotServerIP"`
-	HoneypotServerPort int32  `json:"HoneypotServerPort"`
-	StartTimestamp     int64  `json:"StartTimestamp"`
-	EndTimestamp       int64  `json:"EndTimestamp"`
-	PageNumber         int    `json:"PageNumber" binding:"required"`
-	PageSize           int    `json:"PageSize" binding:"required"`
-}
-
-type FileBaitSelectResultPayload struct {
-	ID         int64  `json:"ID"`         //文件诱饵ID
-	BaitName   string `json:"BaitName"`   //诱饵名称
-	FileName   string `json:"FileName"`   //文件名称
-	BaitType   string `json:"BaitType"`   //诱饵类型
-	BaitData   string `json:"BaitData"`   //HISTORY诱饵数据
-	Creator    string `json:"Creator"`    //创建用户
-	CreateTime string `json:"CreateTime"` //创建时间
-}
-
 type HistoryBaitSelectResultPayload struct {
 	ID         int64  `json:"ID"`
 	BaitName   string `json:"BaitName"`
@@ -98,38 +55,13 @@ type TransparentProxySelectResultPayload struct {
 	Status       int    `json:"Status"`       //状态
 }
 
-type ServerBaitSelectPayload struct {
-	ServerID   int64  `json:"ServerID" binding:"required"`
+type BaitTaskQueryPayload struct {
+	HoneypotId string `json:"HoneypotId"`
+	AgentToken string `json:"AgentToken"`
+	BaitType   string `json:"BaitType"`
 	PageNumber int    `json:"PageNumber" binding:"required"`
 	PageSize   int    `json:"PageSize" binding:"required"`
 	Payload    string `json:"Payload"`
-}
-
-type ServerTokenSelectPayload struct {
-	ServerID   int64  `json:"ServerID" binding:"required"`   //服务器ID
-	PageNumber int    `json:"PageNumber" binding:"required"` //页面number
-	PageSize   int    `json:"PageSize" binding:"required"`   //页面size
-	Payload    string `json:"Payload"`                       //查找payload
-}
-
-type ServerBaitSelectResultPayload struct {
-	ID         int64      `json:"ID"`
-	BaitName   string     `json:"BaitName"`
-	BaitType   string     `json:"BaitType"`
-	Creator    string     `json:"Creator"`
-	DeployPath string     `json:"DeployPath"`
-	CreateTime string     `json:"CreateTime"`
-	Status     TaskStatus `json:"Status"`
-}
-
-type ServerTokenSelectResultPayload struct {
-	ID         int64      `json:"ID"`         //蜜罐密签ID
-	TokenName  string     `json:"TokenName"`  //密签名称
-	TokenType  string     `json:"TokenType"`  //密签类型
-	Creator    string     `json:"Creator"`    //创建用户
-	CreateTime string     `json:"CreateTime"` //创建时间
-	DeployPath string     `json:"DeployPath"` //部署路径
-	Status     TaskStatus `json:"Status"`     //状态
 }
 
 type AttackSelectResultPayload struct {
@@ -169,6 +101,7 @@ type FalcoSelectResultPayload struct {
 type ImageUpdatePayload struct {
 	ImagePort int32  `form:"ImagePort" binding:"required"` //镜像端口
 	ImageType string `form:"ImageType" binding:"required"` //协议类型
+	Label     string `form:"Label"`                        //标签
 }
 
 type SelectPayload struct {
@@ -181,10 +114,9 @@ type AttackEventSelectPayload struct {
 	SelectPayload
 	StartTime    string `json:"StartTime"`    //开始时间
 	EndTime      string `json:"EndTime"`      //结束时间
-	AttackIP     string `json:"AttackIP"`     //攻击IP
-	JumpIP       string `json:"JumpIP"`       //跳转IP
-	ProbeIP      string `json:"ProbeIP"`      //探针IP
-	HoneypotIP   string `json:"HoneypotIP"`   //蜜罐IP
+	AttackIp     string `json:"AttackIp"`     //攻击IP
+	AgentIp      string `json:"AgentIp"`      //跳转IP
+	HoneypotIp   string `json:"HoneypotIp"`   //探针IP
 	ProtocolType string `json:"ProtocolType"` //协议类型
 }
 
@@ -195,7 +127,7 @@ type FalcoEventSelectPayload struct {
 }
 
 type BatchSelectPayload struct {
-	Ids []int64 `json:"Ids"`
+	Ids []string `json:"Ids"`
 }
 
 type TokenTraceSelectPayload struct {
@@ -239,10 +171,10 @@ type AttackStatistics struct {
 
 type ProtocolSelectResultPayload struct {
 	ID           int64  `json:"ID"`           //协议ID
+	ProtocolId   int64  `json:"ProtocolId"`   //协议类型
 	ProtocolType string `json:"ProtocolType"` //协议类型
-	DeployPath   string `json:"DeployPath"`   //部署路径
+	LocalPath    string `json:"LocalPath"`    //部署路径
 	Status       int    `json:"Status"`       //状态
-	Creator      string `json:"Creator"`      //创建用户
 	CreateTime   string `json:"CreateTime"`   //创建时间
 	MinPort      int32  `json:"MinPort"`      //端口low
 	MaxPort      int32  `json:"MaxPort"`      //端口high
@@ -310,34 +242,52 @@ type HistoryBaitDeployTaskPayload struct {
 	BaitData string `json:"BaitData"`
 }
 
-type ProtocolProxyTaskPayload struct {
-	TaskPayload
-	ProxyPort    int32  `json:"ProxyPort"`
-	HoneypotPort int32  `json:"HoneypotPort"`
-	HoneypotIP   string `json:"HoneypotIP"`
-	DeployPath   string `json:"DeployPath"`
+type AgentTaskBase struct {
+	AgentToken   string       `json:"AgentToken"`
+	TaskId       string       `json:"TaskId"`
+	TaskType     TaskType     `json:"TaskType"`
+	OperatorType OperatorType `json:"OperatorType"`
+	Status       TaskStatus   `json:"Status"`
 }
 
-type TransparentProxyTaskPayload struct {
-	TaskPayload
-	ProxyPort          int32  `json:"ProxyPort"`
-	HoneypotServerPort int32  `json:"HoneypotServerPort"`
-	HoneypotServerIP   string `json:"HoneypotServerIP"`
-	ProbeIP            string `json:"ProbeIP"`
+type AgentTransparentProxyTask struct {
+	AgentTaskBase
+	TransparentProxyId string `json:"TransparentProxyId"` //代理端口
+	ProxyPort          int32  `json:"ProxyPort"`          //代理端口
+	DestIp             string `json:"DestIp""`            //协议代理ID
+	DestPort           int32  `json:"DestPort"`           //代理端口
+	CreateTime         int64  `json:"CreateTime"`
 }
 
-// TODO this is a bad design, put two contents into one struct、should use above two struct
-// anyway、 design for agent
+type AgentBaitTask struct {
+	AgentTaskBase
+	BaitTaskId        string `json:"BaitTaskId"`
+	BaitName          string `json:"BaitName"`
+	BaitType          string `json:"BaitType"`
+	URL               string `json:"URL"`
+	FileMD5           string `json:"FileMD5"`
+	BaitData          string `json:"BaitData"`
+	Target            string `json:"Target"`
+	LocalPath         string `json:"LocalPath"`
+	DeployPath        string `json:"DeployPath"`
+	ScriptName        string `json:"ScriptName"`
+	CommandParameters string `json:"CommandParameters"`
+}
 
-type ProxyTaskPayload struct {
-	TaskPayload
-	ProxyPort          int32  `json:"ProxyPort"`
-	HoneypotPort       int32  `json:"HoneypotPort"`
-	HoneypotIP         string `json:"HoneypotIP"`
-	DeployPath         string `json:"DeployPath"`
-	HoneypotServerPort int32  `json:"HoneypotServerPort"`
-	HoneypotServerIP   string `json:"HoneypotServerIP"`
-	ProbeIP            string `json:"ProbeIP"`
+type AgentTokenTask struct {
+	AgentTaskBase
+	TokenTaskId       string `json:"TokenTaskId"`
+	TokenName         string `json:"TokenName"`
+	TokenType         string `json:"TokenType"`
+	URL               string `json:"URL"`
+	FileMD5           string `json:"FileMD5"`
+	DeployPath        string `json:"DeployPath"` //部署路径
+	LocalPath         string `json:"LocalPath"`
+	TraceCode         string `json:"TraceCode"`         //跟踪码
+	ScriptName        string `json:"ScriptName"`        //跟踪码
+	AgentId           int64  `json:"AgentId"`           //探针服务器ID
+	AgentToken        string `json:"ProbeToken"`        //探针服务器ID
+	CommandParameters string `json:"CommandParameters"` //探针服务器ID
 }
 
 type SelectResultPayload struct {
@@ -350,12 +300,8 @@ type OperatorType string
 type TaskStatus int
 
 const (
-	PROTOCOL         TaskType = "PROTOCOL"
-	TOKEN            TaskType = "TOKEN"
-	BAIT             TaskType = "BAIT"
-	ProtocolProxy    TaskType = "PROTOCOL_PROXY"
-	TransparentProxy TaskType = "TRANSPARENT_PROXY"
-	Heartbeat        TaskType = "HEARTBEAT"
+	BAIT_TASK              TaskType = "BAIT_TASK"
+	TRANSPARENT_PROXY_TASK TaskType = "TRANSPARENT_PROXY_TASK"
 )
 
 const (
@@ -368,10 +314,10 @@ const (
 	RUNNING TaskStatus = 1  //下发中
 	FAILED  TaskStatus = 2  //异常
 	SUCCESS TaskStatus = 3  //成功
+	CANCEL  TaskStatus = 4  //取消
 )
 
-var BaitType = []string{"FILE", "HISTORY"}
-var TokenType = []string{"FILE", "BrowserPDF", "EXE", "WPS"}
+var BaitType = []string{"FILE", "WPS", "HISTORY"}
 
 type TopologyNode struct {
 	Id       string `json:"id"`
@@ -395,13 +341,14 @@ type AttackLog struct {
 	relayPort  int32
 }
 
-type TraceSourceResultPayload struct {
-	ID           int64  `json:"ID"`           //ID
+type TraceSourceVo struct {
+	Id           string `json:"Id"`           //ID
 	Type         string `json:"Type"`         //攻击类型
-	Time         string `json:"Time"`         //攻击时间
-	HoneypotIP   string `json:"HoneypotIP"`   //蜜罐IP
-	AttackIP     string `json:"AttackIP"`     //攻击IP
+	AttackIp     string `json:"AttackIp"`     //攻击IP
 	ProtocolType string `json:"ProtocolType"` //协议类型
+	HoneypotName string `json:"HoneypotName"` //蜜罐IP
 	Log          string `json:"Log"`          //日志
-	Detail       string `json:"Detail"`       //详情
+	Time         string `json:"Time"`         //攻击时间
+	EventTime    int64  `json:"EventTime"`
+	Detail       string `json:"Detail"` //详情
 }

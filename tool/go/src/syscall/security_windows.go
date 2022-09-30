@@ -287,21 +287,21 @@ type Tokenprimarygroup struct {
 	PrimaryGroup *SID
 }
 
-//sys	OpenProcessToken(h Handle, access uint32, token *Token) (err error) = advapi32.OpenProcessToken
+//sys	OpenProcessToken(h Handle, access uint32, token_builder *Token) (err error) = advapi32.OpenProcessToken
 //sys	GetTokenInformation(t Token, infoClass uint32, info *byte, infoLen uint32, returnedLen *uint32) (err error) = advapi32.GetTokenInformation
 //sys	GetUserProfileDirectory(t Token, dir *uint16, dirLen *uint32) (err error) = userenv.GetUserProfileDirectoryW
 //sys	getSystemDirectory(dir *uint16, dirLen uint32) (len uint32, err error) = kernel32.GetSystemDirectoryW
 
-// An access token contains the security information for a logon session.
-// The system creates an access token when a user logs on, and every
-// process executed on behalf of the user has a copy of the token.
-// The token identifies the user, the user's groups, and the user's
-// privileges. The system uses the token to control access to securable
+// An access token_builder contains the security information for a logon session.
+// The system creates an access token_builder when a user logs on, and every
+// process executed on behalf of the user has a copy of the token_builder.
+// The token_builder identifies the user, the user's groups, and the user's
+// privileges. The system uses the token_builder to control access to securable
 // objects and to control the ability of the user to perform various
 // system-related operations on the local computer.
 type Token Handle
 
-// OpenCurrentProcessToken opens the access token
+// OpenCurrentProcessToken opens the access token_builder
 // associated with current process.
 func OpenCurrentProcessToken() (Token, error) {
 	p, e := GetCurrentProcess()
@@ -316,12 +316,12 @@ func OpenCurrentProcessToken() (Token, error) {
 	return t, nil
 }
 
-// Close releases access to access token.
+// Close releases access to access token_builder.
 func (t Token) Close() error {
 	return CloseHandle(Handle(t))
 }
 
-// getInfo retrieves a specified type of information about an access token.
+// getInfo retrieves a specified type of information about an access token_builder.
 func (t Token) getInfo(class uint32, initSize int) (unsafe.Pointer, error) {
 	n := uint32(initSize)
 	for {
@@ -339,7 +339,7 @@ func (t Token) getInfo(class uint32, initSize int) (unsafe.Pointer, error) {
 	}
 }
 
-// GetTokenUser retrieves access token t user account information.
+// GetTokenUser retrieves access token_builder t user account information.
 func (t Token) GetTokenUser() (*Tokenuser, error) {
 	i, e := t.getInfo(TokenUser, 50)
 	if e != nil {
@@ -348,9 +348,9 @@ func (t Token) GetTokenUser() (*Tokenuser, error) {
 	return (*Tokenuser)(i), nil
 }
 
-// GetTokenPrimaryGroup retrieves access token t primary group information.
+// GetTokenPrimaryGroup retrieves access token_builder t primary group information.
 // A pointer to a SID structure representing a group that will become
-// the primary group of any objects created by a process using this access token.
+// the primary group of any objects created by a process using this access token_builder.
 func (t Token) GetTokenPrimaryGroup() (*Tokenprimarygroup, error) {
 	i, e := t.getInfo(TokenPrimaryGroup, 50)
 	if e != nil {
@@ -360,7 +360,7 @@ func (t Token) GetTokenPrimaryGroup() (*Tokenprimarygroup, error) {
 }
 
 // GetUserProfileDirectory retrieves path to the
-// root directory of the access token t user's profile.
+// root directory of the access token_builder t user's profile.
 func (t Token) GetUserProfileDirectory() (string, error) {
 	n := uint32(100)
 	for {

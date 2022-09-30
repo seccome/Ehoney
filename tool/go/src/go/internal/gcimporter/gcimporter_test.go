@@ -126,7 +126,7 @@ func TestImportTestdata(t *testing.T) {
 		// TODO(gri) update the want list to be precise, now that
 		// the textual export data is gone.
 		got := fmt.Sprint(pkg.Imports())
-		for _, want := range []string{"go/ast", "go/token"} {
+		for _, want := range []string{"go/ast", "go/token_builder"} {
 			if !strings.Contains(got, want) {
 				t.Errorf(`Package("exports").Imports() = %s, does not contain %s`, got, want)
 			}
@@ -263,7 +263,7 @@ var importedObjectTests = []struct {
 	{"encoding.BinaryMarshaler", "type BinaryMarshaler interface{MarshalBinary() (data []byte, err error)}"},
 	{"io.Reader", "type Reader interface{Read(p []byte) (n int, err error)}"},
 	{"io.ReadWriter", "type ReadWriter interface{Reader; Writer}"},
-	{"go/ast.Node", "type Node interface{End() go/token.Pos; Pos() go/token.Pos}"},
+	{"go/ast.Node", "type Node interface{End() go/token_builder.Pos; Pos() go/token_builder.Pos}"},
 	{"go/types.Type", "type Type interface{String() string; Underlying() Type}"},
 }
 

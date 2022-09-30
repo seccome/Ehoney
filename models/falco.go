@@ -1,26 +1,38 @@
 package models
 
 import (
-	"decept-defense/controllers/comm"
 	"decept-defense/pkg/util"
-	"encoding/json"
 	"fmt"
 	"strings"
 )
 
+/**
+
+
+
+
+
+{"code":400,"msg":"请求参数错误","data":"json: cannot unmarshal string into Go struct field FalcoAttackEvent.time of type int64"}{"output":"23:50:54.719348051: Error wreating files in container (user=root user_loginuid=-1 command=sshd -D -e k8s.ns=default k8s.pod=ssssssh-6948f886dc-b9p44 container=027dae4c3693 file=/proc/self/oom_score_adj container_id=027dae4c3693 container_name=k8s_ssssssh_ssssssh-6948f886dc-b9p44_default_397f6b51-5cb1-47c5-870d-d3f60576e960_0 image=ehoney/ssh) k8s.ns=default k8s.pod=ssssssh-6948f886dc-b9p44 container=027dae4c3693","priority":"Error","rule":"Create files below container any dir","time":"2022-09-25T15:50:54.719348051Z", "output_fields": {"container.id":"027dae4c3693","container.image.repository":"ehoney/ssh","container.name":"k8s_ssssssh_ssssssh-6948f886dc-b9p44_default_397f6b51-5cb1-47c5-870d-d3f60576e960_0","evt.time":1664121054719348051,"fd.name":"/proc/self/oom_score_adj","k8s.ns.name":"default","k8s.pod.name":"ssssssh-6948f886dc-b9p44","proc.cmdline":"sshd -D -e","user.loginuid":-1,"user.name":"root"}}
+
+
+*/
+
 type FalcoAttackEvent struct {
-	ID           int64        `gorm:"primary_key;AUTO_INCREMENT;not null;unique;column:id" json:"id"`
-	Output       string       `gorm:"not null"     json:"output"`
-	Priority     string       `gorm:"not null"     json:"priority"`
-	Rule         string       `gorm:"not null"     json:"rule"`
-	Time         string       `gorm:"not null"     json:"time"`
-	FileFlag     bool         `gorm:"not null; default: false"     json:"FileFlag"`
-	DownloadPath string       `gorm:"null"         json:"DownloadPath"`
-	OutputFields OutputFields `gorm:"embedded"     json:"output_fields"`
+	Id                 int64        `gorm:"primary_key;AUTO_INCREMENT;not null;unique;column:id" json:"id"`
+	FalcoAttackEventId string       `gorm:"not null; size:32" json:"falcoAttackEventId"` // 容器ID
+	Output             string       `gorm:"not null; size:1024"     json:"output"`
+	Priority           string       `gorm:"not null; size:32"     json:"priority"`
+	Rule               string       `gorm:"not null; size:256"     json:"rule"`
+	Time               string       `gorm:"not null; size:32"     json:"time"`
+	FileFlag           bool         `gorm:"not null; default: false"     json:"FileFlag"`
+	HoneypotName       string       `gorm:"not null; size:64"     json:"honeypotName"`
+	DownloadPath       string       `gorm:"size:128"         json:"downloadPath"`
+	OutputFields       OutputFields `gorm:"embedded"     json:"output_fields"`
+	CreateTime         int64        `form:"CreateTime" json:"createTime"`
 }
 
 type OutputFields struct {
-	ContainerID   string `gorm:"" json:"container.id"`               // 容器ID
+	ContainerId   string `gorm:"" json:"container.id"`               // 容器ID
 	Repository    string `gorm:"" json:"container.image.repository"` // 镜像仓库
 	ContainerName string `gorm:"" json:"container.name"`             // 容器名称
 	EventTime     int64  `gorm:"" json:"evt.time"`                   // 事件时间
@@ -37,94 +49,69 @@ type OutputFields struct {
 }
 
 func (event *FalcoAttackEvent) CreateFalcoEvent() error {
+	event.FalcoAttackEventId = util.GenerateId()
+	event.CreateTime = util.GetCurrentIntTime()
 	if err := db.Create(event).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (event *FalcoAttackEvent) GetFalcoEvent(payload comm.FalcoEventSelectPayload) (*[]comm.FalcoSelectResultPayload, int64, error) {
-	var ret []comm.FalcoSelectResultPayload
-	var count int64
+func (event *FalcoAttackEvent) GetFalcoEvent(queryMap map[string]interface{}) (*[]FalcoAttackEvent, int64, error) {
+	var ret []FalcoAttackEvent
+	var total int64
+	sql := fmt.Sprintf("SELECT * FROM falco_attack_events ")
+	sqlTotal := fmt.Sprintf("SELECT count(1) FROM falco_attack_events ")
+	conditionFlag := false
+	conditionSql := ""
+	for key, val := range queryMap {
 
-	if util.CheckInjectionData(payload.Payload) || util.CheckInjectionData(payload.StartTime) || util.CheckInjectionData(payload.EndTime) {
-		return nil, 0, nil
-	}
-	var p string = "%" + payload.Payload + "%"
-	var sql = ""
-	if payload.StartTime == "" && payload.EndTime == "" {
-		sql = fmt.Sprintf("select h.id, h.pod_name as HoneypotName, rule as event, time, output, priority as level, file_flag, download_path from falco_attack_events h, honeypots h2  where h.pod_name = h2.pod_name AND TIMESTAMPDIFF(second, h2.create_time, h.time) > 60 AND CONCAT(h.pod_name, rule, output, priority) LIKE '%s' order by time DESC", p)
-	} else {
-		sql = fmt.Sprintf("select h.id, h.pod_name as HoneypotName, rule as event, time, output, priority as level, file_flag, download_path from falco_attack_events h, honeypots h2  where h.pod_name = h2.pod_name AND TIMESTAMPDIFF(second, h2.create_time, h.time) > 60 AND CONCAT(pod_name, rule, output, priority) LIKE '%s' AND time between '%s' and '%s' order by time DESC", p, payload.StartTime, payload.EndTime)
-	}
-	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
-		return nil, 0, err
-	}
-	count = (int64)(len(ret))
-	t := fmt.Sprintf("limit %d offset %d", payload.PageSize, (payload.PageNumber-1)*payload.PageSize)
-	sql = strings.Join([]string{sql, t}, " ")
-	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
-		return nil, 0, err
-	}
-	return &ret, count, nil
-}
-
-func (event *FalcoAttackEvent) GetFalcoEventForTraceSource(payload comm.AttackTraceSelectPayload) (*[]comm.TraceSourceResultPayload, error) {
-	var ret []comm.TraceSourceResultPayload
-	var result []comm.TraceSourceResultPayload
-	if util.CheckInjectionData(payload.Payload) || util.CheckInjectionData(payload.StartTime) || util.CheckInjectionData(payload.EndTime) {
-		return nil, nil
-	}
-	selectPayload := "%" + payload.Payload + "%"
-
-	var sql = ""
-	if payload.StartTime != "" && payload.EndTime != "" {
-		sql = fmt.Sprintf("select h.id, time, output as Log, h.pod_name  from falco_attack_events h, honeypots h2  where h.pod_name = h2.pod_name AND TIMESTAMPDIFF(second, h2.create_time, h.time) > 3 AND CONCAT(output) LIKE '%s' AND time between '%s' and '%s' order by time DESC", selectPayload, payload.StartTime, payload.EndTime)
-	} else {
-		sql = fmt.Sprintf("select h.id, time, output as Log, h.pod_name  from falco_attack_events h, honeypots h2  where h.pod_name = h2.pod_name AND TIMESTAMPDIFF(second, h2.create_time, h.time) > 3 AND CONCAT(output) LIKE '%s' order by time DESC", selectPayload)
-	}
-
-	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
-		return nil, err
-	}
-
-	var falcoIDDetailMap map[int64]OutputFields
-	falcoIDDetailMap = make(map[int64]OutputFields)
-	var honeypotPodIpMap map[string]string
-	honeypotPodIpMap = make(map[string]string)
-	x, _ := (&Honeypot{}).GetHoneypots()
-	y, _ := event.GetFalcoEvents()
-	for _, data := range *y {
-		falcoIDDetailMap[data.ID] = data.OutputFields
-	}
-	for _, data := range *x {
-		honeypotPodIpMap[data.PodName] = data.HoneypotIP
-	}
-
-	for index, data := range ret {
-		detail, _ := json.Marshal(falcoIDDetailMap[data.ID])
-		ret[index].Detail = string(detail)
-		ret[index].ProtocolType = "falco"
-		if !strings.Contains(ret[index].ProtocolType, payload.ProtocolType) {
+		if key == "PageSize" || key == "PageNumber" {
 			continue
 		}
-		_, ok := honeypotPodIpMap[falcoIDDetailMap[data.ID].PodName]
-		if ok {
-			ret[index].HoneypotIP = honeypotPodIpMap[falcoIDDetailMap[data.ID].PodName]
+		if val == "" {
+			continue
+		}
+		if util.CheckInjectionData(val.(string)) {
+			return nil, 0, nil
+		}
+		condition := "where"
+		if !conditionFlag {
+			conditionFlag = true
 		} else {
-			ret[index].HoneypotIP = ""
+			condition = "and"
 		}
-		if !strings.Contains(ret[index].HoneypotIP, payload.HoneypotIP) {
-			continue
+		if key == "StartTime" {
+			conditionSql = fmt.Sprintf(" %s %s create_time > %s", conditionSql, condition, val)
 		}
-		result = append(result, ret[index])
+		if key == "EndTime" {
+			conditionSql = fmt.Sprintf(" %s %s create_time < %s", conditionSql, condition, val)
+		}
+		if key == "Payload" {
+			conditionSql = fmt.Sprintf(" %s %s output like '%s'", conditionSql, condition, val)
+		}
 	}
-	return &result, nil
+
+	pageSize := int(queryMap["PageSize"].(float64))
+
+	pageNumber := int(queryMap["PageNumber"].(float64))
+
+	t := fmt.Sprintf("order by create_time DESC limit %d offset %d ", pageSize, (pageNumber-1)*pageSize)
+	sql = strings.Join([]string{sql, conditionSql, t}, " ")
+	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
+		return nil, total, err
+	}
+
+	sqlTotal = strings.Join([]string{sqlTotal, conditionSql}, " ")
+	if err := db.Raw(sqlTotal).Scan(&total).Error; err != nil {
+		return nil, total, err
+	}
+	return &ret, total, nil
 }
 
-func (event *FalcoAttackEvent) GetFalcoEventByID(id int64) (*FalcoAttackEvent, error) {
+func (event *FalcoAttackEvent) GetFalcoEventByID(falcoAttackEventId string) (*FalcoAttackEvent, error) {
 	var ret FalcoAttackEvent
-	if err := db.Take(&ret, id).Error; err != nil {
+	if err := db.Where("falco_attack_event_id = ?", falcoAttackEventId).Take(&ret).Error; err != nil {
 		return nil, err
 	}
 	return &ret, nil

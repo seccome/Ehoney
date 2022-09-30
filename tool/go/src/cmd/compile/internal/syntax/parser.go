@@ -247,12 +247,12 @@ func (p *parser) syntaxErrorAt(pos Pos, msg string) {
 	case strings.HasPrefix(msg, "expecting "):
 		msg = ", " + msg
 	default:
-		// plain error - we don't care about current token
+		// plain error - we don't care about current token_builder
 		p.errorAt(pos, "syntax error: "+msg)
 		return
 	}
 
-	// determine token string
+	// determine token_builder string
 	var tok string
 	switch p.tok {
 	case _Name, _Semi:
@@ -433,7 +433,7 @@ func (p *parser) fileOrNil() *File {
 			continue
 		}
 
-		// Reset p.pragma BEFORE advancing to the next token (consuming ';')
+		// Reset p.pragma BEFORE advancing to the next token_builder (consuming ';')
 		// since comments before may set pragmas for the next function decl.
 		p.clearPragma()
 
@@ -733,7 +733,7 @@ func (p *parser) unaryExpr() Expr {
 		pos := p.pos()
 		p.next()
 
-		// If the next token is _Chan we still don't know if it is
+		// If the next token_builder is _Chan we still don't know if it is
 		// a channel (<-chan int) or a receive op (<-chan int(ch)).
 		// We only know once we have found the end of the unaryExpr.
 
@@ -858,7 +858,7 @@ func (p *parser) operand(keep_parens bool) Expr {
 		// }
 
 		// Parentheses are not permitted around T in a composite
-		// literal T{}. If the next token is a {, assume x is a
+		// literal T{}. If the next token_builder is a {, assume x is a
 		// composite literal type T (it may not be, { could be
 		// the opening brace of a block, but we don't know yet).
 		if p.tok == _Lbrace {
@@ -1774,7 +1774,7 @@ func (p *parser) labeledStmtOrNil(label *Name) Stmt {
 		return s
 	}
 
-	// report error at line of ':' token
+	// report error at line of ':' token_builder
 	p.syntaxErrorAt(s.pos, "missing statement after label")
 	// we are already at the end of the labeled statement - no need to advance
 	return nil // avoids follow-on errors (see e.g., fixedbugs/bug274.go)

@@ -11,7 +11,7 @@ import (
 	"unicode/utf8"
 )
 
-// item represents a token or text string returned from the scanner.
+// item represents a token_builder or text string returned from the scanner.
 type item struct {
 	typ  itemType // The type of this item.
 	pos  Pos      // The starting position, in bytes, of this item in the input string.
@@ -182,7 +182,7 @@ func (l *lexer) acceptRun(valid string) {
 	l.backup()
 }
 
-// errorf returns an error token and terminates the scan by passing
+// errorf returns an error token_builder and terminates the scan by passing
 // back a nil pointer that will be the next state, terminating l.nextItem.
 func (l *lexer) errorf(format string, args ...interface{}) stateFn {
 	l.items <- item{itemError, l.start, fmt.Sprintf(format, args...), l.startLine}

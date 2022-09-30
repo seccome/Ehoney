@@ -20,7 +20,7 @@ type test struct {
 
 var decls = []test{
 	// The position of declarations is always the
-	// position of the first token of an individual
+	// position of the first token_builder of an individual
 	// declaration, independent of grouping.
 	{"ImportDecl", `import @"math"`},
 	{"ImportDecl", `import @mymath "math"`},
@@ -61,7 +61,7 @@ var decls = []test{
 
 var exprs = []test{
 	// The position of an expression is the position
-	// of the left-most token that identifies the
+	// of the left-most token_builder that identifies the
 	// kind of expression.
 	{"Name", `@x`},
 

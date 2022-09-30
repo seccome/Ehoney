@@ -194,10 +194,10 @@ func match(m map[string]reflect.Value, pattern, val reflect.Value) bool {
 		v := val.Interface().(*ast.Ident)
 		return p == nil && v == nil || p != nil && v != nil && p.Name == v.Name
 	case objectPtrType, positionType:
-		// object pointers and token positions always match
+		// object pointers and token_builder positions always match
 		return true
 	case callExprType:
-		// For calls, the Ellipsis fields (token.Position) must
+		// For calls, the Ellipsis fields (token_builder.Position) must
 		// match since that is how f(x) and f(x...) are different.
 		// Check them here but fall through for the remaining fields.
 		p := pattern.Interface().(*ast.CallExpr)
@@ -237,7 +237,7 @@ func match(m map[string]reflect.Value, pattern, val reflect.Value) bool {
 		return match(m, p.Elem(), v.Elem())
 	}
 
-	// Handle token integers, etc.
+	// Handle token_builder integers, etc.
 	return p.Interface() == v.Interface()
 }
 

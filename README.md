@@ -26,9 +26,10 @@
 
 - **支持丰富的蜜罐类型**
 
-1. **通用蜜罐**： SSH 蜜罐、Http蜜罐、Redis蜜罐、Telnet蜜罐、Mysql蜜罐、RDP 蜜罐
+1. **通用蜜罐**： SSH 蜜罐、Http蜜罐、Redis蜜罐、Telnet蜜罐、Mysql蜜罐、RDP 蜜罐、SMB 蜜罐、FTP 蜜罐
 2. **IOT蜜罐**：  RTSP 蜜罐
 3. **工控蜜罐**： ModBus 蜜罐
+4. **自定义蜜罐**： 支持七种协议类型的自定义蜜罐
 
 - **基于云原生技术**<br>
 基于k3s打造saas平台欺骗防御，无限生成蜜罐，真实仿真业务环境
@@ -69,7 +70,7 @@ cd Ehoney && chmod +x quick-start.sh && ./quick-start.sh
 # 代表安装成功。
 ```
 
-访问 `http://IP:8080/decept-defense` 进入系统登录页
+访问 `http://IP:8082/decept-defense` 进入系统登录页
 
 默认账户
        <font color=Blue>用户名: `admin`</font>

@@ -144,7 +144,7 @@ var packages = []string{
 	"go/parser",
 	"go/printer",
 	"go/scanner",
-	"go/token",
+	"go/token_builder",
 	"hash",
 	"hash/adler32",
 	"hash/crc32",

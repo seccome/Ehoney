@@ -24,7 +24,7 @@ var canonicalHeaderKeyTests = []canonicalHeaderKeyTest{
 	{"foo-bar~baz", "Foo-Bar~baz"},
 	{"foo-bar*baz", "Foo-Bar*baz"},
 
-	// Non-ASCII or anything with spaces or non-token chars is unchanged:
+	// Non-ASCII or anything with spaces or non-token_builder chars is unchanged:
 	{"üser-agenT", "üser-agenT"},
 	{"a B", "a B"},
 

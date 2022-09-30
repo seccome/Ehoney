@@ -7,14 +7,17 @@ import (
 )
 
 type VirusRecord struct {
-	ID            int64  `gorm:"primary_key;AUTO_INCREMENT;unique;column:id" json:"id"`
+	Id            int64  `gorm:"primary_key;AUTO_INCREMENT;unique;column:id" json:"id"`
+	VirusRecordId string `json:"VirusRecordId" form:"VirusRecordId" gorm:"not null"`
 	VirusName     string `json:"VirusName" form:"VirusName" gorm:"not null;size:256" binding:"required"`
 	HoneypotIP    string `json:"HoneypotIP" form:"HoneypotIP" gorm:"not null;size:256" binding:"required"`
-	CreateTime    string `json:"CreateTime" form:"CreateTime" gorm:"not null"`
 	VirusFilePath string `json:"VirusFilePath" form:"VirusFilePath" gorm:"not null" binding:"required"`
+	CreateTime    int64  `json:"CreateTime" form:"CreateTime" gorm:"not null"`
 }
 
 func (virusRecord *VirusRecord) CreateVirusRecord() error {
+	virusRecord.VirusRecordId = util.GenerateId()
+	virusRecord.CreateTime = util.GetCurrentIntTime()
 	result := db.Create(virusRecord)
 	if result.Error != nil {
 		return result.Error
@@ -22,8 +25,8 @@ func (virusRecord *VirusRecord) CreateVirusRecord() error {
 	return nil
 }
 
-func (virusRecord *VirusRecord) DeleteVirusRecordByID(id int64) error {
-	if err := db.Delete(&VirusRecord{}, id).Error; err != nil {
+func (virusRecord *VirusRecord) DeleteVirusRecordByID(id string) error {
+	if err := db.Model(virusRecord).Where("virus_record_id= ?", id).Delete(&VirusRecord{}).Error; err != nil {
 		return err
 	}
 	return nil

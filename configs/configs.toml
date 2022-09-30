@@ -1,30 +1,28 @@
 
 [app]
   enablecors = true
-  extranet = "http://178.6.4.5:8080"
+  extranet = "http://localhost:8082"
   protocoldeploypath = "/home/ehoney_proxy"
-  scriptpath = "scripts"
-  taskchannel = "task_to_agent_channel"
-  tokentraceaddress = "http://127.0.0.1:5000"
-  tokentraceapipath = "api/msgreceive"
+  tokentraceapipath = "api/public/token/trace-alert"
   uploadpath = "upload"
-  engineversion = "1.0"
+  scriptpath = "scripts"
+  engineversion = "2.0"
   webhook = ""
 
 [database]
-  dbhost = "127.0.0.1"
+  dbhost = "192.168.1.1"
   dbname = "sec_ehoneypot"
-  dbpassword = "ehoney2021"
   dbport = 3306
   dbtype = "mysql"
   dbuser = "root"
+  dbpassword = "Ehoney2021"
 
 [harbor]
-  apiversion = "2.0"
+  apiversion = "v2"
   harborproject = "ehoney"
-  harborurl = "http://47.96.71.197:90"
-  password = "Ehoney2021"
+  harborurl = "http://cloud.docker.com"
   user = "admin"
+  password = "xxx"
 
 [log]
   callerkey = "caller"
@@ -39,14 +37,6 @@
   namekey = "logger"
   stacktracekey = "stacktrace"
   timekey = "time"
-
-[redis]
-  redishost = "127.0.0.1"
-  redisidletimeout = 200
-  redismaxactive = 30
-  redismaxidle = 30
-  redispassword = "ehoney2021"
-  redisport = 6379
 
 [server]
   apphost = "localhost"

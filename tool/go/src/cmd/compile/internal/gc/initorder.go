@@ -329,7 +329,7 @@ func (d *initDeps) foundDep(n *Node) {
 // N.B., the Pos of the first LHS expression is used because because
 // an OAS node's Pos may not be unique. For example, given the
 // declaration "var a, b = f(), g()", "a" must be ordered before "b",
-// but both OAS nodes use the "=" token's position as their Pos.
+// but both OAS nodes use the "=" token_builder's position as their Pos.
 type declOrder []*Node
 
 func (s declOrder) Len() int           { return len(s) }

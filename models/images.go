@@ -2,27 +2,35 @@ package models
 
 import (
 	"decept-defense/controllers/comm"
+	"decept-defense/pkg/util"
 	"fmt"
 	"strings"
 )
 
 type Images struct {
-	ID           int64  `gorm:"primary_key;AUTO_INCREMENT;unique;column:id" json:"id"`     //镜像ID
-	ImageAddress string `json:"ImageAddress" form:"ImageAddress" gorm:"not null;size:256"` //镜像地址
-	ImageName    string `json:"ImageName" form:"ImageName" gorm:"not null"`                //镜像名称
+	Id           int64  `gorm:"primary_key;AUTO_INCREMENT;unique;column:id" json:"id"`     //镜像ID
+	ImageId      string `json:"ImageId" form:"ImageId" gorm:"unique;not null;;size:64"`    //镜像ID
+	ImageAddress string `json:"ImageAddress" form:"ImageAddress" gorm:"not null;size:128"` //镜像地址
+	ImageName    string `json:"ImageName" form:"ImageName" gorm:"not null;size:128"`       //镜像名称
 	ImagePort    int32  `json:"ImagePort" form:"ImagePort" gorm:"null"`                    //镜像端口
-	ImageType    string `json:"ImageType" form:"ImageType" gorm:"null"`                    //镜像服务
+	ProtocolType string `json:"ProtocolType" form:"ProtocolType" gorm:"null;size:128"`     //镜像服务
+	Label        string `json:"Label" form:"Label" gorm:"null;size:128"`                   //标签
+	RepositoryId string `json:"RepositoryId" form:"RepositoryId" gorm:"null;size:128"`     //仓库Id 后续为了自定义镜像准备
+	CreateTime   int64  `form:"CreateTime" json:"CreateTime"`
 	DefaultFlag  bool   `json:"DefaultFlag" form:"DefaultFlag" gorm:"null, default:false"` //默认属性
 }
 
+// dckr_pat_d5BJ8k3y1QHVGPmkg9NMbGUVhJw  docker access token R-Only
+// dckr_pat_qeZ5sDei_wkl8nWxil8s_xvQR-Q docker access token R-W-D
+
 var DefaultImages = []Images{
-	{ImageAddress: "47.96.71.197:90/ehoney/tomcat:v1", ImageName: "ehoney/tomcat", ImagePort: 8080, ImageType: "httpproxy", DefaultFlag: true},
-	{ImageAddress: "47.96.71.197:90/ehoney/ssh:v1", ImageName: "ehoney/ssh", ImagePort: 22, ImageType: "sshproxy", DefaultFlag: true},
-	{ImageAddress: "47.96.71.197:90/ehoney/mysql:v1", ImageName: "ehoney/mysql", ImagePort: 3306, ImageType: "mysqlproxy", DefaultFlag: true},
-	{ImageAddress: "47.96.71.197:90/ehoney/redis:v1", ImageName: "ehoney/redis", ImagePort: 6379, ImageType: "redisproxy", DefaultFlag: true},
-	{ImageAddress: "47.96.71.197:90/ehoney/telnet:v1", ImageName: "ehoney/telnet", ImagePort: 23, ImageType: "telnetproxy", DefaultFlag: true},
-	{ImageAddress: "47.96.71.197:90/ehoney/smb:v1", ImageName: "ehoney/smb", ImagePort: 445, ImageType: "smbproxy", DefaultFlag: true}, // 由于smb client 必须连接 445 所以改4450 445 留给协议代理
-	{ImageAddress: "47.96.71.197:90/ehoney/ftp:v1", ImageName: "ehoney/ftp", ImagePort: 21, ImageType: "ftpproxy", DefaultFlag: true},
+	{ImageAddress: "ehoney/tomcat:v1", ImageId: util.GenerateId(), ImageName: "ehoney/tomcat", ImagePort: 8080, ProtocolType: "httpproxy", Label: "Default", CreateTime: util.GetCurrentIntTime(), DefaultFlag: true},
+	{ImageAddress: "ehoney/ssh:v1", ImageId: util.GenerateId(), ImageName: "ehoney/ssh", ImagePort: 22, ProtocolType: "sshproxy", Label: "Default", CreateTime: util.GetCurrentIntTime(), DefaultFlag: true},
+	{ImageAddress: "ehoney/mysql:v1", ImageId: util.GenerateId(), ImageName: "ehoney/mysql", ImagePort: 3306, ProtocolType: "mysqlproxy", Label: "Default", CreateTime: util.GetCurrentIntTime(), DefaultFlag: true},
+	{ImageAddress: "ehoney/redis:v1", ImageId: util.GenerateId(), ImageName: "ehoney/redis", ImagePort: 6379, ProtocolType: "redisproxy", Label: "Default", CreateTime: util.GetCurrentIntTime(), DefaultFlag: true},
+	{ImageAddress: "ehoney/telnet:v1", ImageId: util.GenerateId(), ImageName: "ehoney/telnet", ImagePort: 23, ProtocolType: "telnetproxy", Label: "Default", CreateTime: util.GetCurrentIntTime(), DefaultFlag: true},
+	{ImageAddress: "ehoney/smb:v1", ImageId: util.GenerateId(), ImageName: "ehoney/smb", ImagePort: 445, ProtocolType: "smbproxy", Label: "Default", CreateTime: util.GetCurrentIntTime(), DefaultFlag: true}, // 由于smb client 必须连接 445 所以改4450 445 留给协议代理
+	{ImageAddress: "ehoney/ftp:v1", ImageId: util.GenerateId(), ImageName: "ehoney/ftp", ImagePort: 21, ProtocolType: "ftpproxy", Label: "Default", CreateTime: util.GetCurrentIntTime(), DefaultFlag: true},
 }
 
 func (image *Images) CreateImage() error {
@@ -50,7 +58,7 @@ func (image *Images) GetImage(payload *comm.SelectPayload) (*[]Images, int64, er
 	var ret []Images
 	var count int64
 	var p = "%" + payload.Payload + "%"
-	sql := fmt.Sprintf("select id, image_name, image_address, image_port, image_type, default_flag from images where CONCAT(image_name, image_address, image_port, image_type) LIKE '%s'", p)
+	sql := fmt.Sprintf("select * from images where CONCAT(image_name, image_address, image_port, protocol_type) LIKE '%s'", p)
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, 0, err
 	}
@@ -63,16 +71,16 @@ func (image *Images) GetImage(payload *comm.SelectPayload) (*[]Images, int64, er
 	return &ret, count, nil
 }
 
-func (image *Images) UpdateImageByID(id int64, payload comm.ImageUpdatePayload) error {
-	if err := db.Model(image).Where("id = ?", id).Updates(Images{ImagePort: payload.ImagePort, ImageType: payload.ImageType}).Error; err != nil {
+func (image *Images) UpdateImageByID(id string, payload comm.ImageUpdatePayload) error {
+	if err := db.Model(image).Where("image_id = ?", id).Updates(Images{ImagePort: payload.ImagePort, ProtocolType: payload.ImageType, Label: payload.Label}).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (image *Images) GetImageByID(id int64) (*Images, error) {
+func (image *Images) GetImageByID(id string) (*Images, error) {
 	var ret Images
-	if err := db.Where("id = ?", id).Take(&ret).Error; err != nil {
+	if err := db.Where("image_id = ?", id).Take(&ret).Error; err != nil {
 		return nil, err
 	}
 	return &ret, nil
@@ -93,9 +101,16 @@ func (image *Images) DeleteImages() error {
 	return nil
 }
 
+func (image *Images) DeleteImageById(id string) error {
+	if err := db.Where("image_id= ?", id).Delete(&Images{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (image *Images) GetPodImageList() (*[]string, error) {
 	var ret []string
-	if err := db.Model(image).Select("image_address").Where("image_type != '' AND image_port != 0 ").Find(&ret).Error; err != nil {
+	if err := db.Model(image).Select("image_address").Where("protocol_type != '' AND image_port != 0 ").Find(&ret).Error; err != nil {
 		return nil, err
 	}
 	return &ret, nil

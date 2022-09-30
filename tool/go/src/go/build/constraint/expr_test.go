@@ -144,10 +144,10 @@ var parseExprErrorTests = []struct {
 }{
 	{"x && ", &SyntaxError{Offset: 5, Err: "unexpected end of expression"}},
 	{"x && (", &SyntaxError{Offset: 6, Err: "missing close paren"}},
-	{"x && ||", &SyntaxError{Offset: 5, Err: "unexpected token ||"}},
+	{"x && ||", &SyntaxError{Offset: 5, Err: "unexpected token_builder ||"}},
 	{"x && !", &SyntaxError{Offset: 6, Err: "unexpected end of expression"}},
 	{"x && !!", &SyntaxError{Offset: 6, Err: "double negation not allowed"}},
-	{"x !", &SyntaxError{Offset: 2, Err: "unexpected token !"}},
+	{"x !", &SyntaxError{Offset: 2, Err: "unexpected token_builder !"}},
 	{"x && (y", &SyntaxError{Offset: 5, Err: "missing close paren"}},
 }
 

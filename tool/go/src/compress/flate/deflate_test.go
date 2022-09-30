@@ -934,7 +934,7 @@ func TestBestSpeedShiftOffsets(t *testing.T) {
 	// Part 2 should match clean state as well even if wrapped.
 	got = len(enc.encode(nil, testData))
 	if wantSecondTokens != got {
-		t.Errorf("got %d, want %d token", got, wantSecondTokens)
+		t.Errorf("got %d, want %d token_builder", got, wantSecondTokens)
 	}
 
 	// Verify that we wrapped.

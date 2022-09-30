@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:build gen
 // +build gen
 
 // This program generates Go code that applies rewrite rules to a Value.
@@ -46,7 +47,7 @@ import (
 //
 // aux      ::= variable | {code}
 // type     ::= variable | {code}
-// variable ::= some token
+// variable ::= some token_builder
 // opcode   ::= one of the opcodes from the *Ops.go files
 
 // special rules: trailing ellipsis "..." (in the outermost sexpr?) must match on both sides of a rule.

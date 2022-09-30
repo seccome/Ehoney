@@ -26,7 +26,7 @@ type Tree struct {
 	// Parsing only; cleared after parse.
 	funcs      []map[string]interface{}
 	lex        *lexer
-	token      [3]item // three-token lookahead for parser.
+	token      [3]item // three-token_builder lookahead for parser.
 	peekCount  int
 	vars       []string // variables defined at the moment.
 	treeSet    map[string]*Tree
@@ -413,9 +413,9 @@ func (t *Tree) pipeline(context string, end itemType) (pipe *PipeNode) {
 decls:
 	if v := t.peekNonSpace(); v.typ == itemVariable {
 		t.next()
-		// Since space is a token, we need 3-token look-ahead here in the worst case:
+		// Since space is a token_builder, we need 3-token_builder look-ahead here in the worst case:
 		// in "$x foo" we need to read "foo" (as opposed to ":=") to know that $x is an
-		// argument variable rather than a declaration. So remember the token
+		// argument variable rather than a declaration. So remember the token_builder
 		// adjacent to the variable so we can push it back if necessary.
 		tokenAfterVariable := t.peek()
 		next := t.peekNonSpace()
@@ -486,7 +486,7 @@ func (t *Tree) parseControl(allowElseIf bool, context string) (pos Pos, line int
 	case nodeElse:
 		if allowElseIf {
 			// Special case for "else if". If the "else" is followed immediately by an "if",
-			// the elseControl will have left the "if" token pending. Treat
+			// the elseControl will have left the "if" token_builder pending. Treat
 			//	{{if a}}_{{else if b}}_{{end}}
 			// as
 			//	{{if a}}_{{else}}{{if b}}_{{end}}{{end}}.
@@ -494,7 +494,7 @@ func (t *Tree) parseControl(allowElseIf bool, context string) (pos Pos, line int
 			// is assumed. This technique works even for long if-else-if chains.
 			// TODO: Should we allow else-if in with and range?
 			if t.peek().typ == itemIf {
-				t.next() // Consume the "if" token.
+				t.next() // Consume the "if" token_builder.
 				elseList = t.newList(next.Position())
 				elseList.append(t.ifControl())
 				// Do not consume the next item - only one {{end}} required.

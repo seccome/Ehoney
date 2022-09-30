@@ -298,7 +298,7 @@ type (
 	// used to unquote STRING and CHAR values, respectively.
 	BasicLit struct {
 		ValuePos token.Pos   // literal position
-		Kind     token.Token // token.INT, token.FLOAT, token.IMAG, token.CHAR, or token.STRING
+		Kind     token.Token // token_builder.INT, token_builder.FLOAT, token_builder.IMAG, token_builder.CHAR, or token_builder.STRING
 		Value    string      // literal string; e.g. 42, 0x7f, 3.14, 1e-9, 2.4i, 'a', '\x7f', "foo" or `\m\n\o`
 	}
 
@@ -364,7 +364,7 @@ type (
 		Fun      Expr      // function expression
 		Lparen   token.Pos // position of "("
 		Args     []Expr    // function arguments; or nil
-		Ellipsis token.Pos // position of "..." (token.NoPos if there is no "...")
+		Ellipsis token.Pos // position of "..." (token_builder.NoPos if there is no "...")
 		Rparen   token.Pos // position of ")"
 	}
 
@@ -436,7 +436,7 @@ type (
 
 	// A FuncType node represents a function type.
 	FuncType struct {
-		Func    token.Pos  // position of "func" keyword (token.NoPos if there is no "func")
+		Func    token.Pos  // position of "func" keyword (token_builder.NoPos if there is no "func")
 		Params  *FieldList // (incoming) parameters; non-nil
 		Results *FieldList // (outgoing) results; or nil
 	}
@@ -458,7 +458,7 @@ type (
 	// A ChanType node represents a channel type.
 	ChanType struct {
 		Begin token.Pos // position of "chan" keyword or "<-" (whichever comes first)
-		Arrow token.Pos // position of "<-" (token.NoPos if there is no "<-")
+		Arrow token.Pos // position of "<-" (token_builder.NoPos if there is no "<-")
 		Dir   ChanDir   // channel direction
 		Value Expr      // value type
 	}
@@ -599,7 +599,7 @@ type (
 
 	// A DeclStmt node represents a declaration in a statement list.
 	DeclStmt struct {
-		Decl Decl // *GenDecl with CONST, TYPE, or VAR token
+		Decl Decl // *GenDecl with CONST, TYPE, or VAR token_builder
 	}
 
 	// An EmptyStmt node represents an empty statement.
@@ -645,7 +645,7 @@ type (
 	AssignStmt struct {
 		Lhs    []Expr
 		TokPos token.Pos   // position of Tok
-		Tok    token.Token // assignment token, DEFINE
+		Tok    token.Token // assignment token_builder, DEFINE
 		Rhs    []Expr
 	}
 
@@ -672,7 +672,7 @@ type (
 	//
 	BranchStmt struct {
 		TokPos token.Pos   // position of Tok
-		Tok    token.Token // keyword token (BREAK, CONTINUE, GOTO, FALLTHROUGH)
+		Tok    token.Token // keyword token_builder (BREAK, CONTINUE, GOTO, FALLTHROUGH)
 		Label  *Ident      // label name; or nil
 	}
 
@@ -957,10 +957,10 @@ type (
 	//
 	// Relationship between Tok value and Specs element type:
 	//
-	//	token.IMPORT  *ImportSpec
-	//	token.CONST   *ValueSpec
-	//	token.TYPE    *TypeSpec
-	//	token.VAR     *ValueSpec
+	//	token_builder.IMPORT  *ImportSpec
+	//	token_builder.CONST   *ValueSpec
+	//	token_builder.TYPE    *TypeSpec
+	//	token_builder.VAR     *ValueSpec
 	//
 	GenDecl struct {
 		Doc    *CommentGroup // associated documentation; or nil

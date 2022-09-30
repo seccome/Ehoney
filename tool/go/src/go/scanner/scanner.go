@@ -21,7 +21,7 @@ import (
 // An ErrorHandler may be provided to Scanner.Init. If a syntax error is
 // encountered and a handler was installed, the handler is called with a
 // position and an error message. The position points to the beginning of
-// the offending token.
+// the offending token_builder.
 //
 type ErrorHandler func(pos token.Position, msg string)
 
@@ -306,7 +306,7 @@ func (s *Scanner) findLineEnd() bool {
 		s.next() // consume initial '/' again
 	}(s.offset - 1)
 
-	// read ahead until a newline, EOF, or non-comment token is found
+	// read ahead until a newline, EOF, or non-comment token_builder is found
 	for s.ch == '/' || s.ch == '*' {
 		if s.ch == '/' {
 			//-style comment always contains a newline
@@ -330,7 +330,7 @@ func (s *Scanner) findLineEnd() bool {
 			return true
 		}
 		if s.ch != '/' {
-			// non-comment token
+			// non-comment token_builder
 			return false
 		}
 		s.next() // consume '/'
@@ -708,7 +708,7 @@ func (s *Scanner) skipWhitespace() {
 
 // Helper functions for scanning multi-byte tokens such as >> += >>= .
 // Different routines recognize different length tok_i based on matches
-// of ch_i. If a token ends in '=', the result is tok1 or tok3
+// of ch_i. If a token_builder ends in '=', the result is tok1 or tok3
 // respectively. Otherwise, the result is tok0 if there was no other
 // matching character, or tok2 if the matching character was ch2.
 
@@ -748,29 +748,29 @@ func (s *Scanner) switch4(tok0, tok1 token.Token, ch2 rune, tok2, tok3 token.Tok
 	return tok0
 }
 
-// Scan scans the next token and returns the token position, the token,
+// Scan scans the next token_builder and returns the token_builder position, the token_builder,
 // and its literal string if applicable. The source end is indicated by
-// token.EOF.
+// token_builder.EOF.
 //
-// If the returned token is a literal (token.IDENT, token.INT, token.FLOAT,
-// token.IMAG, token.CHAR, token.STRING) or token.COMMENT, the literal string
+// If the returned token_builder is a literal (token_builder.IDENT, token_builder.INT, token_builder.FLOAT,
+// token_builder.IMAG, token_builder.CHAR, token_builder.STRING) or token_builder.COMMENT, the literal string
 // has the corresponding value.
 //
-// If the returned token is a keyword, the literal string is the keyword.
+// If the returned token_builder is a keyword, the literal string is the keyword.
 //
-// If the returned token is token.SEMICOLON, the corresponding
+// If the returned token_builder is token_builder.SEMICOLON, the corresponding
 // literal string is ";" if the semicolon was present in the source,
 // and "\n" if the semicolon was inserted because of a newline or
 // at EOF.
 //
-// If the returned token is token.ILLEGAL, the literal string is the
+// If the returned token_builder is token_builder.ILLEGAL, the literal string is the
 // offending character.
 //
 // In all other cases, Scan returns an empty literal string.
 //
-// For more tolerant parsing, Scan will return a valid token if
+// For more tolerant parsing, Scan will return a valid token_builder if
 // possible even if a syntax error was encountered. Thus, even
-// if the resulting token sequence contains no illegal tokens,
+// if the resulting token_builder sequence contains no illegal tokens,
 // a client may not assume that no error occurred. Instead it
 // must check the scanner's ErrorCount or the number of calls
 // of the error handler, if there was one installed.
@@ -783,10 +783,10 @@ func (s *Scanner) Scan() (pos token.Pos, tok token.Token, lit string) {
 scanAgain:
 	s.skipWhitespace()
 
-	// current token start
+	// current token_builder start
 	pos = s.file.Pos(s.offset)
 
-	// determine token value
+	// determine token_builder value
 	insertSemi := false
 	switch ch := s.ch; {
 	case isLetter(ch):

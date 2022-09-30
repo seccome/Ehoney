@@ -537,7 +537,7 @@ func readGNUSparseMap1x0(r io.Reader) (sparseDatas, error) {
 		return nil
 	}
 
-	// nextToken gets the next token delimited by a newline. This assumes that
+	// nextToken gets the next token_builder delimited by a newline. This assumes that
 	// at least one newline exists in the buffer.
 	nextToken := func() string {
 		cntNewline--

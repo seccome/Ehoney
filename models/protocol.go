@@ -2,33 +2,33 @@ package models
 
 import (
 	"decept-defense/controllers/comm"
+	"decept-defense/pkg/util"
 	"fmt"
 	"strings"
 )
 
 type Protocols struct {
-	ID           int64           `gorm:"primary_key;AUTO_INCREMENT;unique;column:id" json:"id"`                               //协议ID
-	ProtocolType string          `json:"ProtocolType" form:"ProtocolType" gorm:"unique;not null;size:128" binding:"required"` //协议类型
-	CreateTime   string          `json:"CreateTime" form:"CreateTime" gorm:"not null"`                                        //创建时间
-	DeployPath   string          `json:"DeployPath" form:"DeployPath" gorm:"not null;size:256"`                               //部署路径
-	LocalPath    string          `json:"LocalPath" form:"LocalPath" gorm:"not null;size:256"`                                 //本地路径
-	FileName     string          `json:"FileName" form:"FileName" gorm:"not null;size:256"`                                   //文件名称
-	Creator      string          `json:"Creator" form:"Creator" gorm:"not null;size:256"`                                     //创建用户
-	Status       comm.TaskStatus `json:"Status" form:"Status" gorm:"not null"`                                                //状态
-	TaskID       string          `json:"TaskID" form:"TaskID" gorm:"not null"`                                                //任务ID
+	Id           int64           `gorm:"primary_key;AUTO_INCREMENT;unique;column:id" json:"Id"`                       //协议ID
+	ProtocolId   string          `json:"ProtocolId" form:"ProtocolId" gorm:"not null;" binding:"required"`            //镜像地址
+	ProtocolType string          `json:"ProtocolType" form:"ProtocolType" gorm:"not null;size:32" binding:"required"` //协议类型
+	LocalPath    string          `json:"LocalPath" form:"LocalPath" gorm:"not null;size:256"`                         //本地路径
+	FileName     string          `json:"FileName" form:"FileName" gorm:"not null;size:256"`                           //文件名称
 	MinPort      int32           `json:"MinPort" form:"MinPort" gorm:"null, default:1" binding:"required"`
 	MaxPort      int32           `json:"MaxPort" form:"MaxPort" gorm:"null, default:65535" binding:"required"`
+	CreateTime   int64           `gorm:"not null" json:"CreateTime"`
 	DefaultFlag  bool            `json:"DefaultFlag" form:"DefaultFlag" gorm:"null, default:false"` //默认属性
+	Status       comm.TaskStatus `json:"Status" form:"Status" gorm:"not null"`                      //状态
+
 }
 
 var DefaultProtocol = []Protocols{
-	{ProtocolType: "httpproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "httpproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 18080, MaxPort: 18082},
-	{ProtocolType: "mysqlproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "mysqlproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 13306, MaxPort: 13308},
-	{ProtocolType: "redisproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "redisproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 16379, MaxPort: 16381},
-	{ProtocolType: "sshproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "sshproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10020, MaxPort: 10022},
-	{ProtocolType: "telnetproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "telnetproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10023, MaxPort: 10025},
-	{ProtocolType: "smbproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "smbproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10445, MaxPort: 10447},
-	{ProtocolType: "ftpproxy", CreateTime: "2021-8-3 19:19:30", DeployPath: "/home/ehoney_proxy", LocalPath: "/fake/path", FileName: "ftpproxy", Creator: "default", Status: comm.SUCCESS, TaskID: "/fake/task/id", DefaultFlag: true, MinPort: 10021, MaxPort: 10023},
+	{ProtocolType: "httpproxy", ProtocolId: util.GenerateId(), CreateTime: util.GetCurrentIntTime(), LocalPath: "/tool/protocol", FileName: "httpproxy", Status: comm.SUCCESS, DefaultFlag: true, MinPort: 18080, MaxPort: 18082},
+	{ProtocolType: "mysqlproxy", ProtocolId: util.GenerateId(), CreateTime: util.GetCurrentIntTime(), LocalPath: "/tool/protocol", FileName: "mysqlproxy", Status: comm.SUCCESS, DefaultFlag: true, MinPort: 13306, MaxPort: 13308},
+	{ProtocolType: "redisproxy", ProtocolId: util.GenerateId(), CreateTime: util.GetCurrentIntTime(), LocalPath: "/tool/protocol", FileName: "redisproxy", Status: comm.SUCCESS, DefaultFlag: true, MinPort: 16379, MaxPort: 16381},
+	{ProtocolType: "sshproxy", ProtocolId: util.GenerateId(), CreateTime: util.GetCurrentIntTime(), LocalPath: "/tool/protocol", FileName: "sshproxy", Status: comm.SUCCESS, DefaultFlag: true, MinPort: 10020, MaxPort: 10022},
+	{ProtocolType: "telnetproxy", ProtocolId: util.GenerateId(), CreateTime: util.GetCurrentIntTime(), LocalPath: "/tool/protocol", FileName: "telnetproxy", Status: comm.SUCCESS, DefaultFlag: true, MinPort: 10023, MaxPort: 10025},
+	{ProtocolType: "smbproxy", ProtocolId: util.GenerateId(), CreateTime: util.GetCurrentIntTime(), LocalPath: "/tool/protocol", FileName: "smbproxy", Status: comm.SUCCESS, DefaultFlag: true, MinPort: 10445, MaxPort: 10447},
+	{ProtocolType: "ftpproxy", ProtocolId: util.GenerateId(), CreateTime: util.GetCurrentIntTime(), LocalPath: "/tool/protocol", FileName: "ftpproxy", Status: comm.SUCCESS, DefaultFlag: true, MinPort: 10021, MaxPort: 10023},
 }
 
 func (protocol *Protocols) CreateProtocol() error {
@@ -53,17 +53,17 @@ func (protocol *Protocols) CreateDefaultProtocol() error {
 	return nil
 }
 
-func (protocol *Protocols) GetProtocolByID(id int64) (*Protocols, error) {
+func (protocol *Protocols) GetProtocolByID(protocolId string) (*Protocols, error) {
 	var ret Protocols
-	if err := db.Where("id = ?", id).Take(&ret).Error; err != nil {
+	if err := db.Where("protocol_id = ?", protocolId).Take(&ret).Error; err != nil {
 		return nil, err
 	}
 	return &ret, nil
 }
 
-func (protocol *Protocols) CheckProtocol(agentID string) *Protocols {
+func (protocol *Protocols) CheckProtocol(agentId string) *Protocols {
 	var ret Protocols
-	if err := db.First(&ret, "agent_id = ?", agentID).Error; err != nil {
+	if err := db.First(&ret, "agent_id = ?", agentId).Error; err != nil {
 		return nil
 	}
 	return &ret
@@ -77,11 +77,11 @@ func (protocol *Protocols) GetProtocolByType(protocolType string) (*Protocols, e
 	return &ret, nil
 }
 
-func (protocol *Protocols) GetProtocol(payload *comm.SelectPayload) (*[]comm.ProtocolSelectResultPayload, int64, error) {
-	var ret []comm.ProtocolSelectResultPayload
+func (protocol *Protocols) GetProtocol(payload *comm.SelectPayload) (*[]Protocols, int64, error) {
+	var ret []Protocols
 	var count int64
 	var p = "%" + payload.Payload + "%"
-	sql := fmt.Sprintf("select id, creator, status, create_time, protocol_type, deploy_path, default_flag, min_port, max_port from protocols where CONCAT(id, creator, create_time, protocol_type, deploy_path, min_port, max_port) LIKE '%s' order by create_time DESC", p)
+	sql := fmt.Sprintf("select * from protocols where CONCAT(id, create_time, protocol_type, local_path, min_port, max_port) LIKE '%s' order by create_time DESC", p)
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, 0, err
 	}
@@ -94,14 +94,6 @@ func (protocol *Protocols) GetProtocol(payload *comm.SelectPayload) (*[]comm.Pro
 	return &ret, count, nil
 }
 
-func (protocol *Protocols) GetProtocolByTaskID(taskID string) (*Protocols, error) {
-	var ret Protocols
-	if err := db.Where("task_id = ?", taskID).First(&ret).Error; err != nil {
-		return nil, err
-	}
-	return &ret, nil
-}
-
 func (protocol *Protocols) GetProtocolTypeList() (*[]string, error) {
 	var ret []string
 	if err := db.Model(protocol).Select("protocol_type").Find(&ret).Error; err != nil {
@@ -110,22 +102,15 @@ func (protocol *Protocols) GetProtocolTypeList() (*[]string, error) {
 	return &ret, nil
 }
 
-func (protocol *Protocols) DeleteProtocolByID(id int64) error {
-	if err := db.Delete(&Protocols{}, id).Error; err != nil {
+func (protocol *Protocols) DeleteProtocolByID(id string) error {
+	if err := db.Where("protocol_id= ?", id).Delete(&Protocols{}).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (protocol *Protocols) UpdateProtocolStatusByTaskID(status int, taskID string) error {
-	if err := db.Model(protocol).Where("task_id = ?", taskID).Update("status", status).Error; err != nil {
-		return err
-	}
-	return nil
-}
-
-func (protocol *Protocols) UpdateProtocolPortRange(min, max int32, ID int64) error {
-	if err := db.Model(protocol).Where("id = ?", ID).Update("min_port", min).Update("max_port", max).Error; err != nil {
+func (protocol *Protocols) UpdateProtocolPortRange(min, max int32, ID string) error {
+	if err := db.Model(protocol).Where("protocol_id = ?", ID).Update("min_port", min).Update("max_port", max).Error; err != nil {
 		return err
 	}
 	return nil

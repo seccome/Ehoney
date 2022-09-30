@@ -24,7 +24,7 @@ func TestIssue33649(t *testing.T) {
 			panic("invalid test setup: parser didn't return an AST")
 		}
 
-		// find corresponding token.File
+		// find corresponding token_builder.File
 		var tf *token.File
 		fset.Iterate(func(f *token.File) bool {
 			tf = f

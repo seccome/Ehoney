@@ -26,7 +26,7 @@ type Input struct {
 	beginningOfLine bool
 	ifdefStack      []bool
 	macros          map[string]*Macro
-	text            string // Text of last token returned by Next.
+	text            string // Text of last token_builder returned by Next.
 	peek            bool
 	peekToken       ScanToken
 	peekText        string
@@ -75,7 +75,7 @@ func (in *Input) Error(args ...interface{}) {
 	os.Exit(1)
 }
 
-// expectText is like Error but adds "got XXX" where XXX is a quoted representation of the most recent token.
+// expectText is like Error but adds "got XXX" where XXX is a quoted representation of the most recent token_builder.
 func (in *Input) expectText(args ...interface{}) {
 	in.Error(append(args, "; got", strconv.Quote(in.Stack.Text()))...)
 }
@@ -99,7 +99,7 @@ func (in *Input) Next() ScanToken {
 		in.text = in.peekText
 		return tok
 	}
-	// If we cannot generate a token after 100 macro invocations, we're in trouble.
+	// If we cannot generate a token_builder after 100 macro invocations, we're in trouble.
 	// The usual case is caught by Push, below, but be safe.
 	for nesting := 0; nesting < 100; {
 		tok := in.Stack.Next()
@@ -178,7 +178,7 @@ func (in *Input) hash() bool {
 	case "undef":
 		in.undef()
 	default:
-		in.Error("unexpected token after '#':", in.Stack.Text())
+		in.Error("unexpected token_builder after '#':", in.Stack.Text())
 	}
 	return true
 }
@@ -230,7 +230,7 @@ func (in *Input) macroDefinition(name string) ([]string, []Token) {
 	// distinctly: the first is a macro with arguments, the second without.
 	// Distinguish these cases using the column number, since we don't
 	// see the space itself. Note that text/scanner reports the position at the
-	// end of the token. It's where you are now, and you just read this token.
+	// end of the token_builder. It's where you are now, and you just read this token_builder.
 	if tok == '(' && in.Stack.Col() == prevCol+1 {
 		// Macro has arguments. Scan list of formals.
 		acceptArg := true
@@ -240,7 +240,7 @@ func (in *Input) macroDefinition(name string) ([]string, []Token) {
 			tok = in.Stack.Next()
 			switch tok {
 			case ')':
-				tok = in.Stack.Next() // First token of macro definition.
+				tok = in.Stack.Next() // First token_builder of macro definition.
 				break Loop
 			case ',':
 				if acceptArg {
@@ -301,7 +301,7 @@ func (in *Input) invokeMacro(macro *Macro) {
 	tok := in.Stack.Next()
 	if tok != '(' {
 		// If the macro has arguments but is invoked without them, all we push is the macro name.
-		// First, put back the token.
+		// First, put back the token_builder.
 		in.peekToken = tok
 		in.peekText = in.text
 		in.peek = true
@@ -351,7 +351,7 @@ func (in *Input) argsFor(macro *Macro) map[string][]Token {
 }
 
 // collectArgument returns the actual tokens for a single argument of a macro.
-// It also returns the token that terminated the argument, which will always
+// It also returns the token_builder that terminated the argument, which will always
 // be either ',' or ')'. The starting '(' has been scanned.
 func (in *Input) collectArgument(macro *Macro) ([]Token, ScanToken) {
 	nesting := 0
@@ -455,7 +455,7 @@ func (in *Input) line() {
 	}
 	tok = in.Stack.Next()
 	if tok != '\n' {
-		in.Error("unexpected token at end of #line: ", tok)
+		in.Error("unexpected token_builder at end of #line: ", tok)
 	}
 	pos := src.MakePos(in.Base(), uint(in.Line())+1, 1) // +1 because #line nnn means line nnn starts on next line
 	in.Stack.SetBase(src.NewLinePragmaBase(pos, file, objabi.AbsFile(objabi.WorkingDir(), file, *flags.TrimPath), uint(line), 1))

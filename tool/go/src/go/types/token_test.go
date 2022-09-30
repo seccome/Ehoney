@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// This file checks invariants of token.Token ordering that we rely on
-// since package go/token doesn't provide any guarantees at the moment.
+// This file checks invariants of token_builder.Token ordering that we rely on
+// since package go/token_builder doesn't provide any guarantees at the moment.
 
 package types
 
@@ -27,7 +27,7 @@ var assignOps = map[token.Token]token.Token{
 }
 
 func TestZeroTok(t *testing.T) {
-	// zero value for token.Token must be token.ILLEGAL
+	// zero value for token_builder.Token must be token_builder.ILLEGAL
 	var zero token.Token
 	if token.ILLEGAL != zero {
 		t.Errorf("%s == %d; want 0", token.ILLEGAL, zero)

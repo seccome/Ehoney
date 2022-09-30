@@ -1,16 +1,13 @@
 #!/bin/bash
 #
-DB_Port=3306
+
 DB_User="root"
-DB_Database="security#123456#"
-DB_Password="12345"
-REDIS_Port="6379"
-REDIS_Password="123456"
+DB_Database="sec_ehoneypot"
+DB_Password="Ehoney2021"
 Project_Dir=/home
 Project_Port=8082
-Project_Front_Port=8080
+DB_Port=3306
 Local_Host="127.0.0.1"
-File_Trace_port=5000
 
 function install_soft() {
   echo -e "[ start install soft [ $1 ]"
@@ -76,17 +73,6 @@ function check_docker_container_state() {
   fi
 }
 
-function check_file_trace_service() {
-  sleep 7s
-  curl http://${Local_Host}:5000/health | grep 'SUCCEED' &>/dev/null
-  if [ $? -ne 0 ]; then
-    echo "file_trace service error, exit!!"
-    exit
-  else
-    echo "file_trace service good"
-  fi
-}
-
 function check_decept_defense_service() {
   sleep 5s
   curl http://localhost:8082/api/public/health | grep 'code' &>/dev/null
@@ -111,22 +97,10 @@ function kill_if_process_exist() {
 
 # 检查软件是否安装 curl wget zip go redis mysql docker kubectl;
 function prepare_base_install() {
-  for i in wget curl unzip kernel-devel-$(uname -r); do
+  for i in wget curl unzip gcc gcc-c++ kernel-devel-$(uname -r); do
     command -v $i &>/dev/null || install_soft $i
   done
   # yumRepoUpdate
-}
-
-function resetAgentJson() {
-  dos2unix ${RelayDir}/agent/conf/agent.json
-  echo "{
-  \"honeyPublicIp\": \"\",
-  \"strategyAddr\": \"${Local_Host}:${REDIS_Port}\",
-  \"strategyPass\": \"${REDIS_Password}\",
-  \"version\": \"1.0\",
-  \"sshKeyUploadUrl\": \"http://${Local_Host}:${Project_Port}/api/public/protocol/key\"
-  }" >${RelayDir}/agent/conf/agent.json
-
 }
 
 function is_port_bind() {
@@ -154,29 +128,16 @@ function ports_check() {
   command -v lsof &>/dev/null || install_soft lsof
   echo "Start to detect whether the necessary ports required by the service are occupied!!"
   shouldreturn="false"
-  httpfrontport=$(is_port_bind $Project_Front_Port)
   httpwebport=$(is_port_bind $Project_Port)
-  redisport=$(is_port_bind $REDIS_Port)
   mysqlport=$(is_port_bind $DB_Port)
-  filetraceport=$(is_port_bind $File_Trace_port)
-  if [ "$httpfrontport" = "true" ]; then
-    echo "$Project_Front_Port Occupied!!"
-    shouldreturn="true"
-  fi
+
   if [ "$httpwebport" = "true" ]; then
     echo "$Project_Port Occupied!!"
     shouldreturn="true"
   fi
-  if [ "$redisport" = "true" ]; then
-    echo "$REDIS_Port Occupied!!"
-    shouldreturn="true"
-  fi
+
   if [ "$mysqlport" = "true" ]; then
     echo "$DB_Port Occupied!!"
-    shouldreturn="true"
-  fi
-  if [ "$filetraceport" = "true" ]; then
-    echo "$File_Trace_port Occupied!!"
     shouldreturn="true"
   fi
 
@@ -237,25 +198,18 @@ function prepare_conf() {
   DB_User=$(readConfValue $Project_Dir/configs/configs.toml dbuser)
   DB_Database=$(readConfValue $Project_Dir/configs/configs.toml dbname)
   DB_Password=$(readConfValue $Project_Dir/configs/configs.toml dbpassword)
-  REDIS_Port=$(readConfValue $Project_Dir/configs/configs.toml redisport)
-  REDIS_Password=$(readConfValue $Project_Dir/configs/configs.toml redispassword)
   echo -e "DB_Port: "$DB_Port
   echo -e "DB_User: "$DB_User
   echo -e "DB_Database: "$DB_Database
   echo -e "DB_Password: "$DB_Password
-  echo -e "REDIS_Port: "$REDIS_Port
-  echo -e "REDIS_Password: "$REDIS_Password
 }
 
 function component_installer() {
   setupDocker # 安装Docker
   setupK3s    # 安装K3S
   setupFalco
-  setupRedis       # 安装Redis
   setupMysqlDocker # 安装MySQL 5.6 以及sec_pot database 的镜像
-  setupFileTrace
   setupDeceptDefence
-  setupRelayAgent
 }
 function setupFalco() {
   echo "--------------------Start deploying Falco----------------------------"
@@ -325,9 +279,7 @@ function swpConfValue() {
   sed -i "$2s/$old/$value/" $configfile
 }
 
-function setupK3s() {
-  echo "--------------------Start deploying K3S-----------------------------"
-  # curl -sfL https://get.k3s.io | sh -
+function install_k3s() {
   # K3S 配置修改
   echo "start setup k3s service"
   dos2unix ${Project_Dir}/tool/k3s/k3s.sh
@@ -337,24 +289,28 @@ function setupK3s() {
   sudo systemctl daemon-reload
   sudo systemctl restart k3s
   swpConfValue /etc/rancher/k3s/k3s.yaml 5 127.0.0.1 $Local_Host
-  echo \ export KUBECONFIG=/etc/rancher/k3s/k3s.yaml >>/etc/profile
+  if [ $(grep -c "KUBECONFIG" /etc/profile) -ge '1' ]; then
+    echo "KUBECONFIG is configured, skip!"
+  else
+    echo \  >>/etc/profile
+    echo export KUBECONFIG=/etc/rancher/k3s/k3s.yaml >>/etc/profile
+  fi
   # 覆盖项目中的k3s 配置
   yes | cp -rf /etc/rancher/k3s/k3s.yaml ${Project_Dir}/configs/.kube/config
   source /etc/profile
   sleep 1s
-  echo "--------------------End of K3S installation-----------------------------"
   check_k3s_service
 }
 
-function setupRedis() {
-  echo "--------------------Start deploying Redis-----------------------------"
-  rm -rf /etc/decept-defense/data
-  mkdir -p /etc/decept-defense/data
-  docker pull redis:5.0.6
-  docker run -p ${REDIS_Port}:6379 -v /etc/decept-defense/data:/data --name decept-redis -d redis:5.0.6 redis-server --requirepass ""${REDIS_Password}""
-  echo "docker run -p ${REDIS_Port}:6379 -v /etc/decept-defense/data:/data --name decept-redis -d redis:5.0.6 redis-server --requirepass ${REDIS_Password}"
-  check_docker_container_state decept-redis
-  echo "--------------------End of redis installation------------------------------"
+function setupK3s() {
+  echo "--------------------Start deploying K3S-----------------------------"
+  if [ -e "/etc/rancher/k3s/k3s.yaml" ]; then
+    echo "k3s is installed, skip! "
+  else
+    echo "k3s is uninstalled, start install!"
+    install_k3s
+  fi
+  echo "--------------------End of K3S installation-----------------------------"
 }
 
 function setupDocker() {
@@ -363,7 +319,7 @@ function setupDocker() {
     echo "docker is uninstalled, start install!"
     install_Docker
   else
-    if [ $(grep -c "47.96.71.197:90" /usr/lib/systemd/system/docker.service) -eq '1' ]; then
+    if [ $(grep -c "dockerd" /usr/lib/systemd/system/docker.service) -eq '1' ]; then
       echo "docker.service is configured, skip!"
     else
       echo "docker is unconfigured, restart install!"
@@ -393,86 +349,19 @@ function install_Docker() {
   # 安装最新稳定版本的docker
   sudo yum install -y docker-ce
 
-  # 配置docker文件
-  sed -i "13c ExecStart=/usr/bin/dockerd --insecure-registry=47.96.71.197:90" /usr/lib/systemd/system/docker.service
-
-  #  sudo tee /etc/docker/daemon.json <<-'EOF'
-  #  {
-  #   "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"],
-  #   "fixed-cidr":"172.17.0.0/24"
-  #  }
-  #EOF
+  sudo tee /etc/docker/daemon.json <<-'EOF'
+    {
+     "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]
+    }
+EOF
 
   # 启动docker引擎并设置开机启动
   sudo systemctl daemon-reload
   sudo systemctl start docker
   sudo systemctl enable docker
   # 配置当前用户对docker的执行权限
-
   sudo groupadd docker
   sudo gpasswd -a ${USER} docker
-
-  #sudo systemctl daemon-reload
-}
-
-function setupRelayAgent() {
-  echo "--------------------Start deploying protocol agent-----------------------------"
-  RelayDir=/home/relay
-
-  kill_if_process_exist decept-agent
-
-  #创建下载路径文件夹
-  if [ ! -d "${RelayDir}" ]; then
-    echo "${RelayDir} not exist, start create"
-    mkdir -p ${RelayDir}
-    if [ $? -ne 0 ]; then
-      echo "Failed to create folder ${RelayDir}"
-      exit 1
-    else
-      sudo chmod -R 755 ${RelayDir}
-      echo "Create folder ${RelayDir} successfully"
-    fi
-  fi
-
-  cp ${Project_Dir}/agent/decept-agent.tar.gz ${RelayDir}/
-
-  # TODO 替换redis 配置
-
-  cd ${RelayDir}/
-
-  tar zxvf ${RelayDir}/decept-agent.tar.gz
-
-  cd ${RelayDir}/agent
-
-  resetAgentJson
-
-  nohup ./decept-agent -mode RELAY >/dev/null &
-
-  cd $Project_Dir
-  # TODO cp 协议代理 到指定目录
-
-  echo "--------------------Protocol agent deployment complete-----------------------------"
-  setupProxyFile
-}
-
-function setupProxyFile() {
-  echo "--------------------Start deploying protocol file-----------------------------"
-  ProtocolPath=/home/ehoney_proxy
-  #创建下载路径文件夹
-  if [ -d "${ProtocolPath}" ]; then
-    rm -rf ${ProtocolPath}
-  fi
-  mkdir -p ${ProtocolPath}
-  if [ $? -ne 0 ]; then
-    echo "Failed to create folder ${ProtocolPath}"
-    exit 1
-  else
-    echo "Create folder ${ProtocolPath} successfully"
-  fi
-
-  cp -r ${Project_Dir}/tool/protocol/* ${ProtocolPath}
-  sudo chmod -R 755 /home/ehoney_proxy/
-  echo "--------------------Protocol file deployment complete-----------------------------"
 }
 
 function setupMysqlDocker() {
@@ -495,37 +384,37 @@ function setupMysqlDocker() {
   cd $Project_Dir
 }
 
+function install_go() {
+  sudo cd $Project_Dir
+  sudo cp -r tool/go /usr/local/go
+  sudo chmod -R 755 /usr/local/go
+  echo \  >>/etc/profile
+  echo PATH=$PATH:/usr/local/go/bin >>/etc/profile
+  echo \  >>/etc/profile
+  echo export GO111MODULE=on >>/etc/profile
+  echo \  >>/etc/profile
+  echo export GOPROXY=https://goproxy.cn >>/etc/profile
+  source /etc/profile
+  sleep 1s
+  go version
+}
+
 function setupDeceptDefence() {
-  echo "--------------------Start install DeceptDefence-------------------------"
+  echo "-------------------- Starrt install DeceptDefence-------------------------"
+  if [ ! -d "/usr/local/go" ]; then
+    echo "golang is uninstalled, start install!"
+    install_go
+  else
+    echo "golang is installed, skip! "
+  fi
   cd $Project_Dir
-  chmod +x $Project_Dir/dockerStart.sh
-  dos2unix $Project_Dir/dockerStart.sh
-  chmod -R 755 $Project_Dir/tool/file_token_trace
-  # 覆盖项目中的k3s 配置
   yes | cp -rf /etc/rancher/k3s/k3s.yaml ${Project_Dir}/configs/.kube/config
-  docker build -t decept-defense .
-  docker run -d -v $Project_Dir/configs/:/go/src/configs/ -v $Project_Dir/upload/:/go/src/upload/ --network host -e TZ=Asia/Shanghai --name decept-defense-web -e CONFIGS="host:${Local_Host};" decept-defense:latest
-  echo "--------------------End of DeceptDefence installation-------------------------"
+  mkdir -p /var/decept-agent/ssh/
+  sudo chmod -R 755 $Project_Dir/tool/protocol
+  go build .
+  nohup ./decept-defense --ip ${Local_Host} >/dev/null &
   check_decept_defense_service
-}
-
-function setupFileTrace() {
-  echo "--------------------Start install FileTrace---------------------------"
-  chmod +x $Project_Dir/tool/filetrace/filetracemsg
-  cd $Project_Dir/tool/filetrace
-  echo "filetrace param: -dbuser ${DB_User} -dbpassword ${DB_Password} -dbhost ${Local_Host} -dbname ${DB_Database} -dbport ${DB_Port} "
-  nohup ./filetracemsg -dbuser ${DB_User} -dbpassword ${DB_Password} -dbhost ${Local_Host} -dbname ${DB_Database} -dbport ${DB_Port} >/dev/null &
-  check_file_trace_service
-  echo "--------------------End of  FileTrace installation---------------------------"
-}
-
-function setupFileTraceDocker() {
-  echo "--------------------Start install FileTrace---------------------------"
-  cd $Project_Dir/tool/filetrace
-  docker build -t filetracemsg .
-  docker run -itd -p 5000:5000 --name filetrace-msg-service -v /home/filetrace/infile:/mnt/infile -v /home/filetrace/outfile:/mnt/outfile -e SQLALCHEMY_DATABASE_URI="mysql+pymysql://${DB_User}:${DB_Password}@${Local_Host}:${DB_Port}/${DB_Database}?charset=utf8" filetracemsg:latest
-  check_docker_container_state filetrace-msg-service
-  echo "--------------------End of FileTrace installation---------------------------"
+  echo "--------------------End of DeceptDefence installation-------------------------"
 }
 
 function main() {
@@ -538,13 +427,12 @@ function main() {
   yum install -y dos2unix
   prepare_conf
   ports_check
-  #setup_iptables
   prepare_base_install
   component_installer
-  echo "----------------------------------------------------------"
+  echo "--------------------------------------------------------------"
   echo "all the services are ready and happy to use!!!"
-  echo "Please visit url: http://${Local_Host}:${Project_Front_Port}/decept-defense"
-  echo "----------------------------------------------------------"
+  echo "please visit url: [ http://${Local_Host}:8082/decept-defense ]"
+  echo "--------------------------------------------------------------"
 }
 function yumRepoUpdate() {
   wget http://mirrors.163.com/.help/CentOS7-Base-163.repo
@@ -566,6 +454,7 @@ function getIpAddr() {
     Local_Host=${array[*]}
   elif [ $num -gt 1 ]; then
     echo -e "\033[036m---------------------------------------------------------\033[0m"
+    echo -e "\033[036m-本次更新涉及数据库结构改变, 如果由老版本升级推荐删除文件夹/var/lib/ehoney-db-data \033[0m"
     echo -e "\033[036m----Please select the IP address used by this machine---\033[0m"
     for i in "${!array[@]}"; do
       echo -e "\033[032m*    "$i" "${array[$i]}"	\033[0m"
@@ -605,11 +494,6 @@ function setUpIp() {
     exit 1
   fi
   echo "The IP used by this machine is set to: ${Local_Host}"
-  #
-  #  if [ ! -f "/home/ehoney_ip.txt" ]; then
-  #    touch /home/ehoney_ip.txt
-  #  fi
-  #  echo ${Local_Host} >/home/ehoney_ip.txt
 }
 
 main

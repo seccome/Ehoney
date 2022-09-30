@@ -20,20 +20,6 @@ type HarborConfigPayload struct {
 	AuthenticatePass  string `gorm:"not null;size:256" form:"AuthenticatePass"  json:"AuthenticatePass" binding:"required"` //密码
 }
 
-// UpdateHarborConfig 设置harbor镜像源
-// @Summary 设置harbor镜像源
-// @Description 设置harbor镜像源
-// @Tags 系统设置
-// @Produce application/json
-// @Accept application/json
-// @Param HarborURL body HarborConfigPayload true "HarborURL"
-// @Param HarborProjectName body HarborConfigPayload true "HarborProjectName"
-// @Param AuthenticateUser body HarborConfigPayload true "AuthenticateUser"
-// @Param AuthenticatePass body HarborConfigPayload true "AuthenticatePass"
-// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
-// @Success 200 {string} json "{"code":200,"msg":"ok","data":{}}"
-// @Failure 400 {string} json "{"code":400,"msg":"请求参数错误","data":{}}"
-// @Router /api/v1/harbor [put]
 func UpdateHarborConfig(c *gin.Context) {
 	appG := app.Gin{C: c}
 
@@ -56,16 +42,6 @@ func UpdateHarborConfig(c *gin.Context) {
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
 }
 
-// GetHarborConfig 获取harbor镜像源
-// @Summary 获取harbor镜像源
-// @Description 获取harbor镜像源
-// @Tags 系统设置
-// @Produce application/json
-// @Accept application/json
-// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
-// @Success 200 {string} json "{"code":200,"msg":"ok","data":{}}"
-// @Failure 400 {string} json "{"code":400,"msg":"请求参数错误","data":{}}"
-// @Router /api/v1/harbor [get]
 func GetHarborConfig(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var harborConfigPayload HarborConfigPayload
@@ -77,20 +53,6 @@ func GetHarborConfig(c *gin.Context) {
 	appG.Response(http.StatusOK, app.SUCCESS, harborConfigPayload)
 }
 
-// TestHarborConnection 测试harbor连接
-// @Summary 测试harbor连接
-// @Description 测试harbor连接
-// @Tags 系统设置
-// @Produce application/json
-// @Accept application/json
-// @Param HarborURL body HarborConfigPayload true "HarborURL"
-// @Param HarborProjectName body HarborConfigPayload true "HarborProjectName"
-// @Param AuthenticateUser body HarborConfigPayload true "AuthenticateUser"
-// @Param AuthenticatePass body HarborConfigPayload true "AuthenticatePass"
-// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
-// @Success 200 {object} models.Images
-// @Failure 400 {string} json "{"code":400,"msg":"请求参数错误","data":{}}"
-// @Router /api/v1/harbor/health [get]
 func TestHarborConnection(c *gin.Context) {
 	appG := app.Gin{C: c}
 

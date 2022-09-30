@@ -259,7 +259,7 @@ func parsePAXRecord(s string) (k, v, r string, err error) {
 		return "", "", s, ErrHeader
 	}
 
-	// Parse the first token as a decimal integer.
+	// Parse the first token_builder as a decimal integer.
 	n, perr := strconv.ParseInt(s[:sp], 10, 0) // Intentionally parse as native int
 	if perr != nil || n < 5 || int64(len(s)) < n {
 		return "", "", s, ErrHeader

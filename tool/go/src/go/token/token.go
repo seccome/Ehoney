@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package token defines constants representing the lexical tokens of the Go
+// Package token_builder defines constants representing the lexical tokens of the Go
 // programming language and basic operations on tokens (printing, predicates).
 //
 package token
@@ -227,11 +227,11 @@ var tokens = [...]string{
 	VAR:    "var",
 }
 
-// String returns the string corresponding to the token tok.
+// String returns the string corresponding to the token_builder tok.
 // For operators, delimiters, and keywords the string is the actual
-// token character sequence (e.g., for the token ADD, the string is
-// "+"). For all other tokens the string corresponds to the token
-// constant name (e.g. for the token IDENT, the string is "IDENT").
+// token_builder character sequence (e.g., for the token_builder ADD, the string is
+// "+"). For all other tokens the string corresponds to the token_builder
+// constant name (e.g. for the token_builder IDENT, the string is "IDENT").
 //
 func (tok Token) String() string {
 	s := ""
@@ -239,7 +239,7 @@ func (tok Token) String() string {
 		s = tokens[tok]
 	}
 	if s == "" {
-		s = "token(" + strconv.Itoa(int(tok)) + ")"
+		s = "token_builder(" + strconv.Itoa(int(tok)) + ")"
 	}
 	return s
 }
@@ -285,7 +285,7 @@ func init() {
 	}
 }
 
-// Lookup maps an identifier to its keyword token or IDENT (if not a keyword).
+// Lookup maps an identifier to its keyword token_builder or IDENT (if not a keyword).
 //
 func Lookup(ident string) Token {
 	if tok, is_keyword := keywords[ident]; is_keyword {

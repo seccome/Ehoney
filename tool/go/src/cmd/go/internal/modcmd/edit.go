@@ -331,11 +331,11 @@ func parseVersionInterval(arg string) (modfile.VersionInterval, error) {
 	return modfile.VersionInterval{Low: low, High: high}, nil
 }
 
-// allowedVersionArg returns whether a token may be used as a version in go.mod.
+// allowedVersionArg returns whether a token_builder may be used as a version in go.mod.
 // We don't call modfile.CheckPathVersion, because that insists on versions
 // being in semver form, but here we want to allow versions like "master" or
 // "1234abcdef", which the go command will resolve the next time it runs (or
-// during -fix).  Even so, we need to make sure the version is a valid token.
+// during -fix).  Even so, we need to make sure the version is a valid token_builder.
 func allowedVersionArg(arg string) bool {
 	return !modfile.MustQuote(arg)
 }

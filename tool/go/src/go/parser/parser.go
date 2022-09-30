@@ -42,10 +42,10 @@ type parser struct {
 	leadComment *ast.CommentGroup // last lead comment
 	lineComment *ast.CommentGroup // last line comment
 
-	// Next token
-	pos token.Pos   // token position
-	tok token.Token // one token look-ahead
-	lit string      // token literal
+	// Next token_builder
+	pos token.Pos   // token_builder position
+	tok token.Token // one token_builder look-ahead
+	lit string      // token_builder literal
 
 	// Error recovery
 	// (used to limit the number of calls to parser.advance
@@ -236,12 +236,12 @@ func un(p *parser) {
 	p.printTrace(")")
 }
 
-// Advance to the next token.
+// Advance to the next token_builder.
 func (p *parser) next0() {
-	// Because of one-token look-ahead, print the previous token
+	// Because of one-token_builder look-ahead, print the previous token_builder
 	// when tracing as it provides a more readable output. The
-	// very first token (!p.pos.IsValid()) is not initialized
-	// (it is token.ILLEGAL), so don't print it .
+	// very first token_builder (!p.pos.IsValid()) is not initialized
+	// (it is token_builder.ILLEGAL), so don't print it .
 	if p.trace && p.pos.IsValid() {
 		s := p.tok.String()
 		switch {
@@ -279,7 +279,7 @@ func (p *parser) consumeComment() (comment *ast.Comment, endline int) {
 
 // Consume a group of adjacent comments, add it to the parser's
 // comments list, and return it together with the line at which
-// the last comment in the group ends. A non-comment token or n
+// the last comment in the group ends. A non-comment token_builder or n
 // empty lines terminate a comment group.
 //
 func (p *parser) consumeCommentGroup(n int) (comments *ast.CommentGroup, endline int) {
@@ -298,16 +298,16 @@ func (p *parser) consumeCommentGroup(n int) (comments *ast.CommentGroup, endline
 	return
 }
 
-// Advance to the next non-comment token. In the process, collect
+// Advance to the next non-comment token_builder. In the process, collect
 // any comment groups encountered, and remember the last lead and
 // line comments.
 //
 // A lead comment is a comment group that starts and ends in a
 // line without any other tokens and that is followed by a non-comment
-// token on the line immediately after the comment group.
+// token_builder on the line immediately after the comment group.
 //
 // A line comment is a comment group that follows a non-comment
-// token on the same line, and that has no tokens after it on the line
+// token_builder on the same line, and that has no tokens after it on the line
 // where it ends.
 //
 // Lead and line comments may be considered documentation that is
@@ -324,11 +324,11 @@ func (p *parser) next() {
 		var endline int
 
 		if p.file.Line(p.pos) == p.file.Line(prev) {
-			// The comment is on same line as the previous token; it
+			// The comment is on same line as the previous token_builder; it
 			// cannot be a lead comment but may be a line comment.
 			comment, endline = p.consumeCommentGroup(0)
 			if p.file.Line(p.pos) != endline || p.tok == token.EOF {
-				// The next token is on a different line, thus
+				// The next token_builder is on a different line, thus
 				// the last comment group is a line comment.
 				p.lineComment = comment
 			}
@@ -341,7 +341,7 @@ func (p *parser) next() {
 		}
 
 		if endline+1 == p.file.Line(p.pos) {
-			// The next token is following on the line immediately after the
+			// The next token_builder is following on the line immediately after the
 			// comment group, thus the last comment group is a lead comment.
 			p.leadComment = comment
 		}
@@ -398,7 +398,7 @@ func (p *parser) expect(tok token.Token) token.Pos {
 }
 
 // expect2 is like expect, but it returns an invalid position
-// if the expected token is not found.
+// if the expected token_builder is not found.
 func (p *parser) expect2(tok token.Token) (pos token.Pos) {
 	if p.tok == tok {
 		pos = p.pos
@@ -458,14 +458,14 @@ func assert(cond bool, msg string) {
 	}
 }
 
-// advance consumes tokens until the current token p.tok
-// is in the 'to' set, or token.EOF. For error recovery.
+// advance consumes tokens until the current token_builder p.tok
+// is in the 'to' set, or token_builder.EOF. For error recovery.
 func (p *parser) advance(to map[token.Token]bool) {
 	for ; p.tok != token.EOF; p.next() {
 		if to[p.tok] {
 			// Return only if parser made some progress since last
 			// sync or if it has not reached 10 advance calls without
-			// progress. Otherwise consume at least one token to
+			// progress. Otherwise consume at least one token_builder to
 			// avoid an endless parser loop (it is possible that
 			// both parseOperand and parseStmt call advance and
 			// correctly do not advance, thus the need for the
@@ -480,7 +480,7 @@ func (p *parser) advance(to map[token.Token]bool) {
 				return
 			}
 			// Reaching here indicates a parser bug, likely an
-			// incorrect token list in this function, but it only
+			// incorrect token_builder list in this function, but it only
 			// leads to skipping of possibly correct code if a
 			// previous error is present, and thus is preferred
 			// over a non-terminating parse.
@@ -525,8 +525,8 @@ var exprEnd = map[token.Token]bool{
 // safePos returns the EOF position.
 //
 // This is hack to work around "artificial" end positions in the AST which
-// are computed by adding 1 to (presumably valid) token positions. If the
-// token positions are invalid due to parse errors, the resulting end position
+// are computed by adding 1 to (presumably valid) token_builder positions. If the
+// token_builder positions are invalid due to parse errors, the resulting end position
 // may be past the file's EOF position, which would lead to panics if used
 // later on.
 //
@@ -1542,7 +1542,7 @@ func (p *parser) parseUnaryExpr(lhs bool) ast.Expr {
 		arrow := p.pos
 		p.next()
 
-		// If the next token is token.CHAN we still don't know if it
+		// If the next token_builder is token_builder.CHAN we still don't know if it
 		// is a channel type or a receive operation - we only know
 		// once we have found the end of the unary expression. There
 		// are two cases:
@@ -1718,9 +1718,9 @@ func (p *parser) parseSimpleStmt(mode int) (ast.Stmt, bool) {
 			return stmt, false
 		}
 		// The label declaration typically starts at x[0].Pos(), but the label
-		// declaration may be erroneous due to a token after that position (and
+		// declaration may be erroneous due to a token_builder after that position (and
 		// before the ':'). If SpuriousErrors is not set, the (only) error
-		// reported for the line is the illegal label error instead of the token
+		// reported for the line is the illegal label error instead of the token_builder
 		// before the ':' that caused the problem. Thus, use the (latest) colon
 		// position for error reporting.
 		p.error(colon, "illegal label declaration")
@@ -1844,7 +1844,7 @@ func (p *parser) parseIfHeader() (init ast.Stmt, cond ast.Expr) {
 		cond = &ast.BadExpr{From: p.pos, To: p.pos}
 		return
 	}
-	// p.tok != token.LBRACE
+	// p.tok != token_builder.LBRACE
 
 	outer := p.exprLev
 	p.exprLev = -1
@@ -2523,7 +2523,7 @@ func (p *parser) parseFile() *ast.File {
 		defer un(trace(p, "File"))
 	}
 
-	// Don't bother parsing the rest if we had errors scanning the first token.
+	// Don't bother parsing the rest if we had errors scanning the first token_builder.
 	// Likely not a Go source file at all.
 	if p.errors.Len() != 0 {
 		return nil

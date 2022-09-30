@@ -171,11 +171,11 @@ func TestParseHexUint(t *testing.T) {
 }
 
 func TestChunkReadingIgnoresExtensions(t *testing.T) {
-	in := "7;ext=\"some quoted string\"\r\n" + // token=quoted string
+	in := "7;ext=\"some quoted string\"\r\n" + // token_builder=quoted string
 		"hello, \r\n" +
-		"17;someext\r\n" + // token without value
+		"17;someext\r\n" + // token_builder without value
 		"world! 0123456789abcdef\r\n" +
-		"0;someextension=sometoken\r\n" // token=token
+		"0;someextension=sometoken\r\n" // token_builder=token_builder
 	data, err := io.ReadAll(NewChunkedReader(strings.NewReader(in)))
 	if err != nil {
 		t.Fatalf("ReadAll = %q, %v", data, err)

@@ -199,7 +199,7 @@ func TestScanLongLines(t *testing.T) {
 		} else {
 			j--
 		}
-		line := tmp.String() // We use the string-valued token here, for variety.
+		line := tmp.String() // We use the string-valued token_builder here, for variety.
 		if s.Text() != line {
 			t.Errorf("%d: bad line: %d %d\n%.100q\n%.100q\n", lineNum, len(s.Bytes()), len(line), s.Text(), line)
 		}
@@ -411,12 +411,12 @@ func TestScanWordsExcessiveWhiteSpace(t *testing.T) {
 		t.Fatalf("scan failed: %v", scanner.Err())
 	}
 	if token := scanner.Text(); token != word {
-		t.Fatalf("unexpected token: %v", token)
+		t.Fatalf("unexpected token_builder: %v", token)
 	}
 }
 
 // Test that empty tokens, including at end of line or end of file, are found by the scanner.
-// Issue 8672: Could miss final empty token.
+// Issue 8672: Could miss final empty token_builder.
 
 func commaSplit(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	for i := 0; i < len(data); i++ {
@@ -522,7 +522,7 @@ func TestEmptyLinesOK(t *testing.T) {
 	}
 }
 
-// Make sure we can read a huge token if a big enough buffer is provided.
+// Make sure we can read a huge token_builder if a big enough buffer is provided.
 func TestHugeBuffer(t *testing.T) {
 	text := strings.Repeat("x", 2*MaxScanTokenSize)
 	s := NewScanner(strings.NewReader(text + "\n"))
@@ -530,7 +530,7 @@ func TestHugeBuffer(t *testing.T) {
 	for s.Scan() {
 		token := s.Text()
 		if token != text {
-			t.Errorf("scan got incorrect token of length %d", len(token))
+			t.Errorf("scan got incorrect token_builder of length %d", len(token))
 		}
 	}
 	if s.Err() != nil {

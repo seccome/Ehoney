@@ -4,7 +4,7 @@
 
 // This file implements scanner, a lexical tokenizer for
 // Go source. After initialization, consecutive calls of
-// next advance the scanner one token at a time.
+// next advance the scanner one token_builder at a time.
 //
 // This file, source.go, tokens.go, and token_string.go are self-contained
 // (`go tool compile scanner.go source.go tokens.go token_string.go` compiles)
@@ -97,7 +97,7 @@ redo:
 		s.nextch()
 	}
 
-	// token start
+	// token_builder start
 	s.line, s.col = s.pos()
 	s.blank = s.line > startLine || startCol == colbase
 	s.start()
@@ -219,7 +219,7 @@ redo:
 	case '*':
 		s.nextch()
 		s.op, s.prec = Mul, precMul
-		// don't goto assignop - want _Star token
+		// don't goto assignop - want _Star token_builder
 		if s.ch == '=' {
 			s.nextch()
 			s.tok = _AssignOp

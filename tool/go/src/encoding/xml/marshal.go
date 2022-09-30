@@ -97,7 +97,7 @@ func Marshal(v interface{}) ([]byte, error) {
 // value with a layout corresponding to the desired XML and then
 // to encode it using e.EncodeElement.
 // Another common strategy is to use repeated calls to e.EncodeToken
-// to generate the XML output one token at a time.
+// to generate the XML output one token_builder at a time.
 // The sequence of encoded tokens must make up zero or more valid
 // XML elements.
 type Marshaler interface {
@@ -187,7 +187,7 @@ var (
 	endProcInst = []byte("?>")
 )
 
-// EncodeToken writes the given XML token to the stream.
+// EncodeToken writes the given XML token_builder to the stream.
 // It returns an error if StartElement and EndElement tokens are not properly matched.
 //
 // EncodeToken does not call Flush, because usually it is part of a larger operation
@@ -197,7 +197,7 @@ var (
 // using Encode or EncodeElement, need to call Flush when finished to ensure
 // that the XML is written to the underlying writer.
 //
-// EncodeToken allows writing a ProcInst with Target set to "xml" only as the first token
+// EncodeToken allows writing a ProcInst with Target set to "xml" only as the first token_builder
 // in the stream.
 func (enc *Encoder) EncodeToken(t Token) error {
 
@@ -222,10 +222,10 @@ func (enc *Encoder) EncodeToken(t Token) error {
 		p.WriteString("-->")
 		return p.cachedWriteError()
 	case ProcInst:
-		// First token to be encoded which is also a ProcInst with target of xml
+		// First token_builder to be encoded which is also a ProcInst with target of xml
 		// is the xml declaration. The only ProcInst where target of xml is allowed.
 		if t.Target == "xml" && p.Buffered() != 0 {
-			return fmt.Errorf("xml: EncodeToken of ProcInst xml target only valid for xml declaration, first token encoded")
+			return fmt.Errorf("xml: EncodeToken of ProcInst xml target only valid for xml declaration, first token_builder encoded")
 		}
 		if !isNameString(t.Target) {
 			return fmt.Errorf("xml: EncodeToken of ProcInst with invalid Target")
@@ -248,7 +248,7 @@ func (enc *Encoder) EncodeToken(t Token) error {
 		p.Write(t)
 		p.WriteString(">")
 	default:
-		return fmt.Errorf("xml: EncodeToken of invalid token type")
+		return fmt.Errorf("xml: EncodeToken of invalid token_builder type")
 
 	}
 	return p.cachedWriteError()

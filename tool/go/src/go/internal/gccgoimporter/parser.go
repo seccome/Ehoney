@@ -21,7 +21,7 @@ import (
 type parser struct {
 	scanner  *scanner.Scanner
 	version  string                    // format version
-	tok      rune                      // current token
+	tok      rune                      // current token_builder
 	lit      string                    // literal string; only valid for Ident, Int, String tokens
 	pkgpath  string                    // package path of imported package
 	pkgname  string                    // name of imported package
@@ -1122,7 +1122,7 @@ func (p *parser) maybeCreatePackage() {
 //                     "checksum" unquotedString ";" .
 func (p *parser) parseInitDataDirective() {
 	if p.tok != scanner.Ident {
-		// unexpected token kind; panic
+		// unexpected token_builder kind; panic
 		p.expect(scanner.Ident)
 	}
 
@@ -1181,7 +1181,7 @@ func (p *parser) parseInitDataDirective() {
 //             "const" Const ";" .
 func (p *parser) parseDirective() {
 	if p.tok != scanner.Ident {
-		// unexpected token kind; panic
+		// unexpected token_builder kind; panic
 		p.expect(scanner.Ident)
 	}
 

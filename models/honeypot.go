@@ -8,17 +8,16 @@ import (
 )
 
 type Honeypot struct {
-	ID           int64           `gorm:"primary_key;AUTO_INCREMENT;unique;column:id" json:"id"`
+	Id           int64           `gorm:"primary_key;AUTO_INCREMENT;unique;column:id" json:"Id"`
+	HoneypotId   string          `json:"HoneypotId" form:"HoneypotId"`
 	HoneypotName string          `json:"HoneypotName" form:"HoneypotName" gorm:"not null;unique;size:128" binding:"required"` //蜜罐名称
 	PodName      string          `json:"PodName" form:"PodName" gorm:"null;size:256"`
+	ImageId      string          `json:"ImageId" form:"ImageId" gorm:"not null;size:256"`                              //镜像地址
 	ImageAddress string          `json:"ImageAddress" form:"ImageAddress" gorm:"not null;size:256" binding:"required"` //镜像地址
-	ServersID    int64           `json:"ServersID" form:"ServersID" gorm:"not null"`
-	Servers      HoneypotServers `gorm:"ForeignKey:ServersID"`
-	CreateTime   string          `json:"CreateTime" form:"CreateTime" gorm:"not null"`
-	HoneypotIP   string          `json:"HoneypotIP" form:"HoneypotIP" gorm:"null;size:256"`
-	Creator      string          `json:"Creator" form:"Creator" gorm:"not null;size:256"`
+	HoneypotIp   string          `json:"HoneypotIp" form:"HoneypotIp" gorm:"null;size:256"`
 	ServerPort   int32           `json:"ServerPort"`
-	ServerType   string          `json:"ServerType"`
+	ProtocolType string          `json:"ProtocolType"`
+	CreateTime   int64           `json:"CreateTime" form:"CreateTime" gorm:"not null"`
 	Status       comm.TaskStatus `json:"Status"`
 }
 
@@ -32,6 +31,8 @@ func (honeypot *Honeypot) GetHoneypotNodes() ([]comm.TopologyNode, error) {
 }
 
 func (honeypot *Honeypot) CreateHoneypot() error {
+	honeypot.CreateTime = util.GetCurrentIntTime()
+	honeypot.HoneypotId = util.GenerateId()
 	result := db.Create(honeypot)
 	if result.Error != nil {
 		return result.Error
@@ -39,13 +40,15 @@ func (honeypot *Honeypot) CreateHoneypot() error {
 	return nil
 }
 
-func (honeypot *Honeypot) DeleteHoneypotByID(id int64) error {
-	sql := fmt.Sprintf("DELETE FROM honeypots WHERE `id` = %d", id)
-	return db.Exec(sql).Error
+func (honeypot *Honeypot) DeleteHoneypotByID(honeypotId string) error {
+	if err := db.Where("honeypot_id= ?", honeypotId).Delete(&Honeypot{}).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
-func (honeypot *Honeypot) GetHoneypot(payload *comm.HoneypotSelectPayload) (*[]comm.HoneypotSelectResultPayload, int64, error) {
-	var ret []comm.HoneypotSelectResultPayload
+func (honeypot *Honeypot) GetHoneypot(payload *comm.HoneypotSelectPayload) (*[]Honeypot, int64, error) {
+	var ret []Honeypot
 	var count int64
 
 	if util.CheckInjectionData(payload.Payload) || util.CheckInjectionData(payload.ProtocolType) {
@@ -55,9 +58,9 @@ func (honeypot *Honeypot) GetHoneypot(payload *comm.HoneypotSelectPayload) (*[]c
 	var p = "%" + payload.Payload + "%"
 	var sql string = ""
 	if payload.ProtocolType == "" {
-		sql = fmt.Sprintf("select h.id, h.server_type, h.honeypot_name, h.honeypot_ip, h2.server_ip, h.create_time, h.status, h.creator from honeypots h, honeypot_servers h2 where h.servers_id = h2.id AND CONCAT(h.server_type, h.honeypot_name, h.honeypot_ip, h2.server_ip, h.create_time, h.status, h.creator) LIKE '%s' order by h.create_time DESC", p)
+		sql = fmt.Sprintf("select * from honeypots where CONCAT(protocol_type, honeypot_name, honeypot_ip, create_time, status) LIKE '%s' order by create_time DESC", p)
 	} else {
-		sql = fmt.Sprintf("select h.id, h.server_type, h.honeypot_name, h.honeypot_ip, h2.server_ip, h.create_time, h.status, h.creator from honeypots h, honeypot_servers h2 where h.servers_id = h2.id AND CONCAT(h.server_type, h.honeypot_name, h.honeypot_ip, h2.server_ip, h.create_time, h.status, h.creator) LIKE '%s' AND server_type = '%s' order by h.create_time DESC", p, payload.ProtocolType)
+		sql = fmt.Sprintf("select * from honeypots where CONCAT(protocol_type, honeypot_name, honeypot_ip, create_time, status) LIKE '%s' and protocol_type = %s order by create_time DESC", p, payload.ProtocolType)
 	}
 
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
@@ -72,10 +75,10 @@ func (honeypot *Honeypot) GetHoneypot(payload *comm.HoneypotSelectPayload) (*[]c
 	return &ret, count, nil
 }
 
-func (honeypot *Honeypot) GetHoneypotByID(id int64) (*Honeypot, error) {
+func (honeypot *Honeypot) GetHoneypotByID(honeypotId string) (*Honeypot, error) {
 
 	var ret Honeypot
-	if err := db.Where("id = ? and status = ?", id, comm.SUCCESS).Take(&ret).Error; err != nil {
+	if err := db.Where("honeypot_id = ?", honeypotId).Take(&ret).Error; err != nil {
 		return nil, err
 	}
 	return &ret, nil
@@ -121,8 +124,8 @@ func (honeypot *Honeypot) GetHoneypotCount() (int64, error) {
 	return count, nil
 }
 
-func (honeypot *Honeypot) RefreshServerStatusByPodName(podName string, status comm.TaskStatus, podIP string) error {
-	db.Model(honeypot).Where("pod_name = ?", podName).Updates(Honeypot{Status: status, HoneypotIP: podIP})
+func (honeypot *Honeypot) UpdatePodInfoByPodName(podName string, status comm.TaskStatus, podIP string) error {
+	db.Model(honeypot).Where("pod_name = ?", podName).Updates(Honeypot{Status: status, HoneypotIp: podIP})
 	return nil
 }
 

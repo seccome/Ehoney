@@ -61,8 +61,8 @@ type printer struct {
 	mode         pmode        // current printer mode
 	endAlignment bool         // if set, terminate alignment immediately
 	impliedSemi  bool         // if set, a linebreak implies a semicolon
-	lastTok      token.Token  // last token printed (token.ILLEGAL if it's whitespace)
-	prevOpen     token.Token  // previous non-brace "open" token (, [, or token.ILLEGAL
+	lastTok      token.Token  // last token_builder printed (token_builder.ILLEGAL if it's whitespace)
+	prevOpen     token.Token  // previous non-brace "open" token_builder (, [, or token_builder.ILLEGAL
 	wsbuf        []whiteSpace // delayed white space
 
 	// Positions
@@ -74,7 +74,7 @@ type printer struct {
 	pos     token.Position // current position in AST (source) space
 	out     token.Position // current position in output space
 	last    token.Position // value of pos after calling writeString
-	linePtr *int           // if set, record out.Line for the next token in *linePtr
+	linePtr *int           // if set, record out.Line for the next token_builder in *linePtr
 
 	// The list of all source comments, in order of appearance.
 	comments        []*ast.CommentGroup // may be nil
@@ -173,7 +173,7 @@ func (p *printer) commentSizeBefore(next token.Position) int {
 }
 
 // recordLine records the output line number for the next non-whitespace
-// token in *linePtr. It is used to compute an accurate line number for a
+// token_builder in *linePtr. It is used to compute an accurate line number for a
 // formatted construct, independent of pending (not yet emitted) whitespace
 // or comments.
 //
@@ -191,7 +191,7 @@ func (p *printer) linesFrom(line int) int {
 }
 
 func (p *printer) posFor(pos token.Pos) token.Position {
-	// not used frequently enough to cache entire token.Position
+	// not used frequently enough to cache entire token_builder.Position
 	return p.fset.PositionFor(pos, false /* absolute position */)
 }
 
@@ -348,7 +348,7 @@ func (p *printer) writeString(pos token.Position, s string, isLit bool) {
 // it as is likely to help position the comment nicely.
 // pos is the comment position, next the position of the item
 // after all pending comments, prev is the previous comment in
-// a group of comments (or nil), and tok is the next token.
+// a group of comments (or nil), and tok is the next token_builder.
 //
 func (p *printer) writeCommentPrefix(pos, next token.Position, prev *ast.Comment, tok token.Token) {
 	if len(p.output) == 0 {
@@ -423,9 +423,9 @@ func (p *printer) writeCommentPrefix(pos, next token.Position, prev *ast.Comment
 				if i+1 < len(p.wsbuf) && p.wsbuf[i+1] == unindent {
 					continue
 				}
-				// if the next token is not a closing }, apply the unindent
+				// if the next token_builder is not a closing }, apply the unindent
 				// if it appears that the comment is aligned with the
-				// token; otherwise assume the unindent is part of a
+				// token_builder; otherwise assume the unindent is part of a
 				// closing block and stop (this scenario appears with
 				// comments before a case label where the comments
 				// apply to the next case instead of the current one)
@@ -734,9 +734,9 @@ func (p *printer) containsLinebreak() bool {
 	return false
 }
 
-// intersperseComments consumes all comments that appear before the next token
+// intersperseComments consumes all comments that appear before the next token_builder
 // tok and prints it together with the buffered whitespace (i.e., the whitespace
-// that needs to be written before the next token). A heuristic is used to mix
+// that needs to be written before the next token_builder). A heuristic is used to mix
 // the comments and whitespace. The intersperseComments result indicates if a
 // newline was written or if a formfeed was dropped from the whitespace buffer.
 //
@@ -754,7 +754,7 @@ func (p *printer) intersperseComments(next token.Position, tok token.Token) (wro
 	if last != nil {
 		// If the last comment is a /*-style comment and the next item
 		// follows on the same line but is not a comma, and not a "closing"
-		// token immediately following its corresponding "opening" token,
+		// token_builder immediately following its corresponding "opening" token_builder,
 		// add an extra separator unless explicitly disabled. Use a blank
 		// as separator unless we have pending linebreaks, they are not
 		// disabled, and we are outside a composite literal, in which case
@@ -867,11 +867,11 @@ func mayCombine(prev token.Token, next byte) (b bool) {
 // It is the only print function that should be called directly from
 // any of the AST printing functions in nodes.go.
 //
-// Whitespace is accumulated until a non-whitespace token appears. Any
-// comments that need to appear before that token are printed first,
+// Whitespace is accumulated until a non-whitespace token_builder appears. Any
+// comments that need to appear before that token_builder are printed first,
 // taking into account the amount and structure of any pending white-
 // space for best comment placement. Then, any leftover whitespace is
-// printed, followed by the actual token.
+// printed, followed by the actual token_builder.
 //
 func (p *printer) print(args ...interface{}) {
 	for _, arg := range args {
@@ -880,14 +880,14 @@ func (p *printer) print(args ...interface{}) {
 		var isLit bool
 		var impliedSemi bool // value for p.impliedSemi after this arg
 
-		// record previous opening token, if any
+		// record previous opening token_builder, if any
 		switch p.lastTok {
 		case token.ILLEGAL:
 			// ignore (white space)
 		case token.LPAREN, token.LBRACK:
 			p.prevOpen = p.lastTok
 		default:
-			// other tokens followed any opening token
+			// other tokens followed any opening token_builder
 			p.prevOpen = token.ILLEGAL
 		}
 
@@ -938,10 +938,10 @@ func (p *printer) print(args ...interface{}) {
 		case token.Token:
 			s := x.String()
 			if mayCombine(p.lastTok, s[0]) {
-				// the previous and the current token must be
+				// the previous and the current token_builder must be
 				// separated by a blank otherwise they combine
-				// into a different incorrect token sequence
-				// (except for token.INT followed by a '.' this
+				// into a different incorrect token_builder sequence
+				// (except for token_builder.INT followed by a '.' this
 				// should never happen because it is taken care
 				// of via binary expression formatting)
 				if len(p.wsbuf) != 0 {
@@ -1000,7 +1000,7 @@ func (p *printer) print(args ...interface{}) {
 			}
 		}
 
-		// the next token starts now - record its line number if requested
+		// the next token_builder starts now - record its line number if requested
 		if p.linePtr != nil {
 			*p.linePtr = p.out.Line
 			p.linePtr = nil
@@ -1012,7 +1012,7 @@ func (p *printer) print(args ...interface{}) {
 }
 
 // flush prints any pending comments and whitespace occurring textually
-// before the position of the next token tok. The flush result indicates
+// before the position of the next token_builder tok. The flush result indicates
 // if a newline was written or if a formfeed was dropped from the whitespace
 // buffer.
 //
@@ -1098,7 +1098,7 @@ func (p *printer) printNode(node interface{}) error {
 				end = e
 			}
 		}
-		// token.Pos values are global offsets, we can
+		// token_builder.Pos values are global offsets, we can
 		// compare them directly
 		i := 0
 		for i < len(comments) && comments[i].End() < beg {

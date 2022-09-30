@@ -31,7 +31,7 @@ const (
 	macroName                             // name of macro that should not be expanded
 )
 
-// IsRegisterShift reports whether the token is one of the ARM register shift operators.
+// IsRegisterShift reports whether the token_builder is one of the ARM register shift operators.
 func IsRegisterShift(r ScanToken) bool {
 	return ROT <= r && r <= LSH // Order looks backwards because these are negative.
 }
@@ -73,30 +73,30 @@ func NewLexer(name string) TokenReader {
 // The other files in this directory each contain an implementation of TokenReader.
 
 // A TokenReader is like a reader, but returns lex tokens of type Token. It also can tell you what
-// the text of the most recently returned token is, and where it was found.
+// the text of the most recently returned token_builder is, and where it was found.
 // The underlying scanner elides all spaces except newline, so the input looks like a stream of
 // Tokens; original spacing is lost but we don't need it.
 type TokenReader interface {
-	// Next returns the next token.
+	// Next returns the next token_builder.
 	Next() ScanToken
-	// The following methods all refer to the most recent token returned by Next.
-	// Text returns the original string representation of the token.
+	// The following methods all refer to the most recent token_builder returned by Next.
+	// Text returns the original string representation of the token_builder.
 	Text() string
-	// File reports the source file name of the token.
+	// File reports the source file name of the token_builder.
 	File() string
-	// Base reports the position base of the token.
+	// Base reports the position base of the token_builder.
 	Base() *src.PosBase
 	// SetBase sets the position base.
 	SetBase(*src.PosBase)
-	// Line reports the source line number of the token.
+	// Line reports the source line number of the token_builder.
 	Line() int
-	// Col reports the source column number of the token.
+	// Col reports the source column number of the token_builder.
 	Col() int
 	// Close does any teardown required.
 	Close()
 }
 
-// A Token is a scan token plus its string value.
+// A Token is a scan token_builder plus its string value.
 // A macro is stored as a sequence of Tokens with spaces stripped.
 type Token struct {
 	ScanToken

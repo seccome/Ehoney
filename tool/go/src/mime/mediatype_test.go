@@ -22,10 +22,10 @@ func TestConsumeToken(t *testing.T) {
 		expectedToken := test[1]
 		expectedRest := test[2]
 		if token != expectedToken {
-			t.Errorf("expected to consume token '%s', not '%s' from '%s'",
+			t.Errorf("expected to consume token_builder '%s', not '%s' from '%s'",
 				expectedToken, token, test[0])
 		} else if rest != expectedRest {
-			t.Errorf("expected to have left '%s', not '%s' after reading token '%s' from '%s'",
+			t.Errorf("expected to have left '%s', not '%s' after reading token_builder '%s' from '%s'",
 				expectedRest, rest, token, test[0])
 		}
 	}
@@ -436,7 +436,7 @@ var badMediaTypeTests = []badMediaTypeTest{
 	// and it is there to check behavior described in #19498
 	{"application/pdf; x-mac-type=\"3F3F3F3F\"; x-mac-creator=\"3F3F3F3F\" name=\"a.pdf\";",
 		"application/pdf", "mime: invalid media parameter"},
-	{"bogus/<script>alert</script>", "", "mime: expected token after slash"},
+	{"bogus/<script>alert</script>", "", "mime: expected token_builder after slash"},
 	{"bogus/bogus<script>alert</script>", "", "mime: unexpected content after media subtype"},
 	// Tests from http://greenbytes.de/tech/tc2231/
 	{`"attachment"`, "attachment", "mime: no media type"},

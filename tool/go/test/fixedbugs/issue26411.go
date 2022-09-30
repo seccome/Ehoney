@@ -7,7 +7,7 @@
 
 // Ensure that label redefinition errors print out
 // a column number that matches the start of the current label's
-// definition instead of the label delimiting token ":"
+// definition instead of the label delimiting token_builder ":"
 
 package main
 

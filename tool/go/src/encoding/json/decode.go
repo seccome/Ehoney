@@ -566,7 +566,7 @@ func (d *decodeState) array(v reflect.Value) error {
 		}
 		i++
 
-		// Next token must be , or ].
+		// Next token_builder must be , or ].
 		if d.opcode == scanSkipSpace {
 			d.scanWhile(scanSkipSpace)
 		}
@@ -808,7 +808,7 @@ func (d *decodeState) object(v reflect.Value) error {
 			}
 		}
 
-		// Next token must be , or }.
+		// Next token_builder must be , or }.
 		if d.opcode == scanSkipSpace {
 			d.scanWhile(scanSkipSpace)
 		}
@@ -1054,7 +1054,7 @@ func (d *decodeState) arrayInterface() []interface{} {
 
 		v = append(v, d.valueInterface())
 
-		// Next token must be , or ].
+		// Next token_builder must be , or ].
 		if d.opcode == scanSkipSpace {
 			d.scanWhile(scanSkipSpace)
 		}
@@ -1103,7 +1103,7 @@ func (d *decodeState) objectInterface() map[string]interface{} {
 		// Read value.
 		m[key] = d.valueInterface()
 
-		// Next token must be , or }.
+		// Next token_builder must be , or }.
 		if d.opcode == scanSkipSpace {
 			d.scanWhile(scanSkipSpace)
 		}

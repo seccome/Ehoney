@@ -817,8 +817,8 @@ func validMethod(method string) bool {
 	                    | "TRACE"                  ; Section 9.8
 	                    | "CONNECT"                ; Section 9.9
 	                    | extension-method
-	   extension-method = token
-	     token          = 1*<any CHAR except CTLs or separators>
+	   extension-method = token_builder
+	     token_builder          = 1*<any CHAR except CTLs or separators>
 	*/
 	return len(method) > 0 && strings.IndexFunc(method, isNotToken) == -1
 }

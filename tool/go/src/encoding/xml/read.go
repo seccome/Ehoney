@@ -169,7 +169,7 @@ func (e UnmarshalError) Error() string { return string(e) }
 // using d.DecodeElement, and then to copy the data from
 // that value into the receiver.
 // Another common strategy is to use d.Token to process the
-// XML object one token at a time.
+// XML object one token_builder at a time.
 // UnmarshalXML may not use d.RawToken.
 type Unmarshaler interface {
 	UnmarshalXML(d *Decoder, start StartElement) error

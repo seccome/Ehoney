@@ -68,7 +68,7 @@ func TestNextJsCtx(t *testing.T) {
 		// Identifiers can be divided and cannot validly be preceded by
 		// a regular expressions. Semicolon insertion cannot happen
 		// between an identifier and a regular expression on a new line
-		// because the one token lookahead for semicolon insertion has
+		// because the one token_builder lookahead for semicolon insertion has
 		// to conclude that it could be a div binary op and treat it as
 		// such.
 		{jsCtxDivOp, "x"},

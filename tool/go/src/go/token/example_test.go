@@ -18,12 +18,12 @@ func Example_retrievePositionInfo() {
 
 import "fmt"
 
-import "go/token"
+import "go/token_builder"
 
 //line :1:5
-type p = token.Pos
+type p = token_builder.Pos
 
-const bad = token.NoPos
+const bad = token_builder.NoPos
 
 //line fake.go:42:11
 func ok(pos p) bool {

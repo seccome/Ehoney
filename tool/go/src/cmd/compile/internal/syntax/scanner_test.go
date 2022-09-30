@@ -89,7 +89,7 @@ func TestEmbeddedTokens(t *testing.T) {
 	var buf bytes.Buffer
 	for i, s := range sampleTokens {
 		buf.WriteString("\t\t\t\t"[:i&3])                            // leading indentation
-		buf.WriteString(s.src)                                       // token
+		buf.WriteString(s.src)                                       // token_builder
 		buf.WriteString("        "[:i&7])                            // trailing spaces
 		buf.WriteString(fmt.Sprintf("/*line foo:%d */ // bar\n", i)) // comments + newline (don't crash w/o directive handler)
 	}
@@ -558,7 +558,7 @@ func TestNumbers(t *testing.T) {
 
 			if i == 0 {
 				if s.tok != _Literal || s.kind != test.kind {
-					t.Errorf("%q: got token %s (kind = %d); want literal (kind = %d)", test.src, s.tok, s.kind, test.kind)
+					t.Errorf("%q: got token_builder %s (kind = %d); want literal (kind = %d)", test.src, s.tok, s.kind, test.kind)
 				}
 				if err != test.err {
 					t.Errorf("%q: got error %q; want %q", test.src, err, test.err)
@@ -588,14 +588,14 @@ func TestScanErrors(t *testing.T) {
 	}{
 		// Note: Positions for lexical errors are the earliest position
 		// where the error is apparent, not the beginning of the respective
-		// token.
+		// token_builder.
 
 		// rune-level errors
 		{"fo\x00o", "invalid NUL character", 0, 2},
 		{"foo\n\ufeff bar", "invalid BOM in the middle of the file", 1, 0},
 		{"foo\n\n\xff    ", "invalid UTF-8 encoding", 2, 0},
 
-		// token-level errors
+		// token_builder-level errors
 		{"\u00BD" /* ½ */, "invalid character U+00BD '½' in identifier", 0, 0},
 		{"\U0001d736\U0001d737\U0001d738_½" /* 𝜶𝜷𝜸_½ */, "invalid character U+00BD '½' in identifier", 0, 13 /* byte offset */},
 		{"\U0001d7d8" /* 𝟘 */, "identifier cannot begin with digit U+1D7D8 '𝟘'", 0, 0},

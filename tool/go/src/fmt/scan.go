@@ -17,7 +17,7 @@ import (
 
 // ScanState represents the scanner state passed to custom scanners.
 // Scanners may do rune-at-a-time scanning or ask the ScanState
-// to discover the next space-delimited token.
+// to discover the next space-delimited token_builder.
 type ScanState interface {
 	// ReadRune reads the next rune (Unicode code point) from the input.
 	// If invoked during Scanln, Fscanln, or Sscanln, ReadRune() will
@@ -32,7 +32,7 @@ type ScanState interface {
 	SkipSpace()
 	// Token skips space in the input if skipSpace is true, then returns the
 	// run of Unicode code points c satisfying f(c).  If f is nil,
-	// !unicode.IsSpace(c) is used; that is, the token will hold non-space
+	// !unicode.IsSpace(c) is used; that is, the token_builder will hold non-space
 	// characters. Newlines are treated appropriately for the operation being
 	// performed; see the package documentation for more information.
 	// The returned slice points to shared data that may be overwritten
@@ -648,7 +648,7 @@ func (s *ss) scanInt(verb rune, bitSize int) int64 {
 			s.errorString("bad unicode format ")
 		}
 	} else {
-		s.accept(sign) // If there's a sign, it will be left in the token buffer.
+		s.accept(sign) // If there's a sign, it will be left in the token_builder buffer.
 		if verb == 'v' {
 			base, digits, haveDigits = s.scanBasePrefix()
 		}
@@ -661,7 +661,7 @@ func (s *ss) scanInt(verb rune, bitSize int) int64 {
 	n := uint(bitSize)
 	x := (i << (64 - n)) >> (64 - n)
 	if x != i {
-		s.errorString("integer overflow on token " + tok)
+		s.errorString("integer overflow on token_builder " + tok)
 	}
 	return i
 }
@@ -691,7 +691,7 @@ func (s *ss) scanUint(verb rune, bitSize int) uint64 {
 	n := uint(bitSize)
 	x := (i << (64 - n)) >> (64 - n)
 	if x != i {
-		s.errorString("unsigned integer overflow on token " + tok)
+		s.errorString("unsigned integer overflow on token_builder " + tok)
 	}
 	return i
 }

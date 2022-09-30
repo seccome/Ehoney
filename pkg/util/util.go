@@ -27,11 +27,15 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"syscall"
 	"time"
 )
 
 func GetCurrentTime() string {
 	return time_parse.CSTLayoutString()
+}
+func GetCurrentIntTime() int64 {
+	return time.Now().Unix()
 }
 
 func ExecPath() string {
@@ -42,9 +46,24 @@ func ExecPath() string {
 	return path
 }
 
+func GenerateId() string {
+	time.Sleep(2)
+	return fmt.Sprintf("%d", time.Now().UnixNano())
+}
+
 func CheckInjectionData(payload string) bool {
 	complite, _ := regexp.Compile(`^[a-zA-Z0-9\.\-\_\:\/\\]*$`)
 	return !complite.MatchString(payload)
+}
+
+func FindLocationByIp(ip string) string {
+	d, _ := GetLocationByIP(ip)
+	if d.City == "-" || d.Country_long == "-" {
+		return "LAN"
+	} else {
+		return d.City + "-" + d.Country_long
+	}
+	return "Unknown"
 }
 
 func GetLocationByIP(ip string) (*ip2location.IP2Locationrecord, error) {
@@ -81,9 +100,21 @@ func CheckPathIsExist(path string) bool {
 	return true
 }
 
-func CreateDir(path string) error {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return os.MkdirAll(path, os.ModePerm)
+func CreateDir(destDir string) error {
+	file, err := os.Open(destDir)
+	defer func() {
+		if file != nil {
+			file.Close()
+		}
+	}()
+
+	if (err != nil && os.IsNotExist(err)) || file == nil {
+		zap.L().Info(fmt.Sprintf("%s dir not exist, create ", destDir))
+		err = os.MkdirAll(destDir, os.ModePerm)
+		if err != nil {
+			zap.L().Error(err.Error())
+			return err
+		}
 	}
 	return nil
 }
@@ -381,9 +412,37 @@ type TokenFileCreateBody struct {
 	TraceCode       string
 }
 
+func ProjectDir() string {
+	ProjectDir, _ := os.Getwd()
+	return ProjectDir
+}
+
+func CoverProjectK3sConfig(projectDir string) error {
+	output, err := exec.Command("sh", "-c", fmt.Sprintf("yes | cp -rf /etc/rancher/k3s/k3s.yaml %s/configs/.kube/config", projectDir)).CombinedOutput()
+
+	if err != nil {
+		zap.L().Error("CoverProjectK3sConfig 失败")
+		zap.L().Error(string(output))
+		zap.L().Error(err.Error())
+		return err
+	}
+	return nil
+}
+
+func ChmodDir(dir string) error {
+	output, err := exec.Command("sh", "-c", fmt.Sprintf("chmod -R 755 %s", dir)).CombinedOutput()
+	if err != nil {
+		zap.L().Error(fmt.Sprintf("文件[%s]夹授权失败", dir))
+		zap.L().Error(string(output))
+		zap.L().Error(err.Error())
+		return err
+	}
+	return nil
+}
+
 func CreateTokenFile(tokenFileCreateBody TokenFileCreateBody) error {
 	zap.L().Info(fmt.Sprintf("开始注入文件[%s] 类型[%s]蜜签", tokenFileCreateBody.TokenType, tokenFileCreateBody.SourceFile))
-	if tokenFileCreateBody.TokenType != "BrowserPDF" && tokenFileCreateBody.TokenType != "WPS" && !CheckPathIsExist(tokenFileCreateBody.SourceFile) {
+	if tokenFileCreateBody.TokenType != "WPS" && !CheckPathIsExist(tokenFileCreateBody.SourceFile) {
 		zap.L().Error("待加签文件不存在")
 		return errors.New("source file is not exist")
 	}
@@ -402,8 +461,6 @@ func CreateTokenFile(tokenFileCreateBody TokenFileCreateBody) error {
 
 	case "WPS":
 		cmd = exec.Command(toolPath, "-u", tokenFileCreateBody.TraceUrl, "-o", tokenFileCreateBody.DestFile, "-w", tokenFileCreateBody.Content, "-t", "wps")
-	case "BrowserPDF":
-		cmd = exec.Command(toolPath, "-u", tokenFileCreateBody.TraceUrl, "-o", tokenFileCreateBody.DestFile, "-w", tokenFileCreateBody.Content, "-t", "chromepdf")
 	case "FILE":
 		cmd = exec.Command(toolPath, "-u", tokenFileCreateBody.TraceUrl, "-o", tokenFileCreateBody.DestFile, "-i", tokenFileCreateBody.SourceFile, "-t", "office")
 	case "EXE":
@@ -460,26 +517,6 @@ func DoFileTokenTrace(sourceFile string, destFile string, traceUrl string) error
 	return nil
 }
 
-func DoBrowserPDFToken(data string, destFile string, traceUrl string) error {
-	var toolPath = path.Join(WorkingPath(), "tool", "file_token_trace", runtime.GOOS, "TraceBrowserPDF")
-	if !CheckPathIsExist(toolPath) {
-		zap.L().Error("BrowserPDF密签工具不存在")
-		return errors.New("BrowserPDF密签工具不存在")
-	}
-	CreateDir(path.Dir(destFile))
-	cmd := exec.Command(toolPath, "-w", data, "-o", destFile, "-u", traceUrl)
-	cmd.Dir = path.Dir(toolPath)
-	_, err := cmd.CombinedOutput()
-	if err != nil {
-		zap.L().Error("BrowserPDF密签生成失败")
-		zap.L().Error(err.Error())
-		fmt.Println("BrowserPDF密签生成失败:" + err.Error())
-		os.RemoveAll(path.Dir(destFile))
-		return err
-	}
-	return nil
-}
-
 func SendGETRequest(header map[string]string, uri string) ([]byte, error) {
 
 	client := &http.Client{}
@@ -506,7 +543,6 @@ func SendGETRequest(header map[string]string, uri string) ([]byte, error) {
 
 func TcpGather(ips []string, port string) bool {
 	for _, ip := range ips {
-		fmt.Println("test ip:" + ip)
 		address := net.JoinHostPort(ip, port)
 		conn, err := net.DialTimeout("tcp", address, 3*time.Second)
 		if err != nil {
@@ -552,4 +588,138 @@ func IsLocalIP(ip string) bool {
 		}
 	}
 	return false
+}
+
+func StartProcess(cmd, mode, nickName string) (Pid, error) {
+	var startedPid Pid
+
+	var argv []string
+
+	var process *os.Process
+
+	var err error
+
+	var processResult string
+
+	zap.L().Info(fmt.Sprintf("starting process [%s] mode [%s] nick name [%s]", cmd, mode, nickName))
+
+	startedPid.Mode = mode
+
+	procAttr := &os.ProcAttr{
+		Env: os.Environ(),
+		Files: []*os.File{
+			os.Stdin,
+			os.Stdout,
+			os.Stderr,
+		},
+	}
+
+	if nickName != "" {
+		argv = []string{nickName}
+	} else {
+		argv = nil
+	}
+
+	if mode == "bash" {
+
+		fmtCmd := exec.Command("sh", "-c", cmd)
+
+		if err = fmtCmd.Start(); err != nil {
+			return startedPid, err
+		}
+
+		tail := 3
+
+		for {
+			if tail > 1 {
+				time.Sleep(100)
+				process = fmtCmd.Process
+				if process != nil {
+					break
+				}
+			} else {
+				break
+			}
+			tail = tail - 1
+		}
+
+		process = fmtCmd.Process
+
+		if process == nil {
+			startedPid.Result = "start error"
+			return startedPid, err
+		}
+		processResult = "start success"
+
+	} else {
+		process, err = os.StartProcess(cmd, argv, procAttr)
+		if err != nil {
+			zap.L().Error(err.Error())
+			processResult = fmt.Sprintf("start error [%v]", err)
+		} else {
+			processResult = "start success"
+		}
+	}
+
+	if process == nil {
+		return startedPid, err
+	}
+
+	startedPid = Pid{
+		Id:     process.Pid,
+		Name:   nickName,
+		Result: processResult,
+		Mode:   mode,
+	}
+
+	return startedPid, err
+}
+
+func KillProcess(pid int) error {
+	if !processExist(pid) {
+		return nil
+	}
+	pp, err := os.FindProcess(pid)
+	zap.L().Info(fmt.Sprintf("start kill process %v", pp))
+	if err == nil && pp != nil {
+		err = Kill(pp)
+		if err != nil {
+			zap.L().Error(fmt.Sprintf("signal %d error %v", pid, err))
+			return err
+		}
+	}
+	return nil
+}
+
+func processExist(pid int) bool {
+	if err := syscall.Kill(pid, 0); err == nil {
+		return true
+	}
+	return false
+}
+
+func Kill(pp *os.Process) error {
+	err := pp.Signal(syscall.SIGKILL)
+	killCmd := fmt.Sprintf("kill -9 %v", pp.Pid)
+	output, _ := exec.Command("sh", "-c", killCmd).CombinedOutput()
+	zap.L().Info(fmt.Sprintf("%s output len: %d; out: %s", killCmd, len(output), output))
+	if err != nil {
+		zap.L().Error(fmt.Sprintf("signal kill %d error %v", pp.Pid, err))
+		zap.L().Info(fmt.Sprintf("kill process [%d] fail", pp.Pid))
+		return err
+	}
+	time.Sleep(time.Millisecond * 100)
+	queryP, err := os.FindProcess(pp.Pid)
+	if err == nil && queryP != nil {
+		_, _ = pp.Wait()
+	}
+	zap.L().Info(fmt.Sprintf("kill process [%d] success", pp.Pid))
+	return nil
+}
+
+type Pid struct {
+	Id     int
+	Name   string
+	Result string
+	Mode   string
 }

@@ -216,7 +216,7 @@ var mozBindingBytes = []byte("mozbinding")
 // cssValueFilter allows innocuous CSS values in the output including CSS
 // quantities (10px or 25%), ID or class literals (#foo, .bar), keyword values
 // (inherit, blue), and colors (#888).
-// It filters out unsafe values, such as those that affect token boundaries,
+// It filters out unsafe values, such as those that affect token_builder boundaries,
 // and anything that might execute scripts.
 func cssValueFilter(args ...interface{}) string {
 	s, t := stringify(args...)

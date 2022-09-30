@@ -20,7 +20,7 @@ func ExampleScanner_Scan() {
 	file := fset.AddFile("", fset.Base(), len(src)) // register input "file"
 	s.Init(file, src, nil /* no error handler */, scanner.ScanComments)
 
-	// Repeated calls to Scan yield the token sequence found in the input.
+	// Repeated calls to Scan yield the token_builder sequence found in the input.
 	for {
 		pos, tok, lit := s.Scan()
 		if tok == token.EOF {

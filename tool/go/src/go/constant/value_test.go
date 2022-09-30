@@ -597,7 +597,7 @@ func TestUnknown(t *testing.T) {
 	u := MakeUnknown()
 	var values = []Value{
 		u,
-		MakeBool(false), // token.ADD ok below, operation is never considered
+		MakeBool(false), // token_builder.ADD ok below, operation is never considered
 		MakeString(""),
 		MakeInt64(1),
 		MakeFromLiteral("''", token.CHAR, 0),

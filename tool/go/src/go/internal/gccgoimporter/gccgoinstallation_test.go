@@ -76,7 +76,7 @@ var importablePackages = [...]string{
 	"go/parser",
 	"go/printer",
 	"go/scanner",
-	"go/token",
+	"go/token_builder",
 	"hash/adler32",
 	"hash/crc32",
 	"hash/crc64",

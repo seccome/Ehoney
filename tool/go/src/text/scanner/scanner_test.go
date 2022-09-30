@@ -280,7 +280,7 @@ func testScan(t *testing.T, mode uint) {
 			checkTok(t, s, line, tok, k.tok, k.text)
 			tok = s.Scan()
 		}
-		line += countNewlines(k.text) + 1 // each token is on a new line
+		line += countNewlines(k.text) + 1 // each token_builder is on a new line
 	}
 	checkTok(t, s, line, tok, EOF, "")
 }
@@ -327,11 +327,11 @@ func TestPosition(t *testing.T) {
 		if s.Column != pos.Column {
 			t.Errorf("column = %d, want %d for %q", s.Column, pos.Column, k.text)
 		}
-		pos.Offset += 4 + len(k.text) + 1     // 4 tabs + token bytes + newline
-		pos.Line += countNewlines(k.text) + 1 // each token is on a new line
+		pos.Offset += 4 + len(k.text) + 1     // 4 tabs + token_builder bytes + newline
+		pos.Line += countNewlines(k.text) + 1 // each token_builder is on a new line
 		s.Scan()
 	}
-	// make sure there were no token-internal errors reported by scanner
+	// make sure there were no token_builder-internal errors reported by scanner
 	if s.ErrorCount != 0 {
 		t.Errorf("%d errors", s.ErrorCount)
 	}
@@ -341,7 +341,7 @@ func TestScanZeroMode(t *testing.T) {
 	src := makeSource("%s\n")
 	str := src.String()
 	s := new(Scanner).Init(src)
-	s.Mode = 0       // don't recognize any token classes
+	s.Mode = 0       // don't recognize any token_builder classes
 	s.Whitespace = 0 // don't skip any whitespace
 	tok := s.Scan()
 	for i, ch := range str {
@@ -860,7 +860,7 @@ func TestNumbers(t *testing.T) {
 			lit := s.TokenText()
 			if i == 0 {
 				if tok != test.tok {
-					t.Errorf("%q: got token %s; want %s", test.src, TokenString(tok), TokenString(test.tok))
+					t.Errorf("%q: got token_builder %s; want %s", test.src, TokenString(tok), TokenString(test.tok))
 				}
 				if err != test.err {
 					t.Errorf("%q: got error %q; want %q", test.src, err, test.err)

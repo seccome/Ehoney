@@ -152,7 +152,7 @@ func WhiteSpace(c int) bool {
 func NextToken() {
 	var i, c int
 
-	tokenbuf[0] = nilchar // clear previous token
+	tokenbuf[0] = nilchar // clear previous token_builder
 	c = Get()
 	for WhiteSpace(c) {
 		c = Get()
@@ -264,7 +264,7 @@ func Parse() *Slist {
 			slist = atom(0)
 		default:
 			slist = nil
-			print("unknown token: ", token, "\n")
+			print("unknown token_builder: ", token, "\n")
 		}
 		NextToken()
 		return slist

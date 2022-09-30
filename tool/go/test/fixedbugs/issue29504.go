@@ -5,7 +5,7 @@
 // license that can be found in the LICENSE file.
 
 // Make sure that in code involving indexing, the bounds
-// check always fails at the line number of the '[' token.
+// check always fails at the line number of the '[' token_builder.
 
 package main
 

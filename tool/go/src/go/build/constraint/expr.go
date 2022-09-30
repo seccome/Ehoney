@@ -200,9 +200,9 @@ type exprParser struct {
 	s string // input string
 	i int    // next read location in s
 
-	tok   string // last token read
+	tok   string // last token_builder read
 	isTag bool
-	pos   int // position (start) of last token
+	pos   int // position (start) of last token_builder
 }
 
 // parseExpr parses a boolean build tag expression.
@@ -220,14 +220,14 @@ func parseExpr(text string) (x Expr, err error) {
 	p := &exprParser{s: text}
 	x = p.or()
 	if p.tok != "" {
-		panic(&SyntaxError{Offset: p.pos, Err: "unexpected token " + p.tok})
+		panic(&SyntaxError{Offset: p.pos, Err: "unexpected token_builder " + p.tok})
 	}
 	return x, nil
 }
 
 // or parses a sequence of || expressions.
-// On entry, the next input token has not yet been lexed.
-// On exit, the next input token has been lexed and is in p.tok.
+// On entry, the next input token_builder has not yet been lexed.
+// On exit, the next input token_builder has been lexed and is in p.tok.
 func (p *exprParser) or() Expr {
 	x := p.and()
 	for p.tok == "||" {
@@ -237,8 +237,8 @@ func (p *exprParser) or() Expr {
 }
 
 // and parses a sequence of && expressions.
-// On entry, the next input token has not yet been lexed.
-// On exit, the next input token has been lexed and is in p.tok.
+// On entry, the next input token_builder has not yet been lexed.
+// On exit, the next input token_builder has been lexed and is in p.tok.
 func (p *exprParser) and() Expr {
 	x := p.not()
 	for p.tok == "&&" {
@@ -248,8 +248,8 @@ func (p *exprParser) and() Expr {
 }
 
 // not parses a ! expression.
-// On entry, the next input token has not yet been lexed.
-// On exit, the next input token has been lexed and is in p.tok.
+// On entry, the next input token_builder has not yet been lexed.
+// On exit, the next input token_builder has been lexed and is in p.tok.
 func (p *exprParser) not() Expr {
 	p.lex()
 	if p.tok == "!" {
@@ -263,10 +263,10 @@ func (p *exprParser) not() Expr {
 }
 
 // atom parses a tag or a parenthesized expression.
-// On entry, the next input token HAS been lexed.
-// On exit, the next input token has been lexed and is in p.tok.
+// On entry, the next input token_builder HAS been lexed.
+// On exit, the next input token_builder has been lexed and is in p.tok.
 func (p *exprParser) atom() Expr {
-	// first token already in p.tok
+	// first token_builder already in p.tok
 	if p.tok == "(" {
 		pos := p.pos
 		defer func() {
@@ -289,17 +289,17 @@ func (p *exprParser) atom() Expr {
 		if p.tok == "" {
 			panic(&SyntaxError{Offset: p.pos, Err: "unexpected end of expression"})
 		}
-		panic(&SyntaxError{Offset: p.pos, Err: "unexpected token " + p.tok})
+		panic(&SyntaxError{Offset: p.pos, Err: "unexpected token_builder " + p.tok})
 	}
 	tok := p.tok
 	p.lex()
 	return tag(tok)
 }
 
-// lex finds and consumes the next token in the input stream.
-// On return, p.tok is set to the token text,
-// p.isTag reports whether the token was a tag,
-// and p.pos records the byte offset of the start of the token in the input stream.
+// lex finds and consumes the next token_builder in the input stream.
+// On return, p.tok is set to the token_builder text,
+// p.isTag reports whether the token_builder was a tag,
+// and p.pos records the byte offset of the start of the token_builder in the input stream.
 // If lex reaches the end of the input, p.tok is set to the empty string.
 // For any other syntax error, lex panics with a SyntaxError.
 func (p *exprParser) lex() {

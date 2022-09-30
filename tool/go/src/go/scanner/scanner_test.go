@@ -254,17 +254,17 @@ func TestScan(t *testing.T) {
 		}
 		checkPos(t, lit, pos, epos)
 
-		// check token
+		// check token_builder
 		e := elt{token.EOF, "", special}
 		if index < len(tokens) {
 			e = tokens[index]
 			index++
 		}
 		if tok != e.tok {
-			t.Errorf("bad token for %q: got %s, expected %s", lit, tok, e.tok)
+			t.Errorf("bad token_builder for %q: got %s, expected %s", lit, tok, e.tok)
 		}
 
-		// check token class
+		// check token_builder class
 		if tokenclass(tok) != e.class {
 			t.Errorf("bad class for %q: got %d, expected %d", lit, tokenclass(tok), e.class)
 		}
@@ -340,13 +340,13 @@ func checkSemi(t *testing.T, line string, mode Mode) {
 	pos, tok, lit := S.Scan()
 	for tok != token.EOF {
 		if tok == token.ILLEGAL {
-			// the illegal token literal indicates what
+			// the illegal token_builder literal indicates what
 			// kind of semicolon literal to expect
 			semiLit := "\n"
 			if lit[0] == '#' {
 				semiLit = ";"
 			}
-			// next token must be a semicolon
+			// next token_builder must be a semicolon
 			semiPos := file.Position(pos)
 			semiPos.Offset++
 			semiPos.Column++
@@ -357,10 +357,10 @@ func checkSemi(t *testing.T, line string, mode Mode) {
 				}
 				checkPos(t, line, pos, semiPos)
 			} else {
-				t.Errorf("bad token for %q: got %s, expected ;", line, tok)
+				t.Errorf("bad token_builder for %q: got %s, expected ;", line, tok)
 			}
 		} else if tok == token.SEMICOLON {
-			t.Errorf("bad token for %q: got ;, expected no ;", line)
+			t.Errorf("bad token_builder for %q: got ;, expected no ;", line)
 		}
 		pos, tok, lit = S.Scan()
 	}
@@ -506,12 +506,12 @@ func TestSemis(t *testing.T) {
 
 type segment struct {
 	srcline      string // a line of source text
-	filename     string // filename for current token; error message for invalid line directives
-	line, column int    // line and column for current token; error position for invalid line directives
+	filename     string // filename for current token_builder; error message for invalid line directives
+	line, column int    // line and column for current token_builder; error position for invalid line directives
 }
 
 var segments = []segment{
-	// exactly one token per line since the test consumes one token per segment
+	// exactly one token_builder per line since the test consumes one token_builder per segment
 	{"  line1", "TestLineDirectives", 1, 3},
 	{"\nline2", "TestLineDirectives", 2, 1},
 	{"\nline3  //line File1.go:100", "TestLineDirectives", 3, 1}, // bad line comment, ignored
@@ -543,7 +543,7 @@ var segments = []segment{
 }
 
 var dirsegments = []segment{
-	// exactly one token per line since the test consumes one token per segment
+	// exactly one token_builder per line since the test consumes one token_builder per segment
 	{"  line1", "TestLineDir/TestLineDirectives", 1, 3},
 	{"\n//line File1.go:100\n  line100", "TestLineDir/File1.go", 100, 0},
 }
@@ -647,7 +647,7 @@ func TestInit(t *testing.T) {
 	s.Scan()              // true
 	_, tok, _ := s.Scan() // {
 	if tok != token.LBRACE {
-		t.Errorf("bad token: got %s, expected %s", tok, token.LBRACE)
+		t.Errorf("bad token_builder: got %s, expected %s", tok, token.LBRACE)
 	}
 
 	// 2nd init
@@ -659,7 +659,7 @@ func TestInit(t *testing.T) {
 	}
 	_, tok, _ = s.Scan() // go
 	if tok != token.GO {
-		t.Errorf("bad token: got %s, expected %s", tok, token.GO)
+		t.Errorf("bad token_builder: got %s, expected %s", tok, token.GO)
 	}
 
 	if s.ErrorCount != 0 {
@@ -757,7 +757,7 @@ var errors = []struct {
 	{"\a", token.ILLEGAL, 0, "", "illegal character U+0007"},
 	{`#`, token.ILLEGAL, 0, "", "illegal character U+0023 '#'"},
 	{`…`, token.ILLEGAL, 0, "", "illegal character U+2026 '…'"},
-	{"..", token.PERIOD, 0, "", ""}, // two periods, not invalid token (issue #28112)
+	{"..", token.PERIOD, 0, "", ""}, // two periods, not invalid token_builder (issue #28112)
 	{`' '`, token.CHAR, 0, `' '`, ""},
 	{`''`, token.CHAR, 0, `''`, "illegal rune literal"},
 	{`'12'`, token.CHAR, 0, `'12'`, "illegal rune literal"},
@@ -1089,7 +1089,7 @@ func TestNumbers(t *testing.T) {
 
 			if i == 0 {
 				if tok != test.tok {
-					t.Errorf("%q: got token %s; want %s", test.src, tok, test.tok)
+					t.Errorf("%q: got token_builder %s; want %s", test.src, tok, test.tok)
 				}
 				if err != test.err {
 					t.Errorf("%q: got error %q; want %q", test.src, err, test.err)

@@ -135,7 +135,7 @@ func (p *Parser) ParseSymABIs(w io.Writer) bool {
 	return p.errorCount == 0
 }
 
-// nextToken returns the next non-build-comment token from the lexer.
+// nextToken returns the next non-build-comment token_builder from the lexer.
 // It reports misplaced //go:build comments but otherwise discards them.
 func (p *Parser) nextToken() lex.ScanToken {
 	for {
@@ -629,7 +629,7 @@ func (p *Parser) register(name string, prefix rune) (r1, r2 int16, scale int8, o
 }
 
 // registerShift parses an ARM/ARM64 shifted register reference and returns the encoded representation.
-// There is known to be a register (current token) and a shift operator (peeked token).
+// There is known to be a register (current token_builder) and a shift operator (peeked token_builder).
 func (p *Parser) registerShift(name string, prefix rune) int64 {
 	if prefix != 0 {
 		p.errorf("prefix %c not allowed for shifted register: $%s", prefix, name)
@@ -696,7 +696,7 @@ func (p *Parser) registerShift(name string, prefix rune) int64 {
 }
 
 // registerExtension parses a register with extension or arrangement.
-// There is known to be a register (current token) and an extension operator (peeked token).
+// There is known to be a register (current token_builder) and an extension operator (peeked token_builder).
 func (p *Parser) registerExtension(a *obj.Addr, name string, prefix rune) {
 	if prefix != 0 {
 		p.errorf("prefix %c not allowed for shifted register: $%s", prefix, name)
@@ -1406,7 +1406,7 @@ func (p *Parser) expect(expectedToken lex.ScanToken, expectedMessage string) {
 	}
 }
 
-// have reports whether the remaining tokens (including the current one) contain the specified token.
+// have reports whether the remaining tokens (including the current one) contain the specified token_builder.
 func (p *Parser) have(token lex.ScanToken) bool {
 	for i := p.inputPos; i < len(p.input); i++ {
 		if p.input[i].ScanToken == token {

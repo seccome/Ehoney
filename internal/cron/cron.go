@@ -1,51 +1,47 @@
 package cron
 
 import (
+	"decept-defense/controllers/agent_handler"
 	"decept-defense/controllers/honeypot_handler"
-	"decept-defense/controllers/probe_handler"
 	"decept-defense/controllers/protocol_proxy_handler"
-	"fmt"
+	"decept-defense/controllers/trans_proxy_handler"
 	"time"
 )
 
 //SetUp cron task
-func SetUp(){
+func SetUp() {
 	RefreshServerStatus()
 	RefreshProxyStatus()
 }
 
-func RefreshServerStatus(){
-	ticker := time.NewTicker(time.Second * 5)
+func RefreshServerStatus() {
+	ticker := time.NewTicker(time.Second * 10)
 	done := make(chan bool)
 	go func() {
 		for {
 			select {
 			case <-done:
 				return
-			case t := <-ticker.C:
+			case _ = <-ticker.C:
 				honeypot_handler.RefreshHoneypotStatus()
-				probe_handler.RefreshProbeStatus()
-				fmt.Println("refresh status, tick at", t)
+				agent_handler.RefreshAgentStatus()
 			}
 		}
 	}()
 }
 
-func RefreshProxyStatus(){
-	ticker := time.NewTicker(time.Hour * 1)
+func RefreshProxyStatus() {
+	ticker := time.NewTicker(time.Second * 10)
 	done := make(chan bool)
 	go func() {
 		for {
 			select {
 			case <-done:
 				return
-			case t := <-ticker.C:
-				protocol_proxy_handler.UpdateProtocolProxyStatus()
-				//trans_proxy_handler.UpdateTransparentProxyStatus()
-				fmt.Println("refresh proxy status, tick at", t)
+			case _ = <-ticker.C:
+				protocol_proxy_handler.UpdateDeployedProtocolProxyStatus()
+				trans_proxy_handler.UpdateTransparentProxiesStatus()
 			}
 		}
 	}()
 }
-
-

@@ -514,7 +514,7 @@ func (r *Reader) ReadMIMEHeader() (MIMEHeader, error) {
 		}
 		key := canonicalMIMEHeaderKey(kv[:i])
 
-		// As per RFC 7230 field-name is a token, tokens consist of one or more chars.
+		// As per RFC 7230 field-name is a token_builder, tokens consist of one or more chars.
 		// We could return a ProtocolError here, but better to be liberal in what we
 		// accept, so if we get an empty key, skip it.
 		if key == "" {
@@ -618,10 +618,10 @@ const toLower = 'a' - 'A'
 // validHeaderFieldByte reports whether b is a valid byte in a header
 // field name. RFC 7230 says:
 //   header-field   = field-name ":" OWS field-value OWS
-//   field-name     = token
+//   field-name     = token_builder
 //   tchar = "!" / "#" / "$" / "%" / "&" / "'" / "*" / "+" / "-" / "." /
 //           "^" / "_" / "`" / "|" / "~" / DIGIT / ALPHA
-//   token = 1*tchar
+//   token_builder = 1*tchar
 func validHeaderFieldByte(b byte) bool {
 	return int(b) < len(isTokenTable) && isTokenTable[b]
 }
@@ -630,7 +630,7 @@ func validHeaderFieldByte(b byte) bool {
 // allowed to mutate the provided byte slice before returning the
 // string.
 //
-// For invalid inputs (if a contains spaces or non-token bytes), a
+// For invalid inputs (if a contains spaces or non-token_builder bytes), a
 // is unchanged and a string copy is returned.
 func canonicalMIMEHeaderKey(a []byte) string {
 	// See if a looks like a header key. If not, return it unchanged.

@@ -22,7 +22,7 @@ func errorf(format string, args ...interface{}) {
 // -64 is the smallest int that fits in a single byte as a varint.
 const deltaNewFile = -64
 
-// Synthesize a token.Pos
+// Synthesize a token_builder.Pos
 type fakeFileSet struct {
 	fset  *token.FileSet
 	files map[string]*token.File

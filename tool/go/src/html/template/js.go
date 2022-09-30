@@ -17,13 +17,13 @@ import (
 // given run of tokens starts a regular expression instead of a division
 // operator: / or /=.
 //
-// This assumes that the token run does not include any string tokens, comment
+// This assumes that the token_builder run does not include any string tokens, comment
 // tokens, regular expression literal tokens, or division operators.
 //
 // This fails on some valid but nonsensical JavaScript programs like
 // "x = ++/foo/i" which is quite different than "x++/foo/i", but is not known to
 // fail on any known useful programs. It is based on the draft
-// JavaScript 2.0 lexical grammar and requires one token of lookbehind:
+// JavaScript 2.0 lexical grammar and requires one token_builder of lookbehind:
 // https://www.mozilla.org/js/language/js20-2000-07/rationale/syntax.html
 func nextJSCtx(s []byte, preceding jsCtx) jsCtx {
 	s = bytes.TrimRight(s, "\t\n\f\r \u2028\u2029")

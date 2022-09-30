@@ -56,7 +56,7 @@ func (pos Position) String() string {
 // set, unrecognized tokens are not ignored. Instead, the scanner simply
 // returns the respective individual characters (or possibly sub-tokens).
 // For instance, if the mode is ScanIdents (not ScanStrings), the string
-// "foo" is scanned as the token sequence '"' Ident '"'.
+// "foo" is scanned as the token_builder sequence '"' Ident '"'.
 //
 // Use GoTokens to configure the Scanner such that it accepts all Go
 // literal tokens including Go identifiers. Comments will be skipped.
@@ -99,7 +99,7 @@ var tokenString = map[rune]string{
 	Comment:   "Comment",
 }
 
-// TokenString returns a printable string for a token or Unicode character.
+// TokenString returns a printable string for a token_builder or Unicode character.
 func TokenString(tok rune) string {
 	if s, found := tokenString[tok]; found {
 		return s
@@ -131,12 +131,12 @@ type Scanner struct {
 	lastCharLen  int // length of last character in bytes
 
 	// Token text buffer
-	// Typically, token text is stored completely in srcBuf, but in general
-	// the token text's head may be buffered in tokBuf while the token text's
+	// Typically, token_builder text is stored completely in srcBuf, but in general
+	// the token_builder text's head may be buffered in tokBuf while the token_builder text's
 	// tail is stored in srcBuf.
-	tokBuf bytes.Buffer // token text head that is not in srcBuf anymore
-	tokPos int          // token text tail position (srcBuf index); valid if >= 0
-	tokEnd int          // token text tail end (srcBuf index)
+	tokBuf bytes.Buffer // token_builder text head that is not in srcBuf anymore
+	tokPos int          // token_builder text tail position (srcBuf index); valid if >= 0
+	tokEnd int          // token_builder text tail end (srcBuf index)
 
 	// One character look-ahead
 	ch rune // character before current srcPos
@@ -166,13 +166,13 @@ type Scanner struct {
 	// accepted instead. The field may be changed at any time.
 	IsIdentRune func(ch rune, i int) bool
 
-	// Start position of most recently scanned token; set by Scan.
+	// Start position of most recently scanned token_builder; set by Scan.
 	// Calling Init or Next invalidates the position (Line == 0).
 	// The Filename field is always left untouched by the Scanner.
 	// If an error is reported (via Error) and Position is invalid,
-	// the scanner is not inside a token. Call Pos to obtain an error
+	// the scanner is not inside a token_builder. Call Pos to obtain an error
 	// position in that case, or to obtain the position immediately
-	// after the most recently scanned token.
+	// after the most recently scanned token_builder.
 	Position
 }
 
@@ -195,7 +195,7 @@ func (s *Scanner) Init(src io.Reader) *Scanner {
 	s.lastLineLen = 0
 	s.lastCharLen = 0
 
-	// initialize token text buffer
+	// initialize token_builder text buffer
 	// (required for first call to next()).
 	s.tokPos = -1
 
@@ -207,7 +207,7 @@ func (s *Scanner) Init(src io.Reader) *Scanner {
 	s.ErrorCount = 0
 	s.Mode = GoTokens
 	s.Whitespace = GoWhitespace
-	s.Line = 0 // invalidate token position
+	s.Line = 0 // invalidate token_builder position
 
 	return s
 }
@@ -223,7 +223,7 @@ func (s *Scanner) next() rune {
 		// uncommon case: not ASCII or not enough bytes
 		for s.srcPos+utf8.UTFMax > s.srcEnd && !utf8.FullRune(s.srcBuf[s.srcPos:s.srcEnd]) {
 			// not enough bytes: read some more, but first
-			// save away token text if any
+			// save away token_builder text if any
 			if s.tokPos >= 0 {
 				s.tokBuf.Write(s.srcBuf[s.tokPos:s.srcPos])
 				s.tokPos = 0
@@ -303,8 +303,8 @@ func (s *Scanner) next() rune {
 // update the Scanner's Position field; use Pos() to
 // get the current position.
 func (s *Scanner) Next() rune {
-	s.tokPos = -1 // don't collect token text
-	s.Line = 0    // invalidate token position
+	s.tokPos = -1 // don't collect token_builder text
+	s.Line = 0    // invalidate token_builder position
 	ch := s.Peek()
 	if ch != EOF {
 		s.ch = s.next()
@@ -327,7 +327,7 @@ func (s *Scanner) Peek() rune {
 }
 
 func (s *Scanner) error(msg string) {
-	s.tokEnd = s.srcPos - s.lastCharLen // make sure token text is terminated
+	s.tokEnd = s.srcPos - s.lastCharLen // make sure token_builder text is terminated
 	s.ErrorCount++
 	if s.Error != nil {
 		s.Error(s, msg)
@@ -474,7 +474,7 @@ func (s *Scanner) scanNumber(ch rune, seenDot bool) (rune, rune) {
 	}
 
 	if digsep&2 != 0 {
-		s.tokEnd = s.srcPos - s.lastCharLen // make sure token text is terminated
+		s.tokEnd = s.srcPos - s.lastCharLen // make sure token_builder text is terminated
 		if i := invalidSep(s.TokenText()); i >= 0 {
 			s.error("'_' must separate successive digits")
 		}
@@ -639,15 +639,15 @@ func (s *Scanner) scanComment(ch rune) rune {
 	return ch
 }
 
-// Scan reads the next token or Unicode character from source and returns it.
+// Scan reads the next token_builder or Unicode character from source and returns it.
 // It only recognizes tokens t for which the respective Mode bit (1<<-t) is set.
 // It returns EOF at the end of the source. It reports scanner errors (read and
-// token errors) by calling s.Error, if not nil; otherwise it prints an error
+// token_builder errors) by calling s.Error, if not nil; otherwise it prints an error
 // message to os.Stderr.
 func (s *Scanner) Scan() rune {
 	ch := s.Peek()
 
-	// reset token text position
+	// reset token_builder text position
 	s.tokPos = -1
 	s.Line = 0
 
@@ -657,11 +657,11 @@ redo:
 		ch = s.next()
 	}
 
-	// start collecting token text
+	// start collecting token_builder text
 	s.tokBuf.Reset()
 	s.tokPos = s.srcPos - s.lastCharLen
 
-	// set token position
+	// set token_builder position
 	// (this is a slightly optimized version of the code in Pos())
 	s.Offset = s.srcBufOffset + s.tokPos
 	if s.column > 0 {
@@ -676,7 +676,7 @@ redo:
 		s.Column = s.lastLineLen
 	}
 
-	// determine token value
+	// determine token_builder value
 	tok := ch
 	switch {
 	case s.isIdentRune(ch, 0):
@@ -717,7 +717,7 @@ redo:
 			ch = s.next()
 			if (ch == '/' || ch == '*') && s.Mode&ScanComments != 0 {
 				if s.Mode&SkipComments != 0 {
-					s.tokPos = -1 // don't collect token text
+					s.tokPos = -1 // don't collect token_builder text
 					ch = s.scanComment(ch)
 					goto redo
 				}
@@ -735,7 +735,7 @@ redo:
 		}
 	}
 
-	// end of token text
+	// end of token_builder text
 	s.tokEnd = s.srcPos - s.lastCharLen
 
 	s.ch = ch
@@ -743,9 +743,9 @@ redo:
 }
 
 // Pos returns the position of the character immediately after
-// the character or token returned by the last call to Next or Scan.
+// the character or token_builder returned by the last call to Next or Scan.
 // Use the Scanner's Position field for the start position of the most
-// recently scanned token.
+// recently scanned token_builder.
 func (s *Scanner) Pos() (pos Position) {
 	pos.Filename = s.Filename
 	pos.Offset = s.srcBufOffset + s.srcPos - s.lastCharLen
@@ -766,11 +766,11 @@ func (s *Scanner) Pos() (pos Position) {
 	return
 }
 
-// TokenText returns the string corresponding to the most recently scanned token.
+// TokenText returns the string corresponding to the most recently scanned token_builder.
 // Valid after calling Scan and in calls of Scanner.Error.
 func (s *Scanner) TokenText() string {
 	if s.tokPos < 0 {
-		// no token text
+		// no token_builder text
 		return ""
 	}
 
@@ -781,11 +781,11 @@ func (s *Scanner) TokenText() string {
 	// s.tokEnd >= s.tokPos
 
 	if s.tokBuf.Len() == 0 {
-		// common case: the entire token text is still in srcBuf
+		// common case: the entire token_builder text is still in srcBuf
 		return string(s.srcBuf[s.tokPos:s.tokEnd])
 	}
 
-	// part of the token text was saved in tokBuf: save the rest in
+	// part of the token_builder text was saved in tokBuf: save the rest in
 	// tokBuf as well and return its content
 	s.tokBuf.Write(s.srcBuf[s.tokPos:s.tokEnd])
 	s.tokPos = s.tokEnd // ensure idempotency of TokenText() call

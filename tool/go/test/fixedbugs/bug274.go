@@ -7,7 +7,7 @@
 // 6g accepts the program below even though it is syntactically incorrect:
 // Each statement in the list of statements for each case clause must be
 // terminated with a semicolon. No semicolon is present for the labeled
-// statements and because the last token is a colon ":", no semicolon is
+// statements and because the last token_builder is a colon ":", no semicolon is
 // inserted automatically.
 //
 // Both gccgo and gofmt correctly refuse this program as is and accept it

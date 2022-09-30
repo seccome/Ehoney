@@ -222,9 +222,9 @@ func (h Header) writeSubset(w io.Writer, exclude map[string]bool, trace *httptra
 // returned without modifications.
 func CanonicalHeaderKey(s string) string { return textproto.CanonicalMIMEHeaderKey(s) }
 
-// hasToken reports whether token appears with v, ASCII
+// hasToken reports whether token_builder appears with v, ASCII
 // case-insensitive, with space or comma boundaries.
-// token must be all lowercase.
+// token_builder must be all lowercase.
 // v may contain mixed cased.
 func hasToken(v, token string) bool {
 	if len(token) > len(v) || token == "" {
@@ -235,7 +235,7 @@ func hasToken(v, token string) bool {
 	}
 	for sp := 0; sp <= len(v)-len(token); sp++ {
 		// Check that first character is good.
-		// The token is ASCII, so checking only a single byte
+		// The token_builder is ASCII, so checking only a single byte
 		// is sufficient. We skip this potential starting
 		// position if both the first byte and its potential
 		// ASCII uppercase equivalent (b|0x20) don't match.
@@ -243,11 +243,11 @@ func hasToken(v, token string) bool {
 		if b := v[sp]; b != token[0] && b|0x20 != token[0] {
 			continue
 		}
-		// Check that start pos is on a valid token boundary.
+		// Check that start pos is on a valid token_builder boundary.
 		if sp > 0 && !isTokenBoundary(v[sp-1]) {
 			continue
 		}
-		// Check that end pos is on a valid token boundary.
+		// Check that end pos is on a valid token_builder boundary.
 		if endPos := sp + len(token); endPos != len(v) && !isTokenBoundary(v[endPos]) {
 			continue
 		}

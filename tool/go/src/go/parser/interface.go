@@ -79,7 +79,7 @@ const (
 //
 func ParseFile(fset *token.FileSet, filename string, src interface{}, mode Mode) (f *ast.File, err error) {
 	if fset == nil {
-		panic("parser.ParseFile: no token.FileSet provided (fset == nil)")
+		panic("parser.ParseFile: no token_builder.FileSet provided (fset == nil)")
 	}
 
 	// get source
@@ -185,7 +185,7 @@ func ParseDir(fset *token.FileSet, path string, filter func(fs.FileInfo) bool, m
 //
 func ParseExprFrom(fset *token.FileSet, filename string, src interface{}, mode Mode) (expr ast.Expr, err error) {
 	if fset == nil {
-		panic("parser.ParseExprFrom: no token.FileSet provided (fset == nil)")
+		panic("parser.ParseExprFrom: no token_builder.FileSet provided (fset == nil)")
 	}
 
 	// get source

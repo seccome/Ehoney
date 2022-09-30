@@ -43,8 +43,11 @@ func Setup() {
 		zap.L().Fatal("BuildConfigFromFlags fail error:" + err.Error())
 	}
 	client, err = kubernetes.NewForConfig(config)
-	if err != nil {
-		zap.L().Fatal("BuildConfigFromFlags fail error:" + err.Error())
+	if err != nil || client == nil {
+		if err != nil {
+			zap.L().Error(err.Error())
+		}
+		zap.L().Fatal("BuildConfigFromFlags fail error")
 	}
 	deploymentsClient = client.AppsV1().Deployments(apiV1.NamespaceDefault)
 }
@@ -60,13 +63,13 @@ func CreateDeployment(podName, imageAddress string, containerPort int32) (*apiV1
 			Replicas: int32Ptr(1),
 			Selector: &metaV1.LabelSelector{
 				MatchLabels: map[string]string{
-					"app": "demo",
+					"app": "ehoney",
 				},
 			},
 			Template: apiV1.PodTemplateSpec{
 				ObjectMeta: metaV1.ObjectMeta{
 					Labels: map[string]string{
-						"app": "demo",
+						"app": "ehoney",
 					},
 				},
 				Spec: apiV1.PodSpec{
@@ -132,19 +135,6 @@ func CreateDeployment(podName, imageAddress string, containerPort int32) (*apiV1
 		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, env4)
 		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, env5)
 		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, env6)
-
-		//deployment.Spec.Template.Spec.Containers[0].Env[0].Name = "FTP_USER"
-		//deployment.Spec.Template.Spec.Containers[0].Env[0].Value = "admin"
-		//deployment.Spec.Template.Spec.Containers[0].Env[1].Name = "FTP_PASS"
-		//deployment.Spec.Template.Spec.Containers[0].Env[1].Value = "admin"
-		//deployment.Spec.Template.Spec.Containers[0].Env[2].Name = "PASV_ADDRESS"
-		//deployment.Spec.Template.Spec.Containers[0].Env[2].Value = ""
-		//deployment.Spec.Template.Spec.Containers[0].Env[3].Name = "PASV_PROMISCUOUS"
-		//deployment.Spec.Template.Spec.Containers[0].Env[3].Value = "YES"
-		//deployment.Spec.Template.Spec.Containers[0].Env[4].Name = "PASV_MIN_PORT"
-		//deployment.Spec.Template.Spec.Containers[0].Env[4].Value = "21100"
-		//deployment.Spec.Template.Spec.Containers[0].Env[5].Name = "PASV_MAX_PORT"
-		//deployment.Spec.Template.Spec.Containers[0].Env[5].Value = "21100"
 		zap.L().Info(fmt.Sprintf("ftp deployment: %v", deployment.Spec.Template.Spec.Containers[0].Ports[0]))
 	}
 	zap.L().Info("Creating deployment...")
@@ -166,7 +156,6 @@ func CreateDeployment(podName, imageAddress string, containerPort int32) (*apiV1
 }
 
 func UpdateDeployment(deploymentName string, containerPort int32, imageAddress string) error {
-
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		result, getErr := deploymentsClient.Get(context.TODO(), deploymentName, metaV1.GetOptions{})
 		if getErr != nil {
@@ -270,10 +259,11 @@ func GetPodDetailInfo(podName string) PodDetail {
 		status = "Running"
 	} else if pod.Status.Phase == apiV1.PodFailed {
 		status = "Failed"
+	} else if pod.Status.Phase == apiV1.PodPending {
+		status = "Creating"
 	} else {
 		status = "Unknown"
 	}
-
 	return PodDetail{
 		Status: status,
 		HostIP: pod.Status.HostIP,
@@ -294,19 +284,22 @@ func RemoveFromPod(podName, containerName, srcPath string) error {
 
 func CopyToPod(podName, containerName, srcPath, destPath string) error {
 
-	zap.L().Error(fmt.Sprintf("podName[%s] containerName[%s]  srcPath[%s] destPath[%s]", podName, containerName, srcPath, destPath))
+	zap.L().Info(fmt.Sprintf("podName[%s] containerName[%s]  srcPath[%s] destPath[%s]", podName, containerName, srcPath, destPath))
 
 	reader, writer := io.Pipe()
 	if destPath != "/" && strings.HasSuffix(string(destPath[len(destPath)-1]), "/") {
 		destPath = destPath[:len(destPath)-1]
 	}
-	createDir(podName, containerName, destPath)
+	createPodDir(podName, containerName, destPath)
 	destPath = destPath + "/" + path.Base(srcPath)
 	go func() {
 		defer writer.Close()
+		zap.L().Info(fmt.Sprintf("srcPath[%s] destPath[%s]  writer status[%v]", srcPath, destPath, writer != nil))
 		err := makeTar(srcPath, destPath, writer)
-		zap.L().Error(fmt.Sprintf("makeTar err: %v", err))
-		cmdUtil.CheckErr(err)
+		if err != nil {
+			zap.L().Error(fmt.Sprintf("makeTar err: %v", err))
+			cmdUtil.CheckErr(err)
+		}
 	}()
 	var cmdArr []string
 
@@ -351,7 +344,6 @@ func CopyToPod(podName, containerName, srcPath, destPath string) error {
 func makeTar(srcPath, destPath string, writer io.Writer) error {
 	tarWriter := tar.NewWriter(writer)
 	defer tarWriter.Close()
-
 	srcPath = path.Clean(srcPath)
 	destPath = path.Clean(destPath)
 	return recursiveTar(path.Dir(srcPath), path.Base(srcPath), path.Dir(destPath), path.Base(destPath), tarWriter)
@@ -435,7 +427,7 @@ func checkDestinationIsFile(podName string, containerName string, destPath strin
 	return exec(podName, containerName, []string{"test", "-e", destPath})
 }
 
-func createDir(podName string, containerName string, destPath string) error {
+func createPodDir(podName string, containerName string, destPath string) error {
 	return exec(podName, containerName, []string{"mkdir", "-p", destPath})
 }
 

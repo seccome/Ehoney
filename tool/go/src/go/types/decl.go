@@ -440,7 +440,7 @@ func (check *Checker) walkDecl(d ast.Decl, f func(decl)) {
 					check.arityMatch(s, nil)
 					f(varDecl{s})
 				default:
-					check.invalidAST(s, "invalid token %s", d.Tok)
+					check.invalidAST(s, "invalid token_builder %s", d.Tok)
 				}
 			case *ast.TypeSpec:
 				f(typeDecl{s})

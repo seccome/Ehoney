@@ -751,7 +751,7 @@ func contextAfterText(c context, s []byte) (context, int) {
 		// Remain inside the attribute.
 		// Decode the value so non-HTML rules can easily handle
 		//     <button onclick="alert(&quot;Hi!&quot;)">
-		// without having to entity decode token boundaries.
+		// without having to entity decode token_builder boundaries.
 		for u := []byte(html.UnescapeString(string(s))); len(u) != 0; {
 			c1, i1 := transitionFunc[c.state](c, u)
 			c, u = c1, u[i1:]

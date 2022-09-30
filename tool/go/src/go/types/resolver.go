@@ -224,7 +224,7 @@ func (check *Checker) collectObjects() {
 
 		// Use the actual source file extent rather than *ast.File extent since the
 		// latter doesn't include comments which appear at the start or end of the file.
-		// Be conservative and use the *ast.File extent if we don't have a *token.File.
+		// Be conservative and use the *ast.File extent if we don't have a *token_builder.File.
 		pos, end := file.Pos(), file.End()
 		if f := check.fset.File(file.Pos()); f != nil {
 			pos, end = token.Pos(f.Base()), token.Pos(f.Base()+f.Size())

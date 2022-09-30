@@ -110,11 +110,11 @@ func checkMediaTypeDisposition(s string) error {
 		return nil
 	}
 	if !strings.HasPrefix(rest, "/") {
-		return errors.New("mime: expected slash after first token")
+		return errors.New("mime: expected slash after first token_builder")
 	}
 	subtype, rest := consumeToken(rest[1:])
 	if subtype == "" {
-		return errors.New("mime: expected token after slash")
+		return errors.New("mime: expected token_builder after slash")
 	}
 	if rest != "" {
 		return errors.New("mime: unexpected content after media subtype")
@@ -264,9 +264,9 @@ func isNotTokenChar(r rune) bool {
 	return !isTokenChar(r)
 }
 
-// consumeToken consumes a token from the beginning of provided
+// consumeToken consumes a token_builder from the beginning of provided
 // string, per RFC 2045 section 5.1 (referenced from 2183), and return
-// the token consumed and the rest of the string. Returns ("", v) on
+// the token_builder consumed and the rest of the string. Returns ("", v) on
 // failure to consume at least one character.
 func consumeToken(v string) (token, rest string) {
 	notPos := strings.IndexFunc(v, isNotTokenChar)
@@ -280,7 +280,7 @@ func consumeToken(v string) (token, rest string) {
 }
 
 // consumeValue consumes a "value" per RFC 2045, where a value is
-// either a 'token' or a 'quoted-string'.  On success, consumeValue
+// either a 'token_builder' or a 'quoted-string'.  On success, consumeValue
 // returns the value consumed (and de-quoted/escaped, if a
 // quoted-string) and the rest of the string. On failure, returns
 // ("", v).
@@ -303,7 +303,7 @@ func consumeValue(v string) (value, rest string) {
 		// escape backslashes: "C:\dev\go\foo.txt", not "C:\\dev\\go\\foo.txt".
 		//
 		// No known MIME generators emit unnecessary backslash escapes
-		// for simple token characters like numbers and letters.
+		// for simple token_builder characters like numbers and letters.
 		//
 		// If we see an unnecessary backslash escape, assume it is from MSIE
 		// and intended as a literal backslash. This makes Go servers deal better

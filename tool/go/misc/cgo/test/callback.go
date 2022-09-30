@@ -25,7 +25,7 @@ import (
 	"unsafe"
 )
 
-// Pass a func value from nestedCall to goCallback using an integer token.
+// Pass a func value from nestedCall to goCallback using an integer token_builder.
 var callbackMutex sync.Mutex
 var callbackToken int
 var callbackFuncs = make(map[int]func())

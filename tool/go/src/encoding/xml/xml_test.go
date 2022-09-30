@@ -364,14 +364,14 @@ func TestRawTokenAltEncodingNoConverter(t *testing.T) {
 	d := NewDecoder(strings.NewReader(testInputAltEncoding))
 	token, err := d.RawToken()
 	if token == nil {
-		t.Fatalf("expected a token on first RawToken call")
+		t.Fatalf("expected a token_builder on first RawToken call")
 	}
 	if err != nil {
 		t.Fatal(err)
 	}
 	token, err = d.RawToken()
 	if token != nil {
-		t.Errorf("expected a nil token; got %#v", token)
+		t.Errorf("expected a nil token_builder; got %#v", token)
 	}
 	if err == nil {
 		t.Fatalf("expected an error on second RawToken call")
@@ -390,7 +390,7 @@ func testRawToken(t *testing.T, d *Decoder, raw string, rawTokens []Token) {
 		have, err := d.RawToken()
 		end := d.InputOffset()
 		if err != nil {
-			t.Fatalf("token %d: unexpected error: %s", i, err)
+			t.Fatalf("token_builder %d: unexpected error: %s", i, err)
 		}
 		if !reflect.DeepEqual(have, want) {
 			var shave, swant string
@@ -404,25 +404,25 @@ func testRawToken(t *testing.T, d *Decoder, raw string, rawTokens []Token) {
 			} else {
 				swant = fmt.Sprintf("%#v", want)
 			}
-			t.Errorf("token %d = %s, want %s", i, shave, swant)
+			t.Errorf("token_builder %d = %s, want %s", i, shave, swant)
 		}
 
-		// Check that InputOffset returned actual token.
+		// Check that InputOffset returned actual token_builder.
 		switch {
 		case start < lastEnd:
-			t.Errorf("token %d: position [%d,%d) for %T is before previous token", i, start, end, have)
+			t.Errorf("token_builder %d: position [%d,%d) for %T is before previous token_builder", i, start, end, have)
 		case start >= end:
 			// Special case: EndElement can be synthesized.
 			if start == end && end == lastEnd {
 				break
 			}
-			t.Errorf("token %d: position [%d,%d) for %T is empty", i, start, end, have)
+			t.Errorf("token_builder %d: position [%d,%d) for %T is empty", i, start, end, have)
 		case end > int64(len(raw)):
-			t.Errorf("token %d: position [%d,%d) for %T extends beyond input", i, start, end, have)
+			t.Errorf("token_builder %d: position [%d,%d) for %T extends beyond input", i, start, end, have)
 		default:
 			text := raw[start:end]
 			if strings.ContainsAny(text, "<>") && (!strings.HasPrefix(text, "<") || !strings.HasSuffix(text, ">")) {
-				t.Errorf("token %d: misaligned raw token %#q for %T", i, text, have)
+				t.Errorf("token_builder %d: misaligned raw token_builder %#q for %T", i, text, have)
 			}
 		}
 		lastEnd = end
@@ -467,10 +467,10 @@ func TestNestedDirectives(t *testing.T) {
 	for i, want := range nestedDirectivesTokens {
 		have, err := d.Token()
 		if err != nil {
-			t.Fatalf("token %d: unexpected error: %s", i, err)
+			t.Fatalf("token_builder %d: unexpected error: %s", i, err)
 		}
 		if !reflect.DeepEqual(have, want) {
-			t.Errorf("token %d = %#v want %#v", i, have, want)
+			t.Errorf("token_builder %d = %#v want %#v", i, have, want)
 		}
 	}
 }
@@ -482,10 +482,10 @@ func TestToken(t *testing.T) {
 	for i, want := range cookedTokens {
 		have, err := d.Token()
 		if err != nil {
-			t.Fatalf("token %d: unexpected error: %s", i, err)
+			t.Fatalf("token_builder %d: unexpected error: %s", i, err)
 		}
 		if !reflect.DeepEqual(have, want) {
-			t.Errorf("token %d = %#v want %#v", i, have, want)
+			t.Errorf("token_builder %d = %#v want %#v", i, have, want)
 		}
 	}
 }
@@ -816,10 +816,10 @@ func TestDirectivesWithComments(t *testing.T) {
 	for i, want := range directivesWithCommentsTokens {
 		have, err := d.Token()
 		if err != nil {
-			t.Fatalf("token %d: unexpected error: %s", i, err)
+			t.Fatalf("token_builder %d: unexpected error: %s", i, err)
 		}
 		if !reflect.DeepEqual(have, want) {
-			t.Errorf("token %d = %#v want %#v", i, have, want)
+			t.Errorf("token_builder %d = %#v want %#v", i, have, want)
 		}
 	}
 }
@@ -996,7 +996,7 @@ func (Failure) UnmarshalXML(*Decoder, StartElement) error {
 func TestTokenUnmarshaler(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			t.Error("Unexpected panic using custom token unmarshaler")
+			t.Error("Unexpected panic using custom token_builder unmarshaler")
 		}
 	}()
 

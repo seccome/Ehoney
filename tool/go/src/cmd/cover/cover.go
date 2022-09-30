@@ -614,7 +614,7 @@ func (b blockSlice) Len() int           { return len(b) }
 func (b blockSlice) Less(i, j int) bool { return b[i].startByte < b[j].startByte }
 func (b blockSlice) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
 
-// offset translates a token position into a 0-indexed byte offset.
+// offset translates a token_builder position into a 0-indexed byte offset.
 func (f *File) offset(pos token.Pos) int {
 	return f.fset.Position(pos).Offset
 }
@@ -631,7 +631,7 @@ func (f *File) addVariables(w io.Writer) {
 	for i := 1; i < len(t); i++ {
 		if t[i-1].endByte > t[i].startByte {
 			fmt.Fprintf(os.Stderr, "cover: internal error: block %d overlaps block %d\n", t[i-1].index, t[i].index)
-			// Note: error message is in byte positions, not token positions.
+			// Note: error message is in byte positions, not token_builder positions.
 			fmt.Fprintf(os.Stderr, "\t%s:#%d,#%d %s:#%d,#%d\n",
 				f.name, f.offset(t[i-1].startByte), f.offset(t[i-1].endByte),
 				f.name, f.offset(t[i].startByte), f.offset(t[i].endByte))
@@ -698,15 +698,15 @@ func (f *File) addVariables(w io.Writer) {
 // Tests are TestHtmlUnformatted and TestLineDup.
 // We use a map to avoid duplicates.
 
-// pos2 is a pair of token.Position values, used as a map key type.
+// pos2 is a pair of token_builder.Position values, used as a map key type.
 type pos2 struct {
 	p1, p2 token.Position
 }
 
-// seenPos2 tracks whether we have seen a token.Position pair.
+// seenPos2 tracks whether we have seen a token_builder.Position pair.
 var seenPos2 = make(map[pos2]bool)
 
-// dedup takes a token.Position pair and returns a pair that does not
+// dedup takes a token_builder.Position pair and returns a pair that does not
 // duplicate any existing pair. The returned pair will have the Offset
 // fields cleared.
 func dedup(p1, p2 token.Position) (r1, r2 token.Position) {

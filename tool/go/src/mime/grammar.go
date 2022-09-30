@@ -14,15 +14,15 @@ func isTSpecial(r rune) bool {
 	return strings.ContainsRune(`()<>@,;:\"/[]?=`, r)
 }
 
-// isTokenChar reports whether rune is in 'token' as defined by RFC
+// isTokenChar reports whether rune is in 'token_builder' as defined by RFC
 // 1521 and RFC 2045.
 func isTokenChar(r rune) bool {
-	// token := 1*<any (US-ASCII) CHAR except SPACE, CTLs,
+	// token_builder := 1*<any (US-ASCII) CHAR except SPACE, CTLs,
 	//             or tspecials>
 	return r > 0x20 && r < 0x7f && !isTSpecial(r)
 }
 
-// isToken reports whether s is a 'token' as defined by RFC 1521
+// isToken reports whether s is a 'token_builder' as defined by RFC 1521
 // and RFC 2045.
 func isToken(s string) bool {
 	if s == "" {

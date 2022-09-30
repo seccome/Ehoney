@@ -5495,7 +5495,7 @@ func TestChanOf(t *testing.T) {
 	type T1 int
 	checkSameType(t, ChanOf(BothDir, TypeOf(T1(1))), (chan T1)(nil))
 
-	// Check arrow token association in undefined chan types.
+	// Check arrow token_builder association in undefined chan types.
 	var left chan<- chan T
 	var right chan (<-chan T)
 	tLeft := ChanOf(SendDir, ChanOf(BothDir, TypeOf(T(""))))

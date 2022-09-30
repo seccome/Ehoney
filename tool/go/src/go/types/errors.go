@@ -195,7 +195,7 @@ func inNode(node ast.Node, pos token.Pos) posSpan {
 	return posSpan{start, pos, end}
 }
 
-// atPos wraps a token.Pos to implement the positioner interface.
+// atPos wraps a token_builder.Pos to implement the positioner interface.
 type atPos token.Pos
 
 func (s atPos) Pos() token.Pos {

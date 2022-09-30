@@ -8,7 +8,7 @@
 // .src rather than .go so that they are not disturbed by gofmt runs.
 //
 // Expected errors are indicated in the test files by putting a comment
-// of the form /* ERROR "rx" */ immediately following an offending token.
+// of the form /* ERROR "rx" */ immediately following an offending token_builder.
 // The harness will verify that an error matching the regular expression
 // rx is reported at that source position.
 //
@@ -58,8 +58,8 @@ func getPos(fset *token.FileSet, filename string, offset int) token.Pos {
 // ERROR comments must be of the form /* ERROR "rx" */ and rx is
 // a regular expression that matches the expected error message.
 // The special form /* ERROR HERE "rx" */ must be used for error
-// messages that appear immediately after a token, rather than at
-// a token's position.
+// messages that appear immediately after a token_builder, rather than at
+// a token_builder's position.
 //
 var errRx = regexp.MustCompile(`^/\* *ERROR *(HERE)? *"([^"]*)" *\*/$`)
 
@@ -74,8 +74,8 @@ func expectedErrors(fset *token.FileSet, filename string, src []byte) map[token.
 	// set otherwise the position information returned here will
 	// not match the position information collected by the parser
 	s.Init(getFile(fset, filename), src, nil, scanner.ScanComments)
-	var prev token.Pos // position of last non-comment, non-semicolon token
-	var here token.Pos // position immediately after the token at position prev
+	var prev token.Pos // position of last non-comment, non-semicolon token_builder
+	var here token.Pos // position immediately after the token_builder at position prev
 
 	for {
 		pos, tok, lit := s.Scan()
@@ -99,7 +99,7 @@ func expectedErrors(fset *token.FileSet, filename string, src []byte) map[token.
 			fallthrough
 		default:
 			prev = pos
-			var l int // token length
+			var l int // token_builder length
 			if tok.IsLiteral() {
 				l = len(lit)
 			} else {
@@ -115,8 +115,8 @@ func expectedErrors(fset *token.FileSet, filename string, src []byte) map[token.
 //
 func compareErrors(t *testing.T, fset *token.FileSet, expected map[token.Pos]string, found scanner.ErrorList) {
 	for _, error := range found {
-		// error.Pos is a token.Position, but we want
-		// a token.Pos so we can do a map lookup
+		// error.Pos is a token_builder.Position, but we want
+		// a token_builder.Pos so we can do a map lookup
 		pos := getPos(fset, error.Pos.Filename, error.Pos.Offset)
 		if msg, found := expected[pos]; found {
 			// we expect a message at pos; check if it matches

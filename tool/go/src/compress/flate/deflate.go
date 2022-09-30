@@ -407,7 +407,7 @@ Loop:
 			if lookahead == 0 {
 				// Flush current output block if any.
 				if d.byteAvailable {
-					// There is still one pending token that needs to be flushed
+					// There is still one pending token_builder that needs to be flushed
 					d.tokens = append(d.tokens, literalToken(uint32(d.window[d.index-1])))
 					d.byteAvailable = false
 				}

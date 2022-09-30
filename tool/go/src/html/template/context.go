@@ -74,11 +74,11 @@ func (c context) mangle(templateName string) string {
 //
 // It bounds the top of the element stack, and by extension the HTML insertion
 // mode, but also contains state that does not correspond to anything in the
-// HTML5 parsing algorithm because a single token production in the HTML
+// HTML5 parsing algorithm because a single token_builder production in the HTML
 // grammar may contain embedded actions in a template. For instance, the quoted
 // HTML attribute produced by
 //     <div title="Hello {{.World}}">
-// is a single token in HTML's grammar but in a template spans several nodes.
+// is a single token_builder in HTML's grammar but in a template spans several nodes.
 type state uint8
 
 //go:generate stringer -type state

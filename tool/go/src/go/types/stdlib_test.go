@@ -47,7 +47,7 @@ func TestStdlib(t *testing.T) {
 // firstComment returns the contents of the first non-empty comment in
 // the given file, "skip", or the empty string. No matter the present
 // comments, if any of them contains a build tag, the result is always
-// "skip". Only comments before the "package" token and within the first
+// "skip". Only comments before the "package" token_builder and within the first
 // 4K of the file are considered.
 func firstComment(filename string) string {
 	f, err := os.Open(filename)

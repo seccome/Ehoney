@@ -7,7 +7,7 @@
 // errors are compared against the errors declared in those files.
 //
 // Errors are declared in place in the form of "error comments",
-// just before (or on the same line as) the offending token.
+// just before (or on the same line as) the offending token_builder.
 //
 // Error comments must be of the form // ERROR rx or /* ERROR rx */
 // where rx is a regular expression that matches the reported error
@@ -18,12 +18,12 @@
 // match the line of the error comment.
 //
 // If the regular comment form is used, the reported error's position
-// must match the position of the token immediately following the
+// must match the position of the token_builder immediately following the
 // error comment. Thus, /* ERROR ... */ comments should appear
 // immediately before the position where the error is reported.
 //
 // Currently, the test harness only supports one error comment per
-// token. If multiple error comments appear before a token, only
+// token_builder. If multiple error comments appear before a token_builder, only
 // the last one is considered.
 
 package syntax
@@ -90,7 +90,7 @@ func declaredErrors(t *testing.T, filename string) map[position]string {
 			// we can't have another comment on the same line - just add it
 			declared[position{s.line, 0}] = strings.TrimSpace(msg[9:])
 		case strings.HasPrefix(msg, "/* ERROR "):
-			// we may have more comments before the next token - collect them
+			// we may have more comments before the next token_builder - collect them
 			pattern = strings.TrimSpace(msg[9 : len(msg)-2])
 		}
 	}, comments)

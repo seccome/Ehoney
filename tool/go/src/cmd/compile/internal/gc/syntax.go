@@ -683,7 +683,7 @@ type Inline struct {
 
 // A Mark represents a scope boundary.
 type Mark struct {
-	// Pos is the position of the token that marks the scope
+	// Pos is the position of the token_builder that marks the scope
 	// change.
 	Pos src.XPos
 

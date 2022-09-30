@@ -160,7 +160,7 @@ func New(pkg *ast.Package, importPath string, mode Mode) *Package {
 func NewFromFiles(fset *token.FileSet, files []*ast.File, importPath string, opts ...interface{}) (*Package, error) {
 	// Check for invalid API usage.
 	if fset == nil {
-		panic(fmt.Errorf("doc.NewFromFiles: no token.FileSet provided (fset == nil)"))
+		panic(fmt.Errorf("doc.NewFromFiles: no token_builder.FileSet provided (fset == nil)"))
 	}
 	var mode Mode
 	switch len(opts) { // There can only be 0 or 1 options, so a simple switch works for now.

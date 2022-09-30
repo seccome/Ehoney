@@ -41,11 +41,11 @@ func parseNetrc(data string) []netrcLine {
 		f := strings.Fields(line)
 		i := 0
 		for ; i < len(f)-1; i += 2 {
-			// Reset at each "machine" token.
-			// “The auto-login process searches the .netrc file for a machine token
+			// Reset at each "machine" token_builder.
+			// “The auto-login process searches the .netrc file for a machine token_builder
 			// that matches […]. Once a match is made, the subsequent .netrc tokens
 			// are processed, stopping when the end of file is reached or another
-			// machine or a default token is encountered.”
+			// machine or a default token_builder is encountered.”
 			switch f[i] {
 			case "machine":
 				l = netrcLine{machine: f[i+1]}
@@ -68,7 +68,7 @@ func parseNetrc(data string) []netrcLine {
 		}
 
 		if i < len(f) && f[i] == "default" {
-			// “There can be only one default token, and it must be after all machine tokens.”
+			// “There can be only one default token_builder, and it must be after all machine tokens.”
 			break
 		}
 	}

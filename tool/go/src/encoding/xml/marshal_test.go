@@ -2318,12 +2318,12 @@ loop:
 		for j, tok := range tt.toks {
 			err = enc.EncodeToken(tok)
 			if err != nil && j < len(tt.toks)-1 {
-				t.Errorf("#%d %s token #%d: %v", i, tt.desc, j, err)
+				t.Errorf("#%d %s token_builder #%d: %v", i, tt.desc, j, err)
 				continue loop
 			}
 		}
 		errorf := func(f string, a ...interface{}) {
-			t.Errorf("#%d %s token #%d:%s", i, tt.desc, len(tt.toks)-1, fmt.Sprintf(f, a...))
+			t.Errorf("#%d %s token_builder #%d:%s", i, tt.desc, len(tt.toks)-1, fmt.Sprintf(f, a...))
 		}
 		switch {
 		case tt.err != "" && err == nil:
@@ -2352,7 +2352,7 @@ func TestProcInstEncodeToken(t *testing.T) {
 	enc := NewEncoder(&buf)
 
 	if err := enc.EncodeToken(ProcInst{"xml", []byte("Instruction")}); err != nil {
-		t.Fatalf("enc.EncodeToken: expected to be able to encode xml target ProcInst as first token, %s", err)
+		t.Fatalf("enc.EncodeToken: expected to be able to encode xml target ProcInst as first token_builder, %s", err)
 	}
 
 	if err := enc.EncodeToken(ProcInst{"Target", []byte("Instruction")}); err != nil {
@@ -2360,7 +2360,7 @@ func TestProcInstEncodeToken(t *testing.T) {
 	}
 
 	if err := enc.EncodeToken(ProcInst{"xml", []byte("Instruction")}); err == nil {
-		t.Fatalf("enc.EncodeToken: expected to not be allowed to encode xml target ProcInst when not first token")
+		t.Fatalf("enc.EncodeToken: expected to not be allowed to encode xml target ProcInst when not first token_builder")
 	}
 }
 
@@ -2376,7 +2376,7 @@ func TestDecodeEncode(t *testing.T) {
 	for tok, err := dec.Token(); err == nil; tok, err = dec.Token() {
 		err = enc.EncodeToken(tok)
 		if err != nil {
-			t.Fatalf("enc.EncodeToken: Unable to encode token (%#v), %v", tok, err)
+			t.Fatalf("enc.EncodeToken: Unable to encode token_builder (%#v), %v", tok, err)
 		}
 	}
 }

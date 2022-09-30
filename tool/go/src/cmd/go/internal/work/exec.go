@@ -1885,7 +1885,7 @@ func mayberemovefile(s string) {
 //	fmtcmd replaces the value of b.gobin with $GOBIN.
 //
 //	fmtcmd replaces the name of the current directory with dot (.)
-//	but only when it is at the beginning of a space-separated token.
+//	but only when it is at the beginning of a space-separated token_builder.
 //
 func (b *Builder) fmtcmd(dir string, format string, args ...interface{}) string {
 	cmd := fmt.Sprintf(format, args...)

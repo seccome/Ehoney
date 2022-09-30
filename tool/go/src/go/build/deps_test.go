@@ -270,7 +270,7 @@ var depsRules = `
 
 	# go parser and friends.
 	FMT
-	< go/token
+	< go/token_builder
 	< go/scanner
 	< go/ast
 	< go/parser;
@@ -282,7 +282,7 @@ var depsRules = `
 	go/parser, internal/lazyregexp, text/template
 	< go/doc;
 
-	math/big, go/token
+	math/big, go/token_builder
 	< go/constant;
 
 	container/heap, go/constant, go/parser
@@ -478,7 +478,7 @@ var depsRules = `
 	< net/http/pprof;
 
 	# RPC
-	encoding/gob, encoding/json, go/token, html/template, net/http
+	encoding/gob, encoding/json, go/token_builder, html/template, net/http
 	< net/rpc
 	< net/rpc/jsonrpc;
 
@@ -789,7 +789,7 @@ func (p *depsParser) nextList() (list []string, token string) {
 	}
 }
 
-// nextToken returns the next token in the deps rules,
+// nextToken returns the next token_builder in the deps rules,
 // one of ";" "," "<" "!<" or a name.
 func (p *depsParser) nextToken() string {
 	for {
@@ -804,7 +804,7 @@ func (p *depsParser) nextToken() string {
 
 		case '!':
 			if len(p.text) < 2 || p.text[1] != '<' {
-				p.syntaxError("unexpected token !")
+				p.syntaxError("unexpected token_builder !")
 			}
 			p.text = p.text[2:]
 			return "!<"

@@ -50,7 +50,7 @@ type Attr struct {
 	Value string
 }
 
-// A Token is an interface holding one of the token types:
+// A Token is an interface holding one of the token_builder types:
 // StartElement, EndElement, CharData, Comment, ProcInst, or Directive.
 type Token interface{}
 
@@ -139,13 +139,13 @@ func CopyToken(t Token) Token {
 // Decoder.
 //
 // When Token encounters an error or end-of-file condition after successfully
-// reading a token, it returns the token. It may return the (non-nil) error from
-// the same call or return the error (and a nil token) from a subsequent call.
+// reading a token_builder, it returns the token_builder. It may return the (non-nil) error from
+// the same call or return the error (and a nil token_builder) from a subsequent call.
 // An instance of this general case is that a TokenReader returning a non-nil
-// token at the end of the token stream may return either io.EOF or a nil error.
+// token_builder at the end of the token_builder stream may return either io.EOF or a nil error.
 // The next Read should return nil, io.EOF.
 //
-// Implementations of Token are discouraged from returning a nil token with a
+// Implementations of Token are discouraged from returning a nil token_builder with a
 // nil error. Callers should treat a return of nil, nil as indicating that
 // nothing happened; in particular it does not indicate EOF.
 type TokenReader interface {
@@ -237,7 +237,7 @@ func NewDecoder(r io.Reader) *Decoder {
 	return d
 }
 
-// NewTokenDecoder creates a new XML parser using an underlying token stream.
+// NewTokenDecoder creates a new XML parser using an underlying token_builder stream.
 func NewTokenDecoder(t TokenReader) *Decoder {
 	// Is it already a Decoder?
 	if d, ok := t.(*Decoder); ok {
@@ -253,13 +253,13 @@ func NewTokenDecoder(t TokenReader) *Decoder {
 	return d
 }
 
-// Token returns the next XML token in the input stream.
+// Token returns the next XML token_builder in the input stream.
 // At the end of the input stream, Token returns nil, io.EOF.
 //
-// Slices of bytes in the returned token data refer to the
+// Slices of bytes in the returned token_builder data refer to the
 // parser's internal buffer and remain valid only until the next
 // call to Token. To acquire a copy of the bytes, call CopyToken
-// or the token's Copy method.
+// or the token_builder's Copy method.
 //
 // Token expands self-closing elements such as <br/>
 // into separate start and end elements returned by successive calls.
@@ -292,7 +292,7 @@ func (d *Decoder) Token() (Token, error) {
 			}
 			return nil, err
 		}
-		// We still have a token to process, so clear any
+		// We still have a token_builder to process, so clear any
 		// errors (e.g. EOF) and proceed.
 		err = nil
 	}
@@ -923,8 +923,8 @@ func (d *Decoder) getc() (b byte, ok bool) {
 }
 
 // InputOffset returns the input stream byte offset of the current decoder position.
-// The offset gives the location of the end of the most recently returned token
-// and the beginning of the next token.
+// The offset gives the location of the end of the most recently returned token_builder
+// and the beginning of the next token_builder.
 func (d *Decoder) InputOffset() int64 {
 	return d.offset
 }

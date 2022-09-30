@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-// lineno is the source position at the start of the most recently lexed token.
+// lineno is the source position at the start of the most recently lexed token_builder.
 // TODO(gri) rename and eventually remove
 var lineno src.XPos
 
