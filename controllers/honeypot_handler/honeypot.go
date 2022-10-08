@@ -171,7 +171,7 @@ func RefreshHoneypotStatus() {
 
 		zap.L().Info(fmt.Sprintf("load honeypot {%s} ip [%s] -> [%s]", honeypot.PodName, honeypot.HoneypotIp, r.PodIP))
 
-		if r.PodIP == honeypot.HoneypotIp {
+		if r.PodIP == honeypot.HoneypotIp && (r.Status == "Running" && honeypot.Status == comm.SUCCESS) {
 			continue
 		}
 

@@ -222,10 +222,7 @@ func CreateProtocolAttackEvent(c *gin.Context) {
 		appG.Response(http.StatusOK, app.InvalidParams, nil)
 		return
 	}
-	if util.IsLocalIP(attackEvent.AttackIp) {
-		appG.Response(http.StatusOK, app.SUCCESS, nil)
-		return
-	}
+
 	if attackEvent.ProtocolProxyId != "" {
 		attackEvent.ProtocolProxyId = strings.ReplaceAll(attackEvent.ProtocolProxyId, ":", "")
 	}

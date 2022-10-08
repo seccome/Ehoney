@@ -34,7 +34,16 @@ import (
 func GetCurrentTime() string {
 	return time_parse.CSTLayoutString()
 }
+
 func GetCurrentIntTime() int64 {
+	sysType := runtime.GOOS
+	if sysType == "linux" {
+		var cstSh, _ = time.LoadLocation("Asia/Shanghai") //上海
+		return time.Now().In(cstSh).Unix()
+	} else if sysType == "windows" {
+		var cstZone = time.FixedZone("CST", 8*3600)
+		return time.Now().In(cstZone).Unix()
+	}
 	return time.Now().Unix()
 }
 
