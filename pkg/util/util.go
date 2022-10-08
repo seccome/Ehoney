@@ -542,6 +542,7 @@ func SendGETRequest(header map[string]string, uri string) ([]byte, error) {
 }
 
 func TcpGather(ips []string, port string) bool {
+	zap.L().Info(fmt.Sprintf("test connection for ips %v port: [%s]", ips, port))
 	for _, ip := range ips {
 		address := net.JoinHostPort(ip, port)
 		conn, err := net.DialTimeout("tcp", address, 3*time.Second)

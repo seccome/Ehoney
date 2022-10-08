@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"os/exec"
-	"strconv"
 	"strings"
 )
 
@@ -58,6 +57,7 @@ func portCheck(port int32) bool {
 	return true
 }
 
-func TestLocalPortConnection(proxyPort int) bool {
-	return util.TcpGather(strings.Split("127.0.0.1", ","), strconv.Itoa(proxyPort))
+func TestLocalPortConnection(proxyPort int32) bool {
+
+	return util.TcpGather(strings.Split("127.0.0.1", ","), fmt.Sprintf("%d", proxyPort))
 }

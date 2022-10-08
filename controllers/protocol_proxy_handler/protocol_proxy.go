@@ -189,14 +189,15 @@ func TestProtocolProxy(c *gin.Context) {
 		appG.Response(http.StatusOK, app.ErrorProtocolProxyNotExist, nil)
 		return
 	}
-	if proxy.TestLocalPortConnection(int(protocolProxy.ProxyPort)) {
+
+	if proxy.TestLocalPortConnection(protocolProxy.ProxyPort) {
 		protocolProxy.Status = comm.SUCCESS
-		protocols.UpdateStatus()
+		_ = protocols.UpdateStatus()
 		appG.Response(http.StatusOK, app.SUCCESS, nil)
 		return
 	}
-	protocolProxy.Status = comm.SUCCESS
-	protocols.UpdateStatus()
+	protocolProxy.Status = comm.FAILED
+	_ = protocols.UpdateStatus()
 	appG.Response(http.StatusOK, app.ErrorConnectTest, nil)
 }
 
@@ -212,7 +213,7 @@ func UpdateDeployedProtocolProxyStatus() {
 		return
 	}
 	for _, protocolProxy := range *protocolProxies {
-		if proxy.TestLocalPortConnection(int(protocolProxy.ProxyPort)) {
+		if proxy.TestLocalPortConnection(protocolProxy.ProxyPort) {
 			protocolProxy.Status = comm.SUCCESS
 		} else {
 			protocolProxy.Status = comm.FAILED
