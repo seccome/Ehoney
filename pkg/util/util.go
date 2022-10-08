@@ -550,8 +550,8 @@ func TcpGather(ips []string, port string) bool {
 			return false
 		} else {
 			if conn != nil {
-				return true
 				_ = conn.Close()
+				return true
 			} else {
 				return false
 			}
