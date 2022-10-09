@@ -212,7 +212,7 @@ function component_installer() {
   setupDeceptDefence
 }
 function setupFalco() {
-  echo "--------------------Start deploying Falco----------------------------"
+  echo "start deploying falco >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
   Project_Dir=$(
     cd $(dirname $0)
     pwd
@@ -231,7 +231,7 @@ function setupFalco() {
       falco_install
     fi
   fi
-  echo "--------------------End of Falco installation-----------------------------"
+  echo "end of falco installation >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 }
 
 function falco_install() {
@@ -303,14 +303,14 @@ function install_k3s() {
 }
 
 function setupK3s() {
-  echo "--------------------Start deploying K3S-----------------------------"
+  echo "start deploying k3s >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
   if [ -e "/etc/rancher/k3s/k3s.yaml" ]; then
     echo "k3s is installed, skip! "
   else
     echo "k3s is uninstalled, start install!"
     install_k3s
   fi
-  echo "--------------------End of K3S installation-----------------------------"
+  echo "end of k3s installation >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 }
 
 function setupDocker() {
@@ -333,7 +333,7 @@ function setupDocker() {
 }
 
 function install_Docker() {
-  echo "--------------------Start deploying Docker-----------------------------"
+  echo "start deploying docker >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
   #  安装依赖包
   sudo yum install -y yum-utils \
     device-mapper-persistent-data \
@@ -365,7 +365,7 @@ EOF
 }
 
 function setupMysqlDocker() {
-  echo "--------------------Start installing the database container-----------------------------"
+  echo "start installing the database container >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
   dos2unix ${Project_Dir}/tool/mysql-docker/setup.sh
   dos2unix ${Project_Dir}/tool/mysql-docker/privileges.sql
   sed -i "3c update user set authentication_string = password('${DB_Password}') where user = 'root';" $Project_Dir/tool/mysql-docker/privileges.sql
@@ -380,7 +380,7 @@ function setupMysqlDocker() {
   fi
   docker run -d -p $DB_Port:3306 -v $db_data_dir:/var/lib/mysql -e TZ=Asia/Shanghai --name ehoney-mysql ehoney-mysql:latest
   check_docker_container_state ehoney-mysql
-  echo "--------------------End of database container installation-----------------------------"
+  echo "end of database container installation >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
   cd $Project_Dir
 }
 
@@ -400,7 +400,7 @@ function install_go() {
 }
 
 function setupDeceptDefence() {
-  echo "-------------------- Starrt install DeceptDefence-------------------------"
+  echo "start install ehoney server >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
   if [ ! -d "/usr/local/go" ]; then
     echo "golang is uninstalled, start install!"
     install_go
@@ -414,7 +414,7 @@ function setupDeceptDefence() {
   go build .
   nohup ./decept-defense --ip ${Local_Host} >/dev/null &
   check_decept_defense_service
-  echo "--------------------End of DeceptDefence installation-------------------------"
+  echo "end of ehoney server installation >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 }
 
 function main() {
@@ -431,6 +431,7 @@ function main() {
   component_installer
   echo "--------------------------------------------------------------"
   echo "all the services are ready and happy to use!!!"
+  echo "please set the correct system time zone!!!!!!!!"
   echo "please visit url: [ http://${Local_Host}:8082/decept-defense ]"
   echo "--------------------------------------------------------------"
 }
@@ -454,6 +455,8 @@ function getIpAddr() {
     Local_Host=${array[*]}
   elif [ $num -gt 1 ]; then
     echo -e "\033[036m---------------------------------------------------------\033[0m"
+    echo -e "\033[036m-本次更新涉及数据库结构改变, 如果由老版本升级推荐删除文件夹/var/lib/ehoney-db-data \033[0m"
+    echo -e "\033[036m-本次更新涉及数据库结构改变, 如果由老版本升级推荐删除文件夹/var/lib/ehoney-db-data \033[0m"
     echo -e "\033[036m-本次更新涉及数据库结构改变, 如果由老版本升级推荐删除文件夹/var/lib/ehoney-db-data \033[0m"
     echo -e "\033[036m----Please select the IP address used by this machine---\033[0m"
     for i in "${!array[@]}"; do

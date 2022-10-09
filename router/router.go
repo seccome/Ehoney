@@ -22,6 +22,7 @@ import (
 	"decept-defense/controllers/webhook_handler"
 	_ "decept-defense/docs"
 	"decept-defense/middleware/cors"
+	"decept-defense/middleware/jwt"
 	"decept-defense/pkg/configs"
 	"github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
@@ -77,6 +78,9 @@ func MakeRoute() *gin.Engine {
 	r.GET("/decept-defense/system-config", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
+	r.GET("/decept-defense/datav", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", nil)
+	})
 
 	api := r.Group("/api")
 	{
@@ -104,7 +108,7 @@ func MakeRoute() *gin.Engine {
 			public.GET("/token/trace-alert", token_trace_handler.TraceMsgReceive)
 		}
 		private := api.Group("/v1/")
-		//private.Use(jwt.JWT())
+		private.Use(jwt.JWT())
 		{
 			//use
 			private.PUT("/user/password", user_handler.ChangePassword)

@@ -9,13 +9,14 @@ import (
 type TransparentEvent struct {
 	Id                 int64  `gorm:"primary_key;AUTO_INCREMENT;unique;column:id" json:"id"`                       //透明代理攻击事件ID
 	TransparentEventId string `gorm:"index;not null; size:64" json:"TransparentEventId" form:"TransparentEventId"` //透明代理攻击事件ID
+	TransparentProxyId string `gorm:"index;not null; size:64" json:"TransparentProxyId" form:"TransparentProxyId"` //透明代理攻击事件ID
 	AgentToken         string `json:"AgentToken" form:"AgentToken" gorm:"not null;size:128"`                       //代理Token
 	AttackType         string `json:"AttackType" form:"AttackType" gorm:"not null;size:64"`                        //攻击类型
 	AttackIp           string `json:"AttackIP" form:"AttackIP" gorm:"not null;size:256"`                           //攻击IP
 	AttackPort         int32  `json:"AttackPort" form:"AttackPort" gorm:"index;not null;"`                         //攻击端口
 	ProxyIp            string `json:"ProxyIP" form:"ProxyIP" gorm:"index;not null;size:64"`                        //代理IP
 	ProxyPort          int32  `json:"ProxyPort" form:"ProxyPort" gorm:"index;not null;"`                           //代理端口
-	DestIP             string `json:"DestIP" form:"DestIP" gorm:"not null;size:64"`                                //目标IP
+	DestIp             string `json:"DestIp" form:"DestIp" gorm:"not null;size:64"`                                //目标IP
 	DestPort           int32  `json:"DestPort" form:"DestPort"`                                                    //目标端口
 	OutPort            int32  `json:"OutPort" form:"OutPort"`
 	AttackLocation     string `json:"AttackLocation" form:"AttackLocation" gorm:"not null;size:128"`

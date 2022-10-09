@@ -584,6 +584,11 @@ func SendDingMsg(title, name, msg string) error {
 }
 
 func IsLocalIP(ip string) bool {
+
+	if ip == "127.0.0.1" {
+		return true
+	}
+
 	address, err := net.InterfaceAddrs()
 	if err != nil {
 		return false

@@ -13,6 +13,7 @@ import (
 	"github.com/unknwon/com"
 	"go.uber.org/zap"
 	"math"
+	"net"
 	"net/http"
 	"path"
 	"strconv"
@@ -193,6 +194,7 @@ func GetAttackList(c *gin.Context) {
 func CreateTransparentEventEvent(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var attackEvent models.TransparentEvent
+
 	err := c.ShouldBind(&attackEvent)
 	if err != nil {
 		appG.Response(http.StatusOK, app.InvalidParams, nil)
@@ -203,14 +205,14 @@ func CreateTransparentEventEvent(c *gin.Context) {
 		return
 	}
 
-	//attackEvent.AttackLocation = util.FindLocationByIp(attackEvent.AttackIp)
+	attackEvent.AttackLocation = util.FindLocationByIp(attackEvent.AttackIp)
 
 	if err := attackEvent.CreateEvent(); err != nil {
 		appG.Response(http.StatusOK, app.ErrorDatabase, nil)
 		return
 	}
-	// waning := `攻击类型: ` + attackEvent.AttackType + `\n\n > AgentID:  ` + attackEvent.AgentToken + `\n\n > 攻击IP:  ` + attackEvent.AttackIp + `\n\n > 攻击端口:  ` + strconv.Itoa(int(attackEvent.AttackPort)) + `\n\n > 代理IP:  ` + attackEvent.ProxyIp + `\n\n > 代理端口:  ` + strconv.Itoa(int(attackEvent.ProxyPort)) + `\n\n > 蜜罐IP:  ` + attackEvent.DestIp + `\n\n > 蜜罐端口:  ` + strconv.Itoa(int(attackEvent.DestPort)) + `\n\n > 协议类型:  ` + attackEvent.ProtocolType + `\n\n > 创建时间:  ` + attackEvent.EventTime + ``
-	// go util.SendDingMsg("欺骗防御告警", "透明代理告警", waning)
+	waning := `AgentID:  ` + attackEvent.AgentToken + `\n\n > 攻击IP:  ` + attackEvent.AttackIp + `\n\n > 攻击端口:  ` + strconv.Itoa(int(attackEvent.AttackPort)) + `\n\n > 代理IP:  ` + attackEvent.ProxyIp + `\n\n > 代理端口:  ` + strconv.Itoa(int(attackEvent.ProxyPort)) + `\n\n > 蜜罐IP:  ` + attackEvent.DestIp + `\n\n > 蜜罐端口:  ` + strconv.Itoa(int(attackEvent.DestPort)) + `\n\n > 创建时间:  ` + util.Sec2TimeStr(attackEvent.CreateTime, "") + ``
+	go util.SendDingMsg("欺骗防御告警", "透明代理告警", waning)
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
 }
 
@@ -225,6 +227,11 @@ func CreateProtocolAttackEvent(c *gin.Context) {
 
 	if attackEvent.ProtocolProxyId != "" {
 		attackEvent.ProtocolProxyId = strings.ReplaceAll(attackEvent.ProtocolProxyId, ":", "")
+	}
+
+	address := net.ParseIP(attackEvent.AttackIp)
+	if address == nil {
+		attackEvent.AttackIp = "Unknown"
 	}
 
 	if err := attackEvent.CreateEvent(); err != nil {

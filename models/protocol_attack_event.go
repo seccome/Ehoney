@@ -65,7 +65,7 @@ func (event *ProtocolEvent) CreateEvent() error {
 
 func (event *ProtocolEvent) GetAttackStatisticsByProtocol() (*[]comm.AttackStatistics, error) {
 	var ret []comm.AttackStatistics
-	sql := fmt.Sprintf("select protocol_type as Data, count(*) as Count from protocol_events group by protocol_type")
+	sql := fmt.Sprintf("select protocol_type as Data, count(*) as Count from protocol_events where protocol_type is not null group by protocol_type")
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, err
 	}

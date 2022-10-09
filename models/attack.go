@@ -35,7 +35,7 @@ type AttackSelectResultPayload struct {
 func (event *AttackEvent) GetAttackEvent(queryMap map[string]interface{}) (*[]AttackEvent, int64, error) {
 	var ret []AttackEvent
 	var total int64
-	sql := fmt.Sprintf("SELECT te.transparent_event_id as TransparentEventId, pe.protocol_event_id as ProtocolEventId, ifnull(te.create_time, pe.create_time) As CreateTime,  ifnull(te.attack_ip, pe.attack_ip) as AttackIp, te.proxy_ip as AgentIp, te.proxy_port as AgentPort, pe.proxy_port as ProtocolPort, pe.protocol_type as ProtocolType,  pe.attack_detail as AttackDetail, pe.dest_ip as HoneypotIp, pe.dest_port as HoneypotPort FROM protocol_events pe left join transparent_events te on pe.proxy_port = te.dest_port ")
+	sql := fmt.Sprintf("SELECT te.transparent_event_id as TransparentEventId, pe.protocol_event_id as ProtocolEventId, ifnull(te.create_time, pe.create_time) As CreateTime,  ifnull(te.attack_ip, pe.attack_ip) as AttackIp, te.proxy_ip as AgentIp, te.proxy_port as AgentPort, pe.proxy_port as ProtocolPort, pe.protocol_type as ProtocolType,  pe.attack_detail as AttackDetail, pe.dest_ip as HoneypotIp, pe.dest_port as HoneypotPort FROM protocol_events pe left join transparent_events te on pe.attack_port = te.out_port ")
 	sqlTotal := fmt.Sprintf("SELECT count(1) FROM protocol_events pe left join transparent_events te on pe.proxy_port = te.dest_port ")
 
 	conditionFlag := false
@@ -81,7 +81,7 @@ func (event *AttackEvent) GetAttackEvent(queryMap map[string]interface{}) (*[]At
 
 	pageNumber := int(queryMap["PageNumber"].(float64))
 
-	t := fmt.Sprintf("order by pe.create_time DESC limit %d offset %d ", pageSize, (pageNumber-1)*pageSize)
+	t := fmt.Sprintf("order by CreateTime DESC limit %d offset %d ", pageSize, (pageNumber-1)*pageSize)
 	sql = strings.Join([]string{sql, conditionSql, t}, " ")
 	zap.L().Info(sql)
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
