@@ -255,6 +255,11 @@ func CreateFalcoAttackEvent(c *gin.Context) {
 	shouldAlarm := false
 	var honeypot models.Honeypot
 	data, _ := honeypot.GetHoneypotByPodName(event.OutputFields.PodName)
+	if data.ImageAddress == "ehoney/smb:v1" {
+		appG.Response(http.StatusOK, app.SUCCESS, err.Error())
+		return
+	}
+
 	if event.Rule == "Create files below container any dir" {
 		event.FileFlag = true
 
