@@ -121,7 +121,6 @@ func GetAttackSource(c *gin.Context) {
 			}
 		}
 	}
-
 	appG.Response(http.StatusOK, app.SUCCESS, comm.SelectResultPayload{Count: falcoTotaol + attckTotaol, List: traceSources})
 }
 

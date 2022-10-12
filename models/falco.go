@@ -3,6 +3,7 @@ package models
 import (
 	"decept-defense/pkg/util"
 	"fmt"
+	"go.uber.org/zap"
 	"strings"
 )
 
@@ -64,9 +65,18 @@ func (event *FalcoAttackEvent) GetFalcoEvent(queryMap map[string]interface{}) (*
 	sqlTotal := fmt.Sprintf("SELECT count(1) FROM falco_attack_events ")
 	conditionFlag := false
 	conditionSql := ""
+
+	if queryMap["AttackIp"] != nil && queryMap["AttackIp"].(string) != "" && queryMap["Payload"] == "" {
+		queryMap["Payload"] = queryMap["AttackIp"]
+	}
+
+	if queryMap["AgentIp"] != nil && queryMap["AgentIp"].(string) != "" && queryMap["Payload"] == "" {
+		queryMap["Payload"] = queryMap["AgentIp"]
+	}
+
 	for key, val := range queryMap {
 
-		if key == "PageSize" || key == "PageNumber" {
+		if key == "PageSize" || key == "PageNumber" || key == "AttackIp" || key == "AgentIp" {
 			continue
 		}
 		if val == "" {
@@ -87,17 +97,24 @@ func (event *FalcoAttackEvent) GetFalcoEvent(queryMap map[string]interface{}) (*
 		if key == "EndTime" {
 			conditionSql = fmt.Sprintf(" %s %s create_time < %s", conditionSql, condition, val)
 		}
+		// TODO 目前 attackIp 和 AgentIp 无法处理 当前处置是为防止干扰
+
 		if key == "Payload" {
-			conditionSql = fmt.Sprintf(" %s %s output like '%s'", conditionSql, condition, val)
+			conditionSql = fmt.Sprintf(" %s %s output like '%s' or cmdline like '%s'", conditionSql, condition, "%"+val.(string)+"%", "%"+val.(string)+"%")
+		}
+		if key == "HoneypotName" {
+			conditionSql = fmt.Sprintf(" %s %s honeypot_name like '%s'", conditionSql, condition, "%"+val.(string)+"%")
+		}
+		if key == "ProtocolType" {
+			val = strings.ReplaceAll(val.(string), "proxy", "")
+			conditionSql = fmt.Sprintf(" %s %s Repository like '%s'", conditionSql, condition, "%"+val.(string)+"%")
 		}
 	}
-
 	pageSize := int(queryMap["PageSize"].(float64))
-
 	pageNumber := int(queryMap["PageNumber"].(float64))
-
 	t := fmt.Sprintf("order by create_time DESC limit %d offset %d ", pageSize, (pageNumber-1)*pageSize)
 	sql = strings.Join([]string{sql, conditionSql, t}, " ")
+	zap.L().Info(sql)
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, total, err
 	}

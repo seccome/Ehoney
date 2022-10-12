@@ -135,7 +135,6 @@ func topology() {
 					zap.L().Error(err.Error())
 					return
 				}
-				fmt.Println(data)
 				if client.Conn.WriteMessage(websocket.TextMessage, data) != nil {
 					zap.L().Info("Fail to write message")
 				}

@@ -35,8 +35,8 @@ type AttackSelectResultPayload struct {
 func (event *AttackEvent) GetAttackEvent(queryMap map[string]interface{}) (*[]AttackEvent, int64, error) {
 	var ret []AttackEvent
 	var total int64
-	sql := fmt.Sprintf("SELECT te.transparent_event_id as TransparentEventId, pe.protocol_event_id as ProtocolEventId, ifnull(te.create_time, pe.create_time) As CreateTime,  ifnull(te.attack_ip, pe.attack_ip) as AttackIp, te.proxy_ip as AgentIp, te.proxy_port as AgentPort, pe.proxy_port as ProtocolPort, pe.protocol_type as ProtocolType,  pe.attack_detail as AttackDetail, pe.dest_ip as HoneypotIp, pe.dest_port as HoneypotPort FROM protocol_events pe left join transparent_events te on pe.attack_port = te.out_port ")
-	sqlTotal := fmt.Sprintf("SELECT count(1) FROM protocol_events pe left join transparent_events te on pe.attack_port = te.out_port ")
+	sql := fmt.Sprintf("SELECT te.transparent_event_id as TransparentEventId, pe.protocol_event_id as ProtocolEventId, ifnull(te.create_time, pe.create_time) As CreateTime,  ifnull(te.attack_ip, pe.attack_ip) as AttackIp, te.proxy_ip as AgentIp, te.proxy_port as AgentPort, pe.proxy_port as ProtocolPort, pe.protocol_type as ProtocolType,  pe.attack_detail as AttackDetail, pe.dest_ip as HoneypotIp, pe.dest_port as HoneypotPort FROM protocol_events pe left join transparent_events te on pe.attack_port = te.out_port left join protocol_proxies pp on pe.protocol_proxy_id = pp.protocol_proxy_id left join honeypots h on pp.honeypot_id = h.honeypot_id ")
+	sqlTotal := fmt.Sprintf("SELECT count(1) FROM protocol_events pe left join transparent_events te on pe.attack_port = te.out_port left join protocol_proxies pp on pe.protocol_proxy_id = pp.protocol_proxy_id left join honeypots h on pp.honeypot_id = h.honeypot_id ")
 
 	conditionFlag := false
 	conditionSql := ""
@@ -69,14 +69,15 @@ func (event *AttackEvent) GetAttackEvent(queryMap map[string]interface{}) (*[]At
 		if key == "AgentIp" {
 			conditionSql = fmt.Sprintf(" %s %s te.proxy_ip like '%s'", conditionSql, condition, "%"+val.(string)+"%")
 		}
-		if key == "HoneypotIp" {
-			conditionSql = fmt.Sprintf(" %s %s pe.dest_ip = '%s'", conditionSql, condition, val)
+		if key == "HoneypotName" {
+			conditionSql = fmt.Sprintf(" %s %s h.honeypot_name like '%s'", conditionSql, condition, "%"+val.(string)+"%")
 		}
 		if key == "Payload" {
 			conditionSql = fmt.Sprintf(" %s %s pe.attack_detail like '%s'", conditionSql, condition, "%"+val.(string)+"%")
 		}
 		if key == "ProtocolType" {
-			conditionSql = fmt.Sprintf(" %s %s pe.protocol_type = '%s'", conditionSql, condition, val)
+			val = strings.ReplaceAll(val.(string), "proxy", "")
+			conditionSql = fmt.Sprintf(" %s %s pe.protocol_type like '%s'", conditionSql, condition, "%"+val.(string)+"%")
 		}
 	}
 
