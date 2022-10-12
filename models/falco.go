@@ -107,7 +107,7 @@ func (event *FalcoAttackEvent) GetFalcoEvent(queryMap map[string]interface{}) (*
 		}
 		if key == "ProtocolType" {
 			val = strings.ReplaceAll(val.(string), "proxy", "")
-			conditionSql = fmt.Sprintf(" %s %s Repository like '%s'", conditionSql, condition, "%"+val.(string)+"%")
+			conditionSql = fmt.Sprintf(" %s %s repository like '%s'", conditionSql, condition, "%"+val.(string)+"%")
 		}
 	}
 	pageSize := int(queryMap["PageSize"].(float64))
