@@ -36,7 +36,7 @@ func (event *AttackEvent) GetAttackEvent(queryMap map[string]interface{}) (*[]At
 	var ret []AttackEvent
 	var total int64
 	sql := fmt.Sprintf("SELECT te.transparent_event_id as TransparentEventId, pe.protocol_event_id as ProtocolEventId, ifnull(te.create_time, pe.create_time) As CreateTime,  ifnull(te.attack_ip, pe.attack_ip) as AttackIp, te.proxy_ip as AgentIp, te.proxy_port as AgentPort, pe.proxy_port as ProtocolPort, pe.protocol_type as ProtocolType,  pe.attack_detail as AttackDetail, pe.dest_ip as HoneypotIp, pe.dest_port as HoneypotPort FROM protocol_events pe left join transparent_events te on pe.attack_port = te.out_port ")
-	sqlTotal := fmt.Sprintf("SELECT count(1) FROM protocol_events pe left join transparent_events te on pe.proxy_port = te.dest_port ")
+	sqlTotal := fmt.Sprintf("SELECT count(1) FROM protocol_events pe left join transparent_events te on pe.attack_port = te.out_port ")
 
 	conditionFlag := false
 	conditionSql := ""
@@ -72,6 +72,9 @@ func (event *AttackEvent) GetAttackEvent(queryMap map[string]interface{}) (*[]At
 		if key == "HoneypotIp" {
 			conditionSql = fmt.Sprintf(" %s %s pe.dest_ip = '%s'", conditionSql, condition, val)
 		}
+		if key == "Payload" {
+			conditionSql = fmt.Sprintf(" %s %s pe.attack_detail like '%s'", conditionSql, condition, "%"+val.(string)+"%")
+		}
 		if key == "ProtocolType" {
 			conditionSql = fmt.Sprintf(" %s %s pe.protocol_type = '%s'", conditionSql, condition, val)
 		}
@@ -81,7 +84,7 @@ func (event *AttackEvent) GetAttackEvent(queryMap map[string]interface{}) (*[]At
 
 	pageNumber := int(queryMap["PageNumber"].(float64))
 
-	t := fmt.Sprintf("order by CreateTime DESC limit %d offset %d ", pageSize, (pageNumber-1)*pageSize)
+	t := fmt.Sprintf("order by CreateTime DESC limit %d, %d ", (pageNumber-1)*pageSize, pageSize)
 	sql = strings.Join([]string{sql, conditionSql, t}, " ")
 	zap.L().Info(sql)
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
@@ -89,6 +92,7 @@ func (event *AttackEvent) GetAttackEvent(queryMap map[string]interface{}) (*[]At
 	}
 
 	sqlTotal = strings.Join([]string{sqlTotal, conditionSql}, " ")
+	zap.L().Info(sqlTotal)
 	if err := db.Raw(sqlTotal).Scan(&total).Error; err != nil {
 		return nil, total, err
 	}
