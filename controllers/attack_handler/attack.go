@@ -8,6 +8,7 @@ import (
 	"decept-defense/pkg/configs"
 	"decept-defense/pkg/util"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"github.com/unknwon/com"
@@ -224,6 +225,11 @@ func CreateProtocolAttackEvent(c *gin.Context) {
 		return
 	}
 
+	if attackEvent.AttackIp == "127.0.0.1" {
+		appG.Response(http.StatusOK, app.SUCCESS, nil)
+		return
+	}
+
 	if attackEvent.ProtocolProxyId != "" {
 		attackEvent.ProtocolProxyId = strings.ReplaceAll(attackEvent.ProtocolProxyId, ":", "")
 	}
@@ -254,21 +260,19 @@ func CreateFalcoAttackEvent(c *gin.Context) {
 	shouldAlarm := false
 	var honeypot models.Honeypot
 	data, _ := honeypot.GetHoneypotByPodName(event.OutputFields.PodName)
-	if data.ImageAddress == "ehoney/smb:v1" {
-		appG.Response(http.StatusOK, app.SUCCESS, err.Error())
+	if data.ImageAddress == "ehoney/smb:v1" && (event.OutputFields.Cmdline == "lpqd -FS --no-process-group" || event.OutputFields.Cmdline == "nmbd -D") {
+		zap.L().Info(fmt.Sprintf("ignore smb falco event: %v", event))
+		appG.Response(http.StatusOK, app.SUCCESS, nil)
 		return
 	}
-
 	if event.Rule == "Create files below container any dir" {
 		event.FileFlag = true
-
 		code, err := util.GetUniqueID()
 		if err != nil {
 			zap.L().Error(err.Error())
 			appG.Response(http.StatusOK, app.INTERNAlERROR, err.Error())
 			return
 		}
-
 		dest := path.Join(util.WorkingPath(), configs.GetSetting().App.UploadPath, "falco", code)
 		cluster.CopyFromPod(event.OutputFields.PodName, data.HoneypotName, event.OutputFields.FilePath, dest)
 		event.DownloadPath = "http:" + "//" + configs.GetSetting().Server.AppHost + ":" + strconv.Itoa(configs.GetSetting().Server.HttpPort) + "/" + configs.GetSetting().App.UploadPath + "/falco/" + code + "/" + path.Base(event.OutputFields.FilePath)

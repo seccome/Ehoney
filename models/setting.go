@@ -21,20 +21,20 @@ type Setting struct {
 }
 
 func (setting *Setting) CreateSetting() error {
-	result := db.Create(setting)
-	if result.Error != nil {
-		return result.Error
+	ret, _ := setting.QueryDefaultSetting()
+	if ret == nil {
+		result := db.Create(setting)
+		if result.Error != nil {
+			return result.Error
+		}
 	}
 	return nil
 }
 
-func (setting *Setting) CreateDefaultSetting() error {
-	ret, _ := setting.QueryDefaultSetting()
-	if ret == nil {
-		return GenerateRsaKey()
+func (setting *Setting) CreateDefaultSetting() {
+	if _, err := os.Stat("/var/decept-agent/ssh/private.pem"); os.IsNotExist(err) {
+		GenerateRsaKey()
 	}
-	return nil
-
 }
 
 func (setting *Setting) QueryDefaultSetting() (*Setting, error) {
@@ -46,7 +46,7 @@ func (setting *Setting) QueryDefaultSetting() (*Setting, error) {
 }
 
 func GenerateRsaKey() error {
-
+	zap.L().Info("generate rsa key files...")
 	privateKeyDir := "/var/decept-agent/ssh/"
 	privateKeyPath := "/var/decept-agent/ssh/private.pem"
 	publicKeyPath := "/var/decept-agent/ssh/public.pem"
@@ -130,6 +130,8 @@ func GenerateRsaKey() error {
 	if err = setting.CreateSetting(); err != nil {
 		return err
 	}
+	zap.L().Info("generate rsa key files success")
+
 	return nil
 }
 

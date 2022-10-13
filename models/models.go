@@ -90,6 +90,5 @@ func SetUp() {
 	if err = db.AutoMigrate(&CounterEvent{}); err != nil {
 		zap.L().Panic("AutoMigrate error:" + err.Error())
 	}
-	zap.L().Info("================= SSH =================")
-	_ = (&Setting{}).CreateDefaultSetting()
+	(&Setting{}).CreateDefaultSetting()
 }
