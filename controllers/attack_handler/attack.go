@@ -260,7 +260,13 @@ func CreateFalcoAttackEvent(c *gin.Context) {
 	shouldAlarm := false
 	var honeypot models.Honeypot
 	data, _ := honeypot.GetHoneypotByPodName(event.OutputFields.PodName)
-	if data.ImageAddress == "ehoney/smb:v1" && (event.OutputFields.Cmdline == "lpqd -FS --no-process-group" || event.OutputFields.Cmdline == "nmbd -D") {
+	if data.ImageAddress == "ehoney/smb:v1" && (event.OutputFields.Cmdline == "lpqd -FS --no-process-group" || event.OutputFields.Cmdline == "nmbd -D" || event.OutputFields.Cmdline == "smbd -FS --no-process-group") {
+		zap.L().Info(fmt.Sprintf("ignore smb falco event: %v", event))
+		appG.Response(http.StatusOK, app.SUCCESS, nil)
+		return
+	}
+
+	if data.ImageAddress == "ehoney/ftp:v1" && (event.OutputFields.Cmdline == "vsftpd /etc/vsftpd/vsftpd.conf" || event.OutputFields.Cmdline == "nmbd -D" || event.OutputFields.Cmdline == "smbd -FS --no-process-group") {
 		zap.L().Info(fmt.Sprintf("ignore smb falco event: %v", event))
 		appG.Response(http.StatusOK, app.SUCCESS, nil)
 		return

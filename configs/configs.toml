@@ -10,7 +10,7 @@
   webhook = ""
 
 [database]
-  dbhost = "192.168.1.1"
+  dbhost = "192.168.3.27"
   dbname = "sec_ehoneypot"
   dbport = 3306
   dbtype = "mysql"

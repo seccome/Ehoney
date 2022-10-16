@@ -95,6 +95,17 @@ function kill_if_process_exist() {
   fi
 }
 
+function kill_if_process_exist2() {
+  PROC_NAME=$1
+  echo "--------Start killing $PROC_NAME process and its child processes---------"
+  ProcNumber=$(ps -ef | grep $PROC_NAME | grep -v "grep" | awk '{print $2}')
+  if [ $ProcNumber ]; then
+    echo "进程ID: $ProcNumber"
+    kill -9 $ProcNumber
+    echo "--------------------End of killing process---------------------------"
+  fi
+}
+
 # 检查软件是否安装 curl wget zip go redis mysql docker kubectl;
 function prepare_base_install() {
   for i in wget curl unzip gcc gcc-c++ kernel-devel-$(uname -r); do
@@ -114,9 +125,10 @@ function is_port_bind() {
 
 function stop_docker_container_if_exist() {
   docker_container_name=$1
-  processor=$(docker ps | grep docker_container_name)
-  echo "stop docker container if exist [$docker_container_name]..."
+  echo $docker_container_name
+  processor=$(docker ps -a | grep $docker_container_name)
   if [ "$processor" != "" ]; then
+    echo "stop and rm docker container [$docker_container_name]..."
     docker stop $docker_container_name
     sleep 2s
     docker rm -f $docker_container_name
@@ -366,6 +378,7 @@ EOF
 
 function setupMysqlDocker() {
   echo "start installing the database container >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+  stop_docker_container_if_exist ehoney-mysql
   dos2unix ${Project_Dir}/tool/mysql-docker/setup.sh
   dos2unix ${Project_Dir}/tool/mysql-docker/privileges.sql
   sed -i "3c update user set authentication_string = password('${DB_Password}') where user = 'root';" $Project_Dir/tool/mysql-docker/privileges.sql
@@ -401,6 +414,7 @@ function install_go() {
 
 function setupDeceptDefence() {
   echo "start install ehoney server >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+  kill_if_process_exist decept-defense
   if [ ! -d "/usr/local/go" ]; then
     echo "golang is uninstalled, start install!"
     install_go
@@ -426,7 +440,7 @@ function main() {
   )
   yum install -y dos2unix
   prepare_conf
-  ports_check
+  #ports_check
   prepare_base_install
   component_installer
   echo "--------------------------------------------------------------"

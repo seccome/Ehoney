@@ -45,7 +45,7 @@ func (proxy *ProtocolProxy) QueryProtocolProxyNode() ([]comm.TopologyNode, error
 
 func (proxy *ProtocolProxy) QueryProtocolAttackNode() ([]comm.TopologyNode, error) {
 	var ret []comm.TopologyNode
-	sql := fmt.Sprintf("SELECT concat(attack_ip, \"-HACK\") AS Id,  \"HACK\" NodeType, attack_ip AS Ip, attack_ip AS HostName FROM protocol_events WHERE attack_ip NOT IN (SELECT agent_ip FROM agents GROUP BY agent_ip) AND create_time < %d GROUP BY attack_ip", util.GetCurrentIntTime()-(10*60))
+	sql := fmt.Sprintf("SELECT concat(attack_ip, \"-HACK\") AS Id,  \"HACK\" NodeType, attack_ip AS Ip, attack_ip AS HostName FROM protocol_events WHERE attack_ip NOT IN (SELECT agent_ip FROM agents GROUP BY agent_ip) AND create_time > %d GROUP BY attack_ip", util.GetCurrentIntTime()-(10*60))
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, err
 	}

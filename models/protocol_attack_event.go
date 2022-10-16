@@ -46,7 +46,7 @@ func (event *ProtocolEvent) QueryAttack2ProtocolLines(attackIpParams string) ([]
 
 func (event *ProtocolEvent) QueryAttackedAgent2ProtocolRedLines(agentIpParams string) ([]comm.TopologyLine, error) {
 	var ret []comm.TopologyLine
-	sql := fmt.Sprintf("SELECT concat(attack_ip, \"-EDGE\") AS Source, concat(proxy_ip, \"-RELAY\") AS Target,  \"RED\" Status FROM protocol_events WHERE attack_ip in (%s) AND create_time > %d GROUP BY attack_ip", agentIpParams, util.GetCurrentIntTime()-(10*60))
+	sql := fmt.Sprintf("SELECT concat(tp.agent_ip, \"-EDGE\") AS Source, concat(proxy_ip, \"-RELAY\") AS Target,  \"RED\" as Status FROM protocol_events pe left join transparent_proxies tp on pe.protocol_proxy_id = tp.protocol_proxy_id WHERE attack_ip in (%s) AND pe.create_time > %d and tp.agent_ip is not null GROUP BY Source", agentIpParams, util.GetCurrentIntTime()-(10*60))
 	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
 		return nil, err
 	}

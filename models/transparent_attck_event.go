@@ -46,6 +46,18 @@ func (event *TransparentEvent) GetTransparentEventNodes() ([]comm.TopologyNode, 
 	return ret, nil
 }
 
+func (event *TransparentEvent) GetAttackedAgentNodes() ([]comm.TopologyNode, error) {
+	var ret []comm.TopologyNode
+
+	sql := fmt.Sprintf("SELECT concat(a.agent_ip, \"-EDGE\") AS Id,  \"EDGE\" NodeType, a.agent_ip AS Ip, a.host_name AS HostName FROM transparent_events te left join agents a on te.agent_token = a.agent_token GROUP BY a.agent_ip ")
+
+	if err := db.Raw(sql).Scan(&ret).Error; err != nil {
+		return nil, err
+	}
+
+	return ret, nil
+}
+
 func (event *TransparentEvent) CreateEvent() error {
 	event.TransparentEventId = util.GenerateId()
 	event.CreateTime = util.GetCurrentIntTime()
