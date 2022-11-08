@@ -211,7 +211,7 @@ func CreateTransparentEventEvent(c *gin.Context) {
 		appG.Response(http.StatusOK, app.ErrorDatabase, nil)
 		return
 	}
-	waning := `AgentID:  ` + attackEvent.AgentToken + `\n\n > 攻击IP:  ` + attackEvent.AttackIp + `\n\n > 攻击端口:  ` + strconv.Itoa(int(attackEvent.AttackPort)) + `\n\n > 代理IP:  ` + attackEvent.ProxyIp + `\n\n > 代理端口:  ` + strconv.Itoa(int(attackEvent.ProxyPort)) + `\n\n > 蜜罐IP:  ` + attackEvent.DestIp + `\n\n > 蜜罐端口:  ` + strconv.Itoa(int(attackEvent.DestPort)) + `\n\n > 创建时间:  ` + util.Sec2TimeStr(attackEvent.CreateTime, "") + ``
+	waning := `Agent:  ` + attackEvent.AgentToken + `\n\n > 攻击IP:  ` + attackEvent.AttackIp + `\n\n > 攻击端口:  ` + strconv.Itoa(int(attackEvent.AttackPort)) + `\n\n > 代理IP:  ` + attackEvent.ProxyIp + `\n\n > 代理端口:  ` + strconv.Itoa(int(attackEvent.ProxyPort)) + `\n\n > 蜜罐IP:  ` + attackEvent.DestIp + `\n\n > 蜜罐端口:  ` + strconv.Itoa(int(attackEvent.DestPort)) + `\n\n > 创建时间:  ` + util.Sec2TimeStr(attackEvent.CreateTime, "") + ``
 	go util.SendDingMsg("欺骗防御告警", "透明代理告警", waning)
 	appG.Response(http.StatusOK, app.SUCCESS, nil)
 }
