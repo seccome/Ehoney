@@ -225,7 +225,7 @@ func CreateProtocolAttackEvent(c *gin.Context) {
 		return
 	}
 
-	if attackEvent.AttackIp == "127.0.0.1" {
+	if attackEvent.AttackIp == "127.0.0.1" ||  attackEvent.AttackIp == configs.GetSetting().app.Server.AppHost {
 		appG.Response(http.StatusOK, app.SUCCESS, nil)
 		return
 	}
