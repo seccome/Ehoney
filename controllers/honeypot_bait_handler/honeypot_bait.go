@@ -214,13 +214,13 @@ func DownloadHoneypotBaitByID(c *gin.Context) {
 // @Router /api/v1/bait/probe/:id [get]
 func DownloadHoneyBaitByID(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var honeypotBaits models.BaitTask
+	var honeypotBaits models.Bait
 	id := com.StrTo(c.Param("id")).String()
 	if id == "" {
 		appG.Response(http.StatusOK, app.InvalidParams, nil)
 		return
 	}
-	p, err := honeypotBaits.GetBaitTaskById(id)
+	p, err := honeypotBaits.GetBaitById(id)
 	if err != nil {
 		appG.Response(http.StatusOK, app.INTERNAlERROR, nil)
 		return
