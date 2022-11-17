@@ -573,6 +573,10 @@ func SendDingMsg(title, name, msg string) error {
 	zap.L().Info("开始发送钉钉告警: " + configs.GetSetting().App.WebHook)
 	webHook := configs.GetSetting().App.WebHook
 
+    if webHook == "" {
+        return nil
+    }
+
 	content := `{"msgtype": "markdown", "markdown":{"title":"` + title + `","text": "### ` + name + `\n > ` + msg + `"}}`
 	req, err := http.NewRequest("POST", webHook, strings.NewReader(content))
 	if err != nil {
@@ -583,6 +587,7 @@ func SendDingMsg(title, name, msg string) error {
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	resp, err := client.Do(req)
 	if err != nil {
+		zap.L().Error(err.Error())
 		zap.L().Error("DingDing 发送请求失败")
 		zap.L().Error(fmt.Sprintf("%v", resp.Body))
 	}
