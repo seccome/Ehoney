@@ -105,4 +105,3 @@ cd Ehoney && chmod +x quick-start.sh && ./quick-start.sh
 
 1. GitHub issue: [创建issue](https://github.com/seccome/Ehoney/issues/new )
 2. Ehoney 技术交流群: 679424748
-3. 邮箱: sihan@tsign.cn
